@@ -1,0 +1,15 @@
+# 忽略 build 文件夹中的所有内容
+/build/*
+
+build
+
+/cmake-build-debug-stm32cube/*
+
+cmake-build-debug-stm32cube
+
+# 忽略工作区
+/.vscode/*
+
+/STM32H723VGTx_FLASH.ld
+
+/compile_commands.json
