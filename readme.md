@@ -84,14 +84,65 @@
 
 ## 致谢
 
-本项目高度参考以下开源项目，它们是：
+本项目高度参考以下项目的代码/库文件或仅参考设计思想，它们是：
 
-Basic_framework
+湖南大学-跃鹿 Basic_framework
 
-One_framework
+大连民族大学-C.ONE One_framework
 
-XRobot
+辽宁科技大学-COD COD_H7_Template_CLion
 
-LingRoboMX(暂未开源)
+大连理工大学-凌Bug LingRoboMX(暂未开源)
 
-Helios_powerful_framework(暂未开源)
+西南交通大学-Helios Helios_powerful_framework(暂未开源)
+
+青岛大学 XRobot
+
+吉林大学-吉甲大师 UIML
+
+哈工大深圳-南工骁鹰 EC2022
+
+---
+
+还要非常感谢愿意与我队电控一起交流，并无私提供帮助的这些队伍，他们是（以下排名不分先后）：
+
+
+首都师范大学 W.PIE
+
+北京信息科技大学 星辰
+
+河北工业大学 山海机甲
+
+四川大学 火锅
+
+重庆大学 千里
+
+成都信息工程大学 风信子
+
+华北理工大学 HORIZON
+
+大连交通大学 TOE
+
+大连大学 智能引擎
+
+哈尔滨工程大学 创梦之翼
+
+沈阳航空航天大学 TUP
+
+西北工业大学 WMJ
+
+电子科技大学中山学院 RoboBraver
+
+南方科技大学 ARTINX
+
+厦门理工大学 PFA
+
+厦门大学 RCS
+
+天津理工大学 LIF
+
+天津工业大学 304
+
+华东理工大学 Origin
+
+谢谢大家。
