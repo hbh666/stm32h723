@@ -3,7 +3,7 @@
 
 介绍
 
-创一工作室达妙H7开发板cpp框架，使用CLion+gcc编译，Ozone/Clion+OpenOCD进行调试,可以下载STM32CubeCLT进行环境配置，一键编译。
+创一工作室基于达妙H7(MC02)开发板编写的c/cpp框架，使用Clion作为IDE，CMake构建，GCC编译，Ozone/Clion+OpenOCD/MDK进行调试,可以下载STM32CubeCLT进行环境配置，一键编译。
 
 ## 功能介绍和展示
 
@@ -52,7 +52,7 @@
 
 介绍完整的工作流。
 
-### 工具链
+### 工具链及环境配置
 
 ### IDE?
 
@@ -72,12 +72,26 @@
 
 ### 运行单个bsp/module测试
 
-### VSCode集成工具
+### Clion集成工具
 
 ---
+
 ## 后续计划
 
-
 ---
 
+
+
 ## 致谢
+
+本项目高度参考以下开源项目，它们是：
+
+Basic_framework
+
+One_framework
+
+XRobot
+
+LingRoboMX(暂未开源)
+
+Helios_powerful_framework(暂未开源)
