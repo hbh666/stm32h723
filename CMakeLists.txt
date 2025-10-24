@@ -8,16 +8,16 @@ include("cmake/gcc-arm-none-eabi.cmake")
 # User is free to modify the file as much as necessary
 #
 
+# 条件编译 所有车共用一套代码
+
 # option(BALANCE "Enable balance" ON)
 # option(STEER "Enable steer" ON)
 option(OMNI "Enable omni" ON)
-#option(INFANTRY_OMNI "Enable infantry moni" ON)
+# option(INFANTRY_OMNI "Enable infantry moni" ON)
 # option(HERO "Enable hero" ON)
-#option(HERO_STEER "Enable hero_steer" ON)
+# option(HERO_STEER "Enable hero_steer" ON)
 # option(DART_STAND "Enable dart stand" ON)
 # option(ENGINEER "Enable engineer" ON)
-
-
 
 
 # Setup compiler settings
