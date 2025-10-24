@@ -19,7 +19,6 @@ option(OMNI "Enable omni" ON)
 # option(DART_STAND "Enable dart stand" ON)
 # option(ENGINEER "Enable engineer" ON)
 
-
 # Setup compiler settings
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
