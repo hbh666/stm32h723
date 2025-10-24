@@ -4,6 +4,16 @@
     <option name="pythonIntegrationState" value="YES" />
   </component>
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="CidrRootsConfiguration">
+    <sourceRoots>
+      <file path="$PROJECT_DIR$" />
+      <file path="$PROJECT_DIR$/User_Code" />
+      <file path="$PROJECT_DIR$/User_Code/app" />
+      <file path="$PROJECT_DIR$/User_Code/bsp" />
+      <file path="$PROJECT_DIR$/User_Code/module" />
+      <file path="$PROJECT_DIR$/User_Code/user_task" />
+    </sourceRoots>
+  </component>
   <component name="MaterialThemeProjectNewConfig">
     <option name="metadata">
       <MTProjectMetadataState>
