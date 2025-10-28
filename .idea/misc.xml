@@ -8,7 +8,7 @@
     <sourceRoots>
       <file path="$PROJECT_DIR$" />
       <file path="$PROJECT_DIR$/User_Code" />
-      <file path="$PROJECT_DIR$/User_Code/app" />
+      <file path="$PROJECT_DIR$/User_Code/application" />
       <file path="$PROJECT_DIR$/User_Code/bsp" />
       <file path="$PROJECT_DIR$/User_Code/module" />
       <file path="$PROJECT_DIR$/User_Code/user_task" />
