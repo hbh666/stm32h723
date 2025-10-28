@@ -1,0 +1,8 @@
+//
+// Created by tuxmonkey on 2025/10/28.
+//
+
+#ifndef TRONONEH7_SCAFFOLD_BSP_LOG_H
+#define TRONONEH7_SCAFFOLD_BSP_LOG_H
+
+#endif //TRONONEH7_SCAFFOLD_BSP_LOG_H
