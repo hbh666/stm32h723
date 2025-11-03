@@ -28,26 +28,26 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_C_FLAGS_RELEASE "-O3")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+elseif (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+elseif (CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
     set(CMAKE_C_FLAGS_MINSIZEREL "-Os")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
-endif()
+endif ()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -Wno-volatile")
 
 # 定义构建类型
-if(NOT CMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
-endif()
+endif ()
 message("Build type: ${CMAKE_BUILD_TYPE}")
 
 # Set the project name
@@ -101,9 +101,9 @@ add_subdirectory(cmake/stm32cubemx)
 
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    stm32cubemx
-#    ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a
-    # Add user defined libraries
+        stm32cubemx
+        #    ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a
+        # Add user defined libraries
 )
 #link_libraries("Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a")
 #
@@ -164,18 +164,20 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         User_Code/bsp/fdcan/bsp_fdcan.c
+        User_Code/bsp/spi/bsp_spi.c
         # Add user sources here
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
         User_Code/bsp/fdcan
+        User_Code/bsp/spi
         # Add user defined include paths
 )
 
 # Add project symbols (macros)
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-#        RM_REFEREE
+        #        RM_REFEREE
         # Add user defined symbols
 )
 
