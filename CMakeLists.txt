@@ -165,6 +165,8 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         User_Code/bsp/fdcan/bsp_fdcan.c
         User_Code/bsp/spi/bsp_spi.c
+        User_Code/bsp/delayticks/delayticks.c
+        User_Code/module/periph/ws2812/ws2812.c
         # Add user sources here
 )
 
@@ -172,6 +174,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
         User_Code/bsp/fdcan
         User_Code/bsp/spi
+        User_Code/bsp/delayticks
+        User_Code/module/periph/ws2812
+        User_Code/module/paramdef
         # Add user defined include paths
 )
 

@@ -1,5 +1,5 @@
-#ifndef ws2812Task_H
-#define ws2812Task_H
+#ifndef ws2812status_H
+#define ws2812status_H
 
 /*---------------------INCLUDES----------------------*/
 #include "main.h"
@@ -23,6 +23,5 @@ void BlinkWhite(void);
 void BlinkCyan(void);
 
 void BlinkPurple(void);
-
 
 #endif

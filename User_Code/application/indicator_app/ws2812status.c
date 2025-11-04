@@ -17,7 +17,7 @@
 //真的有点抽象了不太清楚什么问题，24V的时候用16的分频器可以 5V时候就只能用32的分频器了 spi6的 这个之后注意一下吧 如果要开发还是用32的分频器。
 
 /*---------------------INCLUDES----------------------*/
-#include "ws2812Task.h"
+#include "ws2812status.h"
 #include "ws2812.h"
 #include "cmsis_os.h"
 #include "tim.h"
@@ -37,21 +37,6 @@ uint8_t b = 0;
  */
 void ws2812Task(void const *argument) {
         while (1) {
-                ////Test for mode changes
-                // if(HAL_GPIO_ReadPin(USER_KEY_GPIO_Port, USER_KEY_Pin) == 0) // 读取用户按键状态,可以用于调试或其他功能
-                // {
-                //         delay_ticks(50);
-                //         if(HAL_GPIO_ReadPin(USER_KEY_GPIO_Port, USER_KEY_Pin) == 0)
-                //         {
-                //                 RobotMode ++;
-                //                 if (RobotMode > 5)
-                //                 {
-                //                         RobotMode = 0; // 如果超过最大模式,则重置为0
-                //                 }
-                //         }
-                // }
-                // else{}
-
                 switch (RobotMode) {
                         case NORMAL_MODE:
                                 BlinkGreen();
@@ -74,7 +59,6 @@ void ws2812Task(void const *argument) {
                         default:
                                 BlinkYellow();
                 }
-
                 osDelay(10); // 每个任务最后都要写在while里，要不然会导致任务切换失败
         }
 }
