@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "ws2812status.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -117,45 +117,55 @@ const osThreadAttr_t WS2812Task_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+
 void ShootTask(void *argument);
+
 void GimbalTask(void *argument);
+
 void ChassisTask(void *argument);
+
 void StartInitTask(void *argument);
+
 void VisionTask(void *argument);
+
 void CmdTask(void *argument);
+
 void RefereeTask(void *argument);
-extern void ws2812Task(void *argument);
+
+extern void ws2812Task(void const *argument);
 
 extern void MX_USB_DEVICE_Init(void);
+
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* Hook prototypes */
 void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
+
 void vApplicationMallocFailedHook(void);
 
 /* USER CODE BEGIN 4 */
-void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
-{
-   /* Run time stack overflow checking is performed if
-   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
-   called if a stack overflow is detected. */
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName) {
+  /* Run time stack overflow checking is performed if
+  configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
+  called if a stack overflow is detected. */
 }
+
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN 5 */
-void vApplicationMallocFailedHook(void)
-{
-   /* vApplicationMallocFailedHook() will only be called if
-   configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h. It is a hook
-   function that will get called if a call to pvPortMalloc() fails.
-   pvPortMalloc() is called internally by the kernel whenever a task, queue,
-   timer or semaphore is created. It is also called by various parts of the
-   demo application. If heap_1.c or heap_2.c are used, then the size of the
-   heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
-   FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
-   to query the size of free heap space that remains (although it does not
-   provide information on how the remaining heap might be fragmented). */
+void vApplicationMallocFailedHook(void) {
+  /* vApplicationMallocFailedHook() will only be called if
+  configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h. It is a hook
+  function that will get called if a call to pvPortMalloc() fails.
+  pvPortMalloc() is called internally by the kernel whenever a task, queue,
+  timer or semaphore is created. It is also called by various parts of the
+  demo application. If heap_1.c or heap_2.c are used, then the size of the
+  heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
+  FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+  to query the size of free heap space that remains (although it does not
+  provide information on how the remaining heap might be fragmented). */
 }
+
 /* USER CODE END 5 */
 
 /**
@@ -219,7 +229,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
-
 }
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -229,14 +238,12 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-__weak void StartDefaultTask(void *argument)
-{
+__weak void StartDefaultTask(void *argument) {
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
@@ -249,12 +256,10 @@ __weak void StartDefaultTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_ShootTask */
-__weak void ShootTask(void *argument)
-{
+__weak void ShootTask(void *argument) {
   /* USER CODE BEGIN ShootTask */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END ShootTask */
@@ -267,12 +272,10 @@ __weak void ShootTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_GimbalTask */
-__weak void GimbalTask(void *argument)
-{
+__weak void GimbalTask(void *argument) {
   /* USER CODE BEGIN GimbalTask */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END GimbalTask */
@@ -285,12 +288,10 @@ __weak void GimbalTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_ChassisTask */
-__weak void ChassisTask(void *argument)
-{
+__weak void ChassisTask(void *argument) {
   /* USER CODE BEGIN ChassisTask */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END ChassisTask */
@@ -303,12 +304,10 @@ __weak void ChassisTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartInitTask */
-__weak void StartInitTask(void *argument)
-{
+__weak void StartInitTask(void *argument) {
   /* USER CODE BEGIN StartInitTask */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END StartInitTask */
@@ -321,12 +320,10 @@ __weak void StartInitTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_VisionTask */
-__weak void VisionTask(void *argument)
-{
+__weak void VisionTask(void *argument) {
   /* USER CODE BEGIN VisionTask */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END VisionTask */
@@ -339,12 +336,10 @@ __weak void VisionTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_CmdTask */
-__weak void CmdTask(void *argument)
-{
+__weak void CmdTask(void *argument) {
   /* USER CODE BEGIN CmdTask */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END CmdTask */
@@ -357,12 +352,10 @@ __weak void CmdTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_RefereeTask */
-__weak void RefereeTask(void *argument)
-{
+__weak void RefereeTask(void *argument) {
   /* USER CODE BEGIN RefereeTask */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END RefereeTask */

@@ -167,6 +167,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         User_Code/bsp/spi/bsp_spi.c
         User_Code/bsp/delayticks/delayticks.c
         User_Code/module/periph/ws2812/ws2812.c
+        User_Code/application/indicator_app/ws2812status.c
         # Add user sources here
 )
 
@@ -177,6 +178,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
         User_Code/bsp/delayticks
         User_Code/module/periph/ws2812
         User_Code/module/paramdef
+        User_Code/application/indicator_app
         # Add user defined include paths
 )
 
