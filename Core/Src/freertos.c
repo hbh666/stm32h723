@@ -103,6 +103,13 @@ const osThreadAttr_t reference_attributes = {
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for WS2812Task */
+osThreadId_t WS2812TaskHandle;
+const osThreadAttr_t WS2812Task_attributes = {
+  .name = "WS2812Task",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -117,6 +124,7 @@ void StartInitTask(void *argument);
 void VisionTask(void *argument);
 void CmdTask(void *argument);
 void RefereeTask(void *argument);
+extern void ws2812Task(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -200,6 +208,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of reference */
   referenceHandle = osThreadNew(RefereeTask, NULL, &reference_attributes);
+
+  /* creation of WS2812Task */
+  WS2812TaskHandle = osThreadNew(ws2812Task, NULL, &WS2812Task_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
