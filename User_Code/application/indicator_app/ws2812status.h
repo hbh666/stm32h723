@@ -8,7 +8,7 @@
 #include "ws2812.h"
 
 /*---------------------FUNCTIONS---------------------*/
-extern void ws2812Task(void const *argument);
+void ws2812Task(void *argument);
 
 void BlinkYellow(void);
 
