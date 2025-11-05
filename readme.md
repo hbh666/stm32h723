@@ -92,6 +92,8 @@
 
 辽宁科技大学-COD COD_H7_Template_CLion
 
+深圳北理莫斯科大学-北极熊 StandardRobot++
+
 大连理工大学-凌Bug LingRoboMX(暂未开源)
 
 西南交通大学-Helios Helios_powerful_framework(暂未开源)
