@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
 include("cmake/gcc-arm-none-eabi.cmake")
-
 #
 # This file is generated only once,
 # and is not re-generated if converter is called multiple times.
@@ -12,7 +11,7 @@ include("cmake/gcc-arm-none-eabi.cmake")
 
 # option(BALANCE "Enable balance" ON)
 # option(STEER "Enable steer" ON)
-option(OMNI "Enable omni" ON)
+# option(OMNI "Enable omni" ON)
 # option(INFANTRY_OMNI "Enable infantry moni" ON)
 # option(HERO "Enable hero" ON)
 # option(HERO_STEER "Enable hero_steer" ON)
@@ -27,22 +26,6 @@ set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
-    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_C_FLAGS_RELEASE "-O3")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-elseif (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-elseif (CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-    set(CMAKE_C_FLAGS_MINSIZEREL "-Os")
-    set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
-endif ()
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -Wno-volatile")
 
 # 定义构建类型
 if (NOT CMAKE_BUILD_TYPE)

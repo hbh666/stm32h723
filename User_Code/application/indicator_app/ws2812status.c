@@ -36,6 +36,7 @@ uint8_t b = 0;
  * @param  argument
  */
 void ws2812Task(void *argument) {
+        (void) argument;
         while (1) {
                 switch (RobotMode) {
                         case NORMAL_MODE:
