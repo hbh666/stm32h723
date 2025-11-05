@@ -25,30 +25,28 @@
 
 /* FDCAN实例结构体，每个注册到FDCAN的模块都应该有这个变量 */
 #pragma pack(1)
-typedef struct _FDCANInstance
-{
+typedef struct _FDCANInstance {
     FDCAN_HandleTypeDef *can_handle; // FDCAN句柄
-    FDCAN_TxHeaderTypeDef txconf;    // FDCAN报文发送配置
-    uint32_t tx_id;                  // 发送id
-    uint32_t tx_mailbox;             // FDCAN消息填入的邮箱号
-    uint8_t tx_buff[64];             // 发送缓存，FDCAN最大支持64字节
-    uint8_t rx_buff[64];             // 接收缓存，FDCAN最大支持64字节
-    uint32_t rx_id;                  // 接收id
-    uint8_t rx_len;                  // 接收长度
+    FDCAN_TxHeaderTypeDef txconf; // FDCAN报文发送配置
+    uint32_t tx_id; // 发送id
+    uint32_t tx_mailbox; // FDCAN消息填入的邮箱号
+    uint8_t tx_buff[64]; // 发送缓存，FDCAN最大支持64字节
+    uint8_t rx_buff[64]; // 接收缓存，FDCAN最大支持64字节
+    uint32_t rx_id; // 接收id
+    uint8_t rx_len; // 接收长度
     // 接收的回调函数，用于解析接收到的数据
     void (*can_module_callback)(struct _FDCANInstance *); // 回调函数需要实例来区分注册的设备
-    void *id;                                // 使用FDCAN外设的模块指针
+    void *id; // 使用FDCAN外设的模块指针
 } FDCANInstance;
 #pragma pack()
 
 /* FDCAN实例初始化结构体，将此结构体指针传入注册函数 */
-typedef struct
-{
-    FDCAN_HandleTypeDef *can_handle;              // FDCAN句柄
-    uint32_t tx_id;                               // 发送id
-    uint32_t rx_id;                               // 接收id
+typedef struct {
+    FDCAN_HandleTypeDef *can_handle; // FDCAN句柄
+    uint32_t tx_id; // 发送id
+    uint32_t rx_id; // 接收id
     void (*can_module_callback)(FDCANInstance *); // 处理接收数据的回调函数
-    void *id;                                     // 拥有FDCAN实例的模块地址
+    void *id; // 拥有FDCAN实例的模块地址
 } FDCAN_Init_Config_s;
 
 /**
@@ -87,7 +85,9 @@ void bsp_fdcan_set_baud(FDCAN_HandleTypeDef *hfdcan, uint8_t mode, uint8_t baud)
 
 // 弱定义的接收回调函数，用户可重写
 __weak void fdcan1_rx_callback(void);
+
 __weak void fdcan2_rx_callback(void);
+
 __weak void fdcan3_rx_callback(void);
 
 #endif /* __BSP_FDCAN_H_ */
