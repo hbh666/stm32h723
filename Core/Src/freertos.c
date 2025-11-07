@@ -107,8 +107,8 @@ const osThreadAttr_t reference_attributes = {
 osThreadId_t WS2812TaskHandle;
 const osThreadAttr_t WS2812Task_attributes = {
   .name = "WS2812Task",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
