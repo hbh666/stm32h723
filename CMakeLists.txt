@@ -1,15 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
-include("cmake/gcc-arm-none-eabi.cmake")
 project(TronOneH7_Scaffold)
 
-# option(BALANCE "Enable balance" ON)
-# option(STEER "Enable steer" ON)
-#option(OMNI "Enable omni" ON)
-# option(INFANTRY_OMNI "Enable infantry moni" ON)
-# option(HERO "Enable hero" ON)
-# option(HERO_STEER "Enable hero_steer" ON)
-# option(DART_STAND "Enable dart stand" ON)
-# option(ENGINEER "Enable engineer" ON)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # 启用编译命令以便于使用例如 clangd 进行索引
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -47,50 +39,11 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 message("Build type: ${CMAKE_BUILD_TYPE}")
 
-# 创建可执行对象类型
+# 创建可执行对象
 add_executable(${CMAKE_PROJECT_NAME})
 
-# 添加子目录
-#add_subdirectory(cmake/stm32cubemx)
-#add_subdirectory(User_Code/bsp)
-#add_subdirectory(User_Code/module)
-#if (STEER)
-#    add_subdirectory(User_Code/user/steer)
-#    message("You set STEER")
-#
-#elseif (BALANCE)
-#    add_subdirectory(User_Code/user/balance)
-#    message("You set BALANCE")
-#
-#elseif (OMNI)
-#    add_subdirectory(User_Code/user/omni)
-#    message("You set OMNI")
-#
-#elseif (INFANTRY_OMNI)
-#    add_subdirectory(User_Code/user/infantry_omni)
-#    message("You set INFANTRY_OMNI")
-#
-#elseif (DART_STAND)
-#    add_subdirectory(User_Code/user/dart_stand)
-#    message("You set DART_STAND")
-#
-#elseif (ENGINEER)
-#    add_subdirectory(User_Code/user/engineer)
-#    message("You set ENGINEER")
-#
-#elseif (HERO)
-#    add_subdirectory(User_Code/user/hero)
-#    message("You set HERO")
-#
-#elseif (HERO_STEER)
-#    add_subdirectory(User_Code/user/hero_steer)
-#    message("You set HERO_STEER")
-#endif ()
-
-# # 强制包含头文件
-# target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
-#     # -include "${CMAKE_SOURCE_DIR}/User_Code/bsp/safe_check/packed_struct.hpp"
-# )
+include(CompileOptions)
+include(FindModules)
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
@@ -98,115 +51,30 @@ add_subdirectory(cmake/stm32cubemx)
 # 添加链接库
 target_link_libraries(${CMAKE_PROJECT_NAME}
         stm32cubemx
-        #        ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a
-)
-#link_libraries("Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a")
-# 添加包含路径
-include_directories(
-        ./Drivers/CMSIS/Include
-        ./Drivers/CMSIS/DSP/Include/
-)
-# 添加链接目录
-link_directories(
-        ./Drivers/CMSIS/DSP/Lib/GCC
-)
-# 添加编译选项
-add_compile_options(-pipe -Wall -fmessage-length=0 # basic options
-        -ffunction-sections -fdata-sections -fno-common # optimize options
-)
-add_link_options(-pipe -Wl,--no-warn-rwx-segments # close RWX warning
-        -lc -lstdc++ -lm -lnosys # lib options
-        -Wl,--gc-sections -flto -specs=nano.specs -specs=nosys.specs # optimize options
-)
-# 添加全局宏定义
-add_definitions(
-        -DUSE_HAL_DRIVER
-        -DARM_MATH_CM7
-        -DARM_MATH_MATRIX_CHECK
-        -DARM_MATH_ROUNDING
-        -DARM_MATH_LOOPUNROLL
-        -DDISABLEFLOAT16
-)
-# 添加目标编译选项
-target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
-        -mthumb
-        #        -mthumb-interwork
-        -mfpu=fpv5-d16
-        -mfloat-abi=hard
+        rpl::rpl
 )
 
-
-# 忽略 usbd_desc.c 文件中由于缺少字段初始化引起的警告
-#set_source_files_properties(
-#        ${CMAKE_CURRENT_SOURCE_DIR}/USB_DEVICE/App/usbd_desc.c
-#        PROPERTIES COMPILE_FLAGS -Wno-missing-field-initializers
-#)
-# 忽略特定文件中的未使用参数警告
-#set_source_files_properties(
-#        ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/freertos.c
-#        ${CMAKE_CURRENT_SOURCE_DIR}/USB_DEVICE/App/usbd_cdc_if.c
-#        PROPERTIES COMPILE_FLAGS -Wno-unused-parameter
-#)
+file(GLOB_RECURSE USER_SOURCES "${PROJECT_SOURCE_DIR}/User_Code/*.c" "${PROJECT_SOURCE_DIR}/User_Code/*.cpp")
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-        User_Code/bsp/fdcan/bsp_fdcan.c
-        User_Code/bsp/spi/bsp_spi.c
-        User_Code/bsp/delayticks/delayticks.c
-        User_Code/module/periph/ws2812/ws2812.c
-        User_Code/application/indicator_app/ws2812status.c
+        ${USER_SOURCES}
         # Add user sources here
 )
 
+file(GLOB_RECURSE USER_HEADERS "${CMAKE_SOURCE_DIR}/User_Code/*.h" "${CMAKE_SOURCE_DIR}/User_Code/*.hpp")
+
+foreach (header ${USER_HEADERS})
+    get_filename_component(dir ${header} DIRECTORY)
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${dir})
+endforeach ()
+
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-        User_Code/bsp/fdcan
-        User_Code/bsp/spi
-        User_Code/bsp/delayticks
-        User_Code/module/periph/ws2812
-        User_Code/module/paramdef
-        User_Code/application/indicator_app
-        # Add user defined include paths
+
 )
 
 # 添加全局宏定义
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
         #        RM_REFEREE
 )
-
-# 添加全局宏定义
-#if (OMNI)
-#    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-#            SENTRY
-#            OMNI
-#    )
-#elseif (INFANTRY_OMNI)
-#    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-#            # SENTRY
-#            INFANTRY_OMNI
-#    )
-#elseif (STEER)
-#    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-#            STEER
-#    )
-#elseif (BALANCE)
-#    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-#            BALANCE
-#    )
-#elseif (HERO)
-#    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-#            HERO
-#    )
-#elseif (HERO_STEER)
-#    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-#            HERO_STEER
-#    )
-#elseif (DART_STAND)
-#    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-#            DART_STAND
-#    )
-#elseif (ENGINEER)
-#    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-#            ENGINEER
-#    )
-#endif ()
