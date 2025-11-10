@@ -52,25 +52,24 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         stm32cubemx
 )
 
+file(GLOB_RECURSE USER_SOURCES "${PROJECT_SOURCE_DIR}/User_Code/*.c" "${PROJECT_SOURCE_DIR}/User_Code/*.cpp")
+
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-        User_Code/bsp/fdcan/bsp_fdcan.c
-        User_Code/bsp/spi/bsp_spi.c
-        User_Code/bsp/delayticks/delayticks.c
-        User_Code/module/periph/ws2812/ws2812.c
-        User_Code/application/indicator_app/ws2812status.c
+        ${USER_SOURCES}
         # Add user sources here
 )
 
+file(GLOB_RECURSE USER_HEADERS "${CMAKE_SOURCE_DIR}/User_Code/*.h" "${CMAKE_SOURCE_DIR}/User_Code/*.hpp")
+
+foreach (header ${USER_HEADERS})
+    get_filename_component(dir ${header} DIRECTORY)
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${dir})
+endforeach ()
+
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-        User_Code/bsp/fdcan
-        User_Code/bsp/spi
-        User_Code/bsp/delayticks
-        User_Code/module/periph/ws2812
-        User_Code/module/paramdef
-        User_Code/application/indicator_app
-        # Add user defined include paths
+
 )
 
 # 添加全局宏定义
