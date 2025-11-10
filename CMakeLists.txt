@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
-include("cmake/gcc-arm-none-eabi.cmake")
 project(TronOneH7_Scaffold)
+
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # 启用编译命令以便于使用例如 clangd 进行索引
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -41,39 +42,14 @@ message("Build type: ${CMAKE_BUILD_TYPE}")
 # 创建可执行对象
 add_executable(${CMAKE_PROJECT_NAME})
 
+include(CompileOptions)
+
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
 # 添加链接库
 target_link_libraries(${CMAKE_PROJECT_NAME}
         stm32cubemx
-)
-
-
-# 添加编译选项
-add_compile_options(-pipe -Wall -fmessage-length=0 # basic options
-        -ffunction-sections -fdata-sections -fno-common # optimize options
-)
-add_link_options(-pipe -Wl,--no-warn-rwx-segments # close RWX warning
-        -lc -lstdc++ -lm -lnosys # lib options
-        -Wl,--gc-sections -flto -specs=nano.specs -specs=nosys.specs # optimize options
-)
-
-# 添加全局宏定义
-add_definitions(
-        -DUSE_HAL_DRIVER
-        -DARM_MATH_CM7
-        -DARM_MATH_MATRIX_CHECK
-        -DARM_MATH_ROUNDING
-        -DARM_MATH_LOOPUNROLL
-        -DDISABLEFLOAT16
-)
-# 添加目标编译选项
-target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
-        -mthumb
-        #        -mthumb-interwork
-        -mfpu=fpv5-d16
-        -mfloat-abi=hard
 )
 
 # Add sources to executable
