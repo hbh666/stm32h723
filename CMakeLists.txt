@@ -43,6 +43,7 @@ message("Build type: ${CMAKE_BUILD_TYPE}")
 add_executable(${CMAKE_PROJECT_NAME})
 
 include(CompileOptions)
+include(FindModules)
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
@@ -50,6 +51,7 @@ add_subdirectory(cmake/stm32cubemx)
 # 添加链接库
 target_link_libraries(${CMAKE_PROJECT_NAME}
         stm32cubemx
+        rpl::rpl
 )
 
 file(GLOB_RECURSE USER_SOURCES "${PROJECT_SOURCE_DIR}/User_Code/*.c" "${PROJECT_SOURCE_DIR}/User_Code/*.cpp")
