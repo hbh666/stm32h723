@@ -13,3 +13,5 @@ cmake-build-debug-stm32cube
 /STM32H723VGTx_FLASH.ld
 
 /compile_commands.json
+
+.idea
