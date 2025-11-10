@@ -3,7 +3,7 @@
 
 介绍
 
-创一工作室基于达妙H7(MC02)开发板编写的c/cpp框架，使用Clion作为IDE，CMake构建，GCC编译，Ozone/Clion+OpenOCD/MDK进行调试,可以下载STM32CubeCLT进行环境配置，一键编译。
+创一工作室基于达妙H7(MC02)开发板编写的c/cpp框架，使用Clion作为IDE，CMake+Ninja构建，Starm-Clang/arm-none-eabi-gcc工具链（自动检测），Ozone/Clion+OpenOCD/MDK进行调试，可以下载STM32CubeCLT进行环境安装，一键编译。
 
 ## 功能介绍和展示
 
