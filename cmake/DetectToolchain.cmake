@@ -30,7 +30,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
             set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Toolchain/gcc-arm-none-eabi.cmake)
             message(STATUS "未找到 starm-clang 工具链，使用 gcc-arm-none-eabi 工具链")
         endif()
-    elseif(UNIX AND NOT APPLE)
+    elseif(LINUX AND NOT APPLE)
         # Linux 系统
         message(STATUS "检测到你使用的是 Linux 系统")
         # Linux 系统优先使用 starm-clang
