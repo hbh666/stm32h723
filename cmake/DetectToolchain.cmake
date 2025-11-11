@@ -1,12 +1,31 @@
 if(NOT CMAKE_TOOLCHAIN_FILE)
-    # 检查 starm-clang 是否可用
-    find_program(STARM_CLANG starm-clang)
-
-    if(STARM_CLANG)
-        set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Toolchain/starm-clang.cmake)
-        message(STATUS "已找到 starm-clang, 使用 starm-clang 工具链")
+    # 检测操作系统
+    if(APPLE)
+        # 在 macOS 上，进一步检查是否有可用的 gcc-arm-none-eabi
+        find_program(ARM_NONE_EABI_GCC arm-none-eabi-gcc)
+        if(ARM_NONE_EABI_GCC)
+            set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Toolchain/gcc-arm-none-eabi.cmake)
+            message(STATUS "检测到 macOS 系统，将首选使用 gcc-arm-none-eabi 工具链")
+        else()
+            # 如果没找到，可以尝试 starm-clang 作为备选
+            find_program(STARM_CLANG starm-clang)
+            if(STARM_CLANG)
+                set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Toolchain/starm-clang.cmake)
+                message(STATUS "检测到 macOS 系统，使用 starm-clang 工具链（备选）")
+            else()
+                message(FATAL_ERROR "在 macOS 上未找到可用的 ARM 工具链")
+            endif()
+        endif()
     else()
-        set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Toolchain/gcc-arm-none-eabi.cmake)
-        message(STATUS "未找到 starm-clang 工具链, 使用 gcc-arm-none-eabi 工具链")
+        # 其他系统（Linux/Windows）优先使用 starm-clang
+        find_program(STARM_CLANG starm-clang)
+
+        if(STARM_CLANG)
+            set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Toolchain/starm-clang.cmake)
+            message(STATUS "检测到Linux/Windows系统 已找到 starm-clang, 使用 starm-clang 工具链")
+        else()
+            set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Toolchain/gcc-arm-none-eabi.cmake)
+            message(STATUS "检测到Linux/Windows系统 未找到 starm-clang 工具链, 使用 gcc-arm-none-eabi 工具链")
+        endif()
     endif()
 endif()
