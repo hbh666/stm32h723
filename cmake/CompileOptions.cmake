@@ -44,7 +44,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 # 为目标添加特定的编译选项
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
         -mthumb             # 生成thumb指令集代码（ARM的紧凑指令集）
-        -mthumb-interwork   # 支持thumb和ARM指令集间互操作
+#        -mthumb-interwork   # 支持thumb和ARM指令集间互操作
         -mfpu=fpv5-d16      # 指定FPU类型：FPv5，16个双精度寄存器
         -mfloat-abi=hard    # 使用硬浮点ABI（浮点运算由硬件FPU处理）
 )
