@@ -52,8 +52,8 @@ FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 1024K
 _estack = ORIGIN(DTCMRAM) + LENGTH(DTCMRAM);    /* RAM的末尾作为栈起始位置 */
 
 /* 如果堆和栈不能放入RAM则生成链接错误 */
-_Min_Heap_Size = 0x4000;      /* 最小堆大小 - 16KB */
-_Min_Stack_Size = 0x4000;     /* 最小栈大小 - 16KB */
+_Min_Heap_Size = 0x4000;      /* required amount of heap  */
+_Min_Stack_Size = 0x4000; /* required amount of stack */
 
 /* 定义输出段 */
 SECTIONS

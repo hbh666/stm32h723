@@ -32,6 +32,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "buzzer.h"
+#include "delayticks.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -127,7 +130,7 @@ int main(void)
   MX_TIM3_Init();
   MX_SPI6_Init();
   /* USER CODE BEGIN 2 */
-
+  systemstart_song();
   /* USER CODE END 2 */
 
   /* Init scheduler */
