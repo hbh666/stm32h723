@@ -20,7 +20,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 # 添加目标编译选项
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
         -mthumb
-        #        -mthumb-interwork
+        -mthumb-interwork
         -mfpu=fpv5-d16
         -mfloat-abi=hard
 )
