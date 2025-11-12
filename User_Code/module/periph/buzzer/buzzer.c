@@ -281,83 +281,83 @@ void SongLaoda(void)
 	// buzzer_note(90,0.5);
 	// delay_ticks(450);
 	buzzer_note(100,0.5);//so
-	delay_ticks(200);
+	HAL_Delay(200);
 	buzzer_note(150,0.5);//re
-	delay_ticks(200);
+	HAL_Delay(200);
 	buzzer_note(135,0.5);//do
-	delay_ticks(200);
+	HAL_Delay(200);
 	buzzer_note(100,0.5);//so
-	delay_ticks(500);
+	HAL_Delay(500);
 	buzzer_note(135,0.5);//do
-	delay_ticks(170);
+	HAL_Delay(170);
 	buzzer_note(150,0.5);//re
-	delay_ticks(170);
+	HAL_Delay(170);
 	buzzer_note(165,0.5);//mi
-	delay_ticks(170);
+	HAL_Delay(170);
 	buzzer_note(150,0.5);//re
-	delay_ticks(170);
+	HAL_Delay(170);
 	buzzer_note(135,0.5);//do
-	delay_ticks(170);
+	HAL_Delay(170);
 	buzzer_note(150,0.5);//re
-	delay_ticks(170);
+	HAL_Delay(170);
 	buzzer_note(100,0.5);//so
-	delay_ticks(215);
+	HAL_Delay(215);
 	buzzer_note(150,0.5);//re
-	delay_ticks(215);
+	HAL_Delay(215);
 	buzzer_note(135,0.5);//do
-	delay_ticks(215);
+	HAL_Delay(215);
 	buzzer_note(100,0.5);//so
-	delay_ticks(215);
+	HAL_Delay(215);
 
 	// buzzer_note(45,0.5);//do
-    // delay_ticks(150);
+    // HAL_Delay(150);
 	// buzzer_note(50,0.5);//mi
-    // delay_ticks(250);
+    // HAL_Delay(250);
     // buzzer_note(60,0.5);//so
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(65,0.5);//la
-	// delay_ticks(250);
+	// HAL_Delay(250);
 	// buzzer_note(60,0.5);//so
-    // delay_ticks(500);
+    // HAL_Delay(500);
 
 	// buzzer_note(45,0.5);//do
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(46,0.5);//re
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(46,0.5);//re
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(45,0.5);//do
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(50,0.5);//mi
-    // delay_ticks(500);
+    // HAL_Delay(500);
 
 	// buzzer_note(50,0.5);//mi
-    // delay_ticks(200);
+    // HAL_Delay(200);
 	// buzzer_note(60,0.5);//so
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(65,0.5);//la
-	// delay_ticks(250);
+	// HAL_Delay(250);
 	// buzzer_note(72,0.5);//si
-	// delay_ticks(250);
+	// HAL_Delay(250);
 	// buzzer_note(65,0.5);//la
-	// delay_ticks(250);
+	// HAL_Delay(250);
 	// buzzer_note(60,0.5);//so
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(50,0.5);//mi
-    // delay_ticks(200);
+    // HAL_Delay(200);
 	// buzzer_note(46,0.5);//re
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(46,0.5);//re
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(45,0.5);//do
-    // delay_ticks(250);
+    // HAL_Delay(250);
 
 	// buzzer_note(46,0.5);//re
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(46,0.5);//re
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(50,0.5);//mi
-    // delay_ticks(250);
+    // HAL_Delay(250);
 	// buzzer_note(45,0.5);//do
-    // delay_ticks(250);
+    // HAL_Delay(250);
 }
