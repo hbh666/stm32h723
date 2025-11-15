@@ -1,3 +1,19 @@
+/**
+ * @file buzzer.c
+ * @brief 蜂鸣器控制
+ * @author TuxMonkey
+ * @version v1.0-bsp
+ * @date 2025-11-15
+ *
+ * @copyright Copyright (c) 2025 DLMU-C.ONE
+ *
+ * @par 修改日志:
+ * <table>
+ * <tr><th>Date       <th>Version      <th>Author        <th>Description
+ * <tr><td>25-11.15   <td>v1.0-bsp     <td>TuxMonkey     <td>蜂鸣器部分
+ * </table>
+ */
+
 /*---------------------INCLUDES---------------------*/
 #include "buzzer.h"
 #include "cmsis_os.h"
@@ -263,15 +279,38 @@ void systemstart_song(void)
     // delay_ticks(1000);
 
     //DJI
-    // buzzer_note(80,0.5);//高音do
-    // delay_ticks(450);
-    // buzzer_note(90,0.5);//高音re
-    // delay_ticks(450);
-    // buzzer_note(120,0.5);//高音sol
-    // delay_ticks(550);
-    SongLaoda();
+    // buzzer_note(80, 0.5); //高音do
+    // HAL_Delay(450);
+    // buzzer_note(90, 0.5); //高音re
+    // HAL_Delay(450);
+    // buzzer_note(120, 0.5); //高音sol
+    // HAL_Delay(550);
+
+    SongSpring(); //为什么要演奏春日影！！！
+
+    // SongLaoda();
 
     buzzer_off();
+}
+
+void SongSpring(void) //春日影！！！
+{
+    buzzer_note(165, 0.5); //mi
+    HAL_Delay(280);
+    buzzer_note(150, 0.5); //re
+    HAL_Delay(280);
+    buzzer_note(135, 0.5); //do
+    HAL_Delay(280);
+    buzzer_note(150, 0.5); //re
+    HAL_Delay(280);
+    buzzer_note(165, 0.5); //mi
+    HAL_Delay(280);
+    buzzer_note(170, 0.5); //fa
+    HAL_Delay(200);
+    buzzer_note(165, 0.5); //mi
+    HAL_Delay(200);
+    buzzer_note(150, 0.5); //re
+    HAL_Delay(300);
 }
 
 void SongLaoda(void)

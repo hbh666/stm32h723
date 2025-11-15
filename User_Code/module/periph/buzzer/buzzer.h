@@ -40,20 +40,29 @@ extern const uint8_t sound_autoaiming[];
 void systemstart_song(void);
 
 //
-void buzzerTask(void const * argument);
+void buzzerTask(void const *argument);
+
 void SongLaoda(void);
+
+void SongSpring(void);
+
 //
 extern void SetBuzzerOff(void);
+
 extern void SetBuzzerFrequence(uint16_t freq);
 
 
 extern void buzzer_on(uint16_t psc, uint16_t pwm);
+
 extern void buzzer_off(void);
-extern void buzzer_note(uint16_t note,float volume);
+
+extern void buzzer_note(uint16_t note, float volume);
 
 //
 extern int8_t SetBuzzerState(uint8_t state);
+
 extern void PlayingSong(const uint16_t *song, uint16_t len);
+
 extern void PlayingSound(const uint8_t *sound, uint16_t len);
 
 

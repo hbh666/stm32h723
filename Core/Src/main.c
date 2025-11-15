@@ -133,8 +133,11 @@ int main(void)
     MX_TIM3_Init();
     MX_SPI6_Init();
     /* USER CODE BEGIN 2 */
-    systemstart_song();
 
+    robotSelfCheck(); //自检LED
+    systemstart_song(); //开机音乐
+
+    /*还没有启动调度器！不允许任何涉及到 Freertos ticks的内容在这里运行！！！*/
     /* USER CODE END 2 */
 
     /* Init scheduler */

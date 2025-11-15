@@ -10,6 +10,8 @@
 /*---------------------FUNCTIONS---------------------*/
 void ws2812Task(void *argument);
 
+void robotSelfCheck(void);
+
 void BlinkYellow(void);
 
 void BlinkRed(void);
