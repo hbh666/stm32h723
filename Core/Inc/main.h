@@ -61,10 +61,10 @@ void Error_Handler(void);
 #define ACC_CS_GPIO_Port GPIOC
 #define GYRO_CS_Pin GPIO_PIN_3
 #define GYRO_CS_GPIO_Port GPIOC
-#define pump1_Pin GPIO_PIN_0
-#define pump1_GPIO_Port GPIOA
-#define pump2_Pin GPIO_PIN_2
-#define pump2_GPIO_Port GPIOA
+#define power2_Pin GPIO_PIN_0
+#define power2_GPIO_Port GPIOA
+#define power1_Pin GPIO_PIN_2
+#define power1_GPIO_Port GPIOA
 #define pump3_Pin GPIO_PIN_9
 #define pump3_GPIO_Port GPIOE
 #define ACC_INT_Pin GPIO_PIN_10

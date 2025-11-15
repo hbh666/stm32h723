@@ -1,0 +1,8 @@
+//
+// Created by ASUS on 2025/11/15.
+//
+
+#ifndef TRONONEH7_SCAFFOLD_CRC8_H
+#define TRONONEH7_SCAFFOLD_CRC8_H
+
+#endif //TRONONEH7_SCAFFOLD_CRC8_H
