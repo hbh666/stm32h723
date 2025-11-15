@@ -34,7 +34,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
         # Linux 系统
         message(STATUS "检测到你使用的是 Linux 系统")
         # Linux 系统也优先使用 Arm-none-eabi-GCC
-        find_program(STARM_CLANG starm-clang)
+        find_program(ARM_NONE_EABI_GCC arm-none-eabi-gcc)
         if(ARM_NONE_EABI_GCC)
             set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Toolchain/gcc-arm-none-eabi.cmake)
             message(STATUS "已找到 gcc-arm-none-eabi，将使用该工具链")
