@@ -34,9 +34,9 @@
 //7 - si - 1976Hz
 
 //高中低音的实际频率 Hz
-const uint16_t music_steps[3][7] = {{262,294,330,349,392,440,494},
-																		{523,587,659,698,784,880,988},
-																		{1046,1175,1318,1397,1568,1760,1976}};
+const uint16_t music_steps[3][7] = {{262, 294, 330, 349, 392, 440, 494},
+                                    {523, 587, 659, 698, 784, 880, 988},
+                                    {1046, 1175, 1318, 1397, 1568, 1760, 1976}};
 
 //乐谱1:小星星
 /*const uint16_t song_littlestar[42] = {0x1411,0x1411,0x1415,0x1415,0x1416,0x1416,0x1815,
@@ -91,17 +91,17 @@ const uint16_t music_steps[3][7] = {{262,294,330,349,392,440,494},
 																					0x1221,0x0222,0x1422,0x8001,0x1215,0x1221,0x1117,0x0121,0x1821};*/
 
 //乐谱4-2:机甲大师主题曲—你(舔狗之歌)
-const uint16_t song_robomasterlickdog[3] = {0x1411,0x1412,0x0415};
+const uint16_t song_robomasterlickdog[3] = {0x1411, 0x1412, 0x0415};
 //DJI
 //const uint16_t song_starting[3] = {};const uint16_t song_robomasterlickdog[13] = {0x1411,0x1414,0x0415,0x1215,0x1213,0x1215,0x1113,0x0115,0x1215,0x0217,0x1217,0x0221,0x1421};//125
 
 //提示音
-const uint8_t sound_warning[6] = {0x4B,0x40,0x4B,0x40,0x4B,0x40}; //B__B__B__
-const uint8_t sound_error[6] = {0x2B,0x10,0x2B,0x10,0x2B,0x10}; //B_B_B_
+const uint8_t sound_warning[6] = {0x4B, 0x40, 0x4B, 0x40, 0x4B, 0x40}; //B__B__B__
+const uint8_t sound_error[6] = {0x2B, 0x10, 0x2B, 0x10, 0x2B, 0x10}; //B_B_B_
 
 
-const uint8_t sound_gyrocalibrating[6] = {0x2D,0x40,0x2D,0x40,0x2D,0x40}; //D__D__D__
-const uint8_t sound_autoaiming[6] = {0x2D,0x10,0x2D,0x10,0x2D,0x10}; //D_D_D_
+const uint8_t sound_gyrocalibrating[6] = {0x2D, 0x40, 0x2D, 0x40, 0x2D, 0x40}; //D__D__D__
+const uint8_t sound_autoaiming[6] = {0x2D, 0x10, 0x2D, 0x10, 0x2D, 0x10}; //D_D_D_
 
 //
 static uint16_t bzply_n = 0; //乐谱播放位置计数
@@ -119,7 +119,7 @@ static uint8_t bzply_count = 1; //单个音的节拍延时计数
 ***********************************************************************/
 void SetBuzzerOff(void)
 {
-	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, 0);
+    __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, 0);
 }
 
 /***********************************************************************
@@ -131,12 +131,12 @@ void SetBuzzerOff(void)
 ***********************************************************************/
 void SetBuzzerFrequence(uint16_t freq)
 {
-	//buzzer --> tim12.channel2
-	//分频后为1000000Hz
-	uint16_t period = 1000000/freq -1;
+    //buzzer --> tim12.channel2
+    //分频后为1000000Hz
+    uint16_t period = 1000000 / freq - 1;
 
-	__HAL_TIM_SET_AUTORELOAD(&htim12, period);
-	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, period/2);
+    __HAL_TIM_SET_AUTORELOAD(&htim12, period);
+    __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, period/2);
 
 }
 
@@ -170,12 +170,13 @@ void buzzer_off(void)
  * @param note note
  * @param volume 音量，范围[0.0\\~1.0],用百分比表示
  */
-void buzzer_note(uint16_t note,float volume)
+void buzzer_note(uint16_t note, float volume)
 {
-    if(volume > 1.0f)
+    if (volume > 1.0f)
     {
         volume = 1.0f;
-    }else if(volume < 0.0f)
+    }
+    else if (volume < 0.0f)
     {
         volume = 0.0f;
     }
@@ -186,7 +187,7 @@ void buzzer_note(uint16_t note,float volume)
     // 设置自动重装载寄存器（ARR），以控制PWM信号的频率
     htim12.Instance->ARR = (1000000 / note - 1) * 1u;
     // 设置比较寄存器（CCR3），以控制PWM信号的占空比
-    htim12.Instance->CCR3 = (8*10500 / note - 1) * volume * 1u;
+    htim12.Instance->CCR3 = (8 * 10500 / note - 1) * volume * 1u;
     // 重新启用定时器
     __HAL_TIM_ENABLE(&htim12);
     // 启动PWM信号
@@ -223,141 +224,141 @@ void systemstart_song(void)
     // 播放结束后关闭蜂鸣器
     // buzzer_off();
 
-	// buzzer_note(85,0.5);//中音mi
-	// delay_ticks(450);
-	// buzzer_note(90,0.5);
-	// delay_ticks(450);
-	// buzzer_note(100,0.5);
-	// delay_ticks(750);
-	// buzzer_note(85,0.5);
-	// delay_ticks(250);
-	// buzzer_note(100,0.5);
-	// delay_ticks(250);
-	// buzzer_note(85,0.5);
-	// delay_ticks(290);
-	// buzzer_note(100,0.5);
-	// delay_ticks(300);
-	// buzzer_note(125,0.5);
-	// delay_ticks(550);
-	// buzzer_note(132,0.5);
-	// delay_ticks(1000);
+    // buzzer_note(85,0.5);//中音mi
+    // delay_ticks(450);
+    // buzzer_note(90,0.5);
+    // delay_ticks(450);
+    // buzzer_note(100,0.5);
+    // delay_ticks(750);
+    // buzzer_note(85,0.5);
+    // delay_ticks(250);
+    // buzzer_note(100,0.5);
+    // delay_ticks(250);
+    // buzzer_note(85,0.5);
+    // delay_ticks(290);
+    // buzzer_note(100,0.5);
+    // delay_ticks(300);
+    // buzzer_note(125,0.5);
+    // delay_ticks(550);
+    // buzzer_note(132,0.5);
+    // delay_ticks(1000);
 
-	// buzzer_note(135,0.5);//高音mi
-	// delay_ticks(450);
-	// buzzer_note(140,0.5);
-	// delay_ticks(450);
-	// buzzer_note(160,0.5);
-	// delay_ticks(750);
-	// buzzer_note(135,0.5);
-	// delay_ticks(250);
-	// buzzer_note(160,0.5);
-	// delay_ticks(250);
-	// buzzer_note(135,0.5);
-	// delay_ticks(290);
-	// buzzer_note(160,0.5);
-	// delay_ticks(300);
-	// buzzer_note(200,0.5);
-	// delay_ticks(550);
-	// buzzer_note(210,0.5);
-	// delay_ticks(1000);
+    // buzzer_note(135,0.5);//高音mi
+    // delay_ticks(450);
+    // buzzer_note(140,0.5);
+    // delay_ticks(450);
+    // buzzer_note(160,0.5);
+    // delay_ticks(750);
+    // buzzer_note(135,0.5);
+    // delay_ticks(250);
+    // buzzer_note(160,0.5);
+    // delay_ticks(250);
+    // buzzer_note(135,0.5);
+    // delay_ticks(290);
+    // buzzer_note(160,0.5);
+    // delay_ticks(300);
+    // buzzer_note(200,0.5);
+    // delay_ticks(550);
+    // buzzer_note(210,0.5);
+    // delay_ticks(1000);
 
-	//DJI
-	// buzzer_note(80,0.5);//高音do
-	// delay_ticks(450);
-	// buzzer_note(90,0.5);//高音re
-	// delay_ticks(450);
-	// buzzer_note(120,0.5);//高音sol
-	// delay_ticks(550);
-	SongLaoda();
+    //DJI
+    // buzzer_note(80,0.5);//高音do
+    // delay_ticks(450);
+    // buzzer_note(90,0.5);//高音re
+    // delay_ticks(450);
+    // buzzer_note(120,0.5);//高音sol
+    // delay_ticks(550);
+    SongLaoda();
 
-	buzzer_off();
+    buzzer_off();
 }
 
 void SongLaoda(void)
 {
-	// 播放歌曲牢大
-	// buzzer_note(85,0.5);//中音mi
-	// delay_ticks(450);
-	// buzzer_note(90,0.5);
-	// delay_ticks(450);
-	buzzer_note(100,0.5);//so
-	HAL_Delay(200);
-	buzzer_note(150,0.5);//re
-	HAL_Delay(200);
-	buzzer_note(135,0.5);//do
-	HAL_Delay(200);
-	buzzer_note(100,0.5);//so
-	HAL_Delay(500);
-	buzzer_note(135,0.5);//do
-	HAL_Delay(170);
-	buzzer_note(150,0.5);//re
-	HAL_Delay(170);
-	buzzer_note(165,0.5);//mi
-	HAL_Delay(170);
-	buzzer_note(150,0.5);//re
-	HAL_Delay(170);
-	buzzer_note(135,0.5);//do
-	HAL_Delay(170);
-	buzzer_note(150,0.5);//re
-	HAL_Delay(170);
-	buzzer_note(100,0.5);//so
-	HAL_Delay(215);
-	buzzer_note(150,0.5);//re
-	HAL_Delay(215);
-	buzzer_note(135,0.5);//do
-	HAL_Delay(215);
-	buzzer_note(100,0.5);//so
-	HAL_Delay(215);
+    // 播放歌曲牢大
+    // buzzer_note(85,0.5);//中音mi
+    // delay_ticks(450);
+    // buzzer_note(90,0.5);
+    // delay_ticks(450);
+    buzzer_note(100, 0.5); //so
+    HAL_Delay(200);
+    buzzer_note(150, 0.5); //re
+    HAL_Delay(200);
+    buzzer_note(135, 0.5); //do
+    HAL_Delay(200);
+    buzzer_note(100, 0.5); //so
+    HAL_Delay(500);
+    buzzer_note(135, 0.5); //do
+    HAL_Delay(170);
+    buzzer_note(150, 0.5); //re
+    HAL_Delay(170);
+    buzzer_note(165, 0.5); //mi
+    HAL_Delay(170);
+    buzzer_note(150, 0.5); //re
+    HAL_Delay(170);
+    buzzer_note(135, 0.5); //do
+    HAL_Delay(170);
+    buzzer_note(150, 0.5); //re
+    HAL_Delay(170);
+    buzzer_note(100, 0.5); //so
+    HAL_Delay(215);
+    buzzer_note(150, 0.5); //re
+    HAL_Delay(215);
+    buzzer_note(135, 0.5); //do
+    HAL_Delay(215);
+    buzzer_note(100, 0.5); //so
+    HAL_Delay(215);
 
-	// buzzer_note(45,0.5);//do
+    // buzzer_note(45,0.5);//do
     // HAL_Delay(150);
-	// buzzer_note(50,0.5);//mi
+    // buzzer_note(50,0.5);//mi
     // HAL_Delay(250);
     // buzzer_note(60,0.5);//so
     // HAL_Delay(250);
-	// buzzer_note(65,0.5);//la
-	// HAL_Delay(250);
-	// buzzer_note(60,0.5);//so
+    // buzzer_note(65,0.5);//la
+    // HAL_Delay(250);
+    // buzzer_note(60,0.5);//so
     // HAL_Delay(500);
 
-	// buzzer_note(45,0.5);//do
+    // buzzer_note(45,0.5);//do
     // HAL_Delay(250);
-	// buzzer_note(46,0.5);//re
+    // buzzer_note(46,0.5);//re
     // HAL_Delay(250);
-	// buzzer_note(46,0.5);//re
+    // buzzer_note(46,0.5);//re
     // HAL_Delay(250);
-	// buzzer_note(45,0.5);//do
+    // buzzer_note(45,0.5);//do
     // HAL_Delay(250);
-	// buzzer_note(50,0.5);//mi
+    // buzzer_note(50,0.5);//mi
     // HAL_Delay(500);
 
-	// buzzer_note(50,0.5);//mi
+    // buzzer_note(50,0.5);//mi
     // HAL_Delay(200);
-	// buzzer_note(60,0.5);//so
+    // buzzer_note(60,0.5);//so
     // HAL_Delay(250);
-	// buzzer_note(65,0.5);//la
-	// HAL_Delay(250);
-	// buzzer_note(72,0.5);//si
-	// HAL_Delay(250);
-	// buzzer_note(65,0.5);//la
-	// HAL_Delay(250);
-	// buzzer_note(60,0.5);//so
+    // buzzer_note(65,0.5);//la
     // HAL_Delay(250);
-	// buzzer_note(50,0.5);//mi
+    // buzzer_note(72,0.5);//si
+    // HAL_Delay(250);
+    // buzzer_note(65,0.5);//la
+    // HAL_Delay(250);
+    // buzzer_note(60,0.5);//so
+    // HAL_Delay(250);
+    // buzzer_note(50,0.5);//mi
     // HAL_Delay(200);
-	// buzzer_note(46,0.5);//re
+    // buzzer_note(46,0.5);//re
     // HAL_Delay(250);
-	// buzzer_note(46,0.5);//re
+    // buzzer_note(46,0.5);//re
     // HAL_Delay(250);
-	// buzzer_note(45,0.5);//do
+    // buzzer_note(45,0.5);//do
     // HAL_Delay(250);
 
-	// buzzer_note(46,0.5);//re
+    // buzzer_note(46,0.5);//re
     // HAL_Delay(250);
-	// buzzer_note(46,0.5);//re
+    // buzzer_note(46,0.5);//re
     // HAL_Delay(250);
-	// buzzer_note(50,0.5);//mi
+    // buzzer_note(50,0.5);//mi
     // HAL_Delay(250);
-	// buzzer_note(45,0.5);//do
+    // buzzer_note(45,0.5);//do
     // HAL_Delay(250);
 }
