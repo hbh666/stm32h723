@@ -121,6 +121,17 @@ const osThreadAttr_t WS2812Task_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
+//Todo: 测试instask
+const osThreadAttr_t instask_attributes = {
+        .name = "instask",
+        .priority = osPriorityAboveNormal, // 较高优先级
+        .stack_size = 1024 * 4 // 栈大小，单位是字节（通常是字数的4倍）
+};
+
+//Todo:测试使用
+osThreadId insTaskHandle;
+
+void StartINSTASK(void const *argument);
 
 /* USER CODE END FunctionPrototypes */
 
@@ -233,6 +244,9 @@ void MX_FREERTOS_Init(void)
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
+    //Todo：INS_Task是测试版本
+    // 创建线程
+    insTaskHandle = osThreadNew(StartINSTASK, NULL, &instask_attributes);
     /* USER CODE END RTOS_THREADS */
 
     /* USER CODE BEGIN RTOS_EVENTS */

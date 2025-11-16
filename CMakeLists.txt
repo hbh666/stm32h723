@@ -69,6 +69,18 @@ add_subdirectory(cmake/stm32cubemx)
 target_link_libraries(${CMAKE_PROJECT_NAME}
         stm32cubemx  # STM32CubeMX生成的库
         #        rpl::rpl     # 第三方库（当前被注释掉）
+        ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a
+)
+
+link_libraries("Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a")
+# 添加包含路径
+include_directories(
+        ./Drivers/CMSIS/Include
+        ./Drivers/CMSIS/DSP/Include/
+)
+# 添加链接目录
+link_directories(
+        ./Drivers/CMSIS/DSP/Lib/GCC
 )
 
 # 递归查找User_Code目录下的所有C和C++源文件
