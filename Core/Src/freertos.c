@@ -58,65 +58,65 @@
 /* Definitions for BeginTask */
 osThreadId_t BeginTaskHandle;
 const osThreadAttr_t BeginTask_attributes = {
-        .name = "BeginTask",
-        .stack_size = 256 * 4,
-        .priority = (osPriority_t) osPriorityNormal,
+  .name = "BeginTask",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for shoot */
 osThreadId_t shootHandle;
 const osThreadAttr_t shoot_attributes = {
-        .name = "shoot",
-        .stack_size = 512 * 4,
-        .priority = (osPriority_t) osPriorityNormal,
+  .name = "shoot",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for gimbal */
 osThreadId_t gimbalHandle;
 const osThreadAttr_t gimbal_attributes = {
-        .name = "gimbal",
-        .stack_size = 512 * 4,
-        .priority = (osPriority_t) osPriorityNormal,
+  .name = "gimbal",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for chassis */
 osThreadId_t chassisHandle;
 const osThreadAttr_t chassis_attributes = {
-        .name = "chassis",
-        .stack_size = 512 * 4,
-        .priority = (osPriority_t) osPriorityNormal,
+  .name = "chassis",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for init */
 osThreadId_t initHandle;
 const osThreadAttr_t init_attributes = {
-        .name = "init",
-        .stack_size = 256 * 4,
-        .priority = (osPriority_t) osPriorityHigh,
+  .name = "init",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for vision */
 osThreadId_t visionHandle;
 const osThreadAttr_t vision_attributes = {
-        .name = "vision",
-        .stack_size = 512 * 4,
-        .priority = (osPriority_t) osPriorityNormal,
+  .name = "vision",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for cmd */
 osThreadId_t cmdHandle;
 const osThreadAttr_t cmd_attributes = {
-        .name = "cmd",
-        .stack_size = 512 * 4,
-        .priority = (osPriority_t) osPriorityNormal,
+  .name = "cmd",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for reference */
 osThreadId_t referenceHandle;
 const osThreadAttr_t reference_attributes = {
-        .name = "reference",
-        .stack_size = 512 * 4,
-        .priority = (osPriority_t) osPriorityNormal,
+  .name = "reference",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for WS2812Task */
 osThreadId_t WS2812TaskHandle;
 const osThreadAttr_t WS2812Task_attributes = {
-        .name = "WS2812Task",
-        .stack_size = 256 * 4,
-        .priority = (osPriority_t) osPriorityBelowNormal,
+  .name = "WS2812Task",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -136,28 +136,20 @@ void StartINSTASK(void const *argument);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
-
 void ShootTask(void *argument);
-
 void GimbalTask(void *argument);
-
 void ChassisTask(void *argument);
-
 void StartInitTask(void *argument);
-
 void VisionTask(void *argument);
-
 void CmdTask(void *argument);
-
 void RefereeTask(void *argument);
+extern void ws2812Task(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
-
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* Hook prototypes */
 void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
-
 void vApplicationMallocFailedHook(void);
 
 /* USER CODE BEGIN 4 */
@@ -192,66 +184,65 @@ void vApplicationMallocFailedHook(void)
   * @param  None
   * @retval None
   */
-void MX_FREERTOS_Init(void)
-{
-    /* USER CODE BEGIN Init */
+void MX_FREERTOS_Init(void) {
+  /* USER CODE BEGIN Init */
 
-    /* USER CODE END Init */
+  /* USER CODE END Init */
 
-    /* USER CODE BEGIN RTOS_MUTEX */
+  /* USER CODE BEGIN RTOS_MUTEX */
     /* add mutexes, ... */
-    /* USER CODE END RTOS_MUTEX */
+  /* USER CODE END RTOS_MUTEX */
 
-    /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
     /* add semaphores, ... */
-    /* USER CODE END RTOS_SEMAPHORES */
+  /* USER CODE END RTOS_SEMAPHORES */
 
-    /* USER CODE BEGIN RTOS_TIMERS */
+  /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
-    /* USER CODE END RTOS_TIMERS */
+  /* USER CODE END RTOS_TIMERS */
 
-    /* USER CODE BEGIN RTOS_QUEUES */
+  /* USER CODE BEGIN RTOS_QUEUES */
     /* add queues, ... */
-    /* USER CODE END RTOS_QUEUES */
+  /* USER CODE END RTOS_QUEUES */
 
-    /* Create the thread(s) */
-    /* creation of BeginTask */
-    BeginTaskHandle = osThreadNew(StartDefaultTask, NULL, &BeginTask_attributes);
+  /* Create the thread(s) */
+  /* creation of BeginTask */
+  BeginTaskHandle = osThreadNew(StartDefaultTask, NULL, &BeginTask_attributes);
 
-    /* creation of shoot */
-    shootHandle = osThreadNew(ShootTask, NULL, &shoot_attributes);
+  /* creation of shoot */
+  shootHandle = osThreadNew(ShootTask, NULL, &shoot_attributes);
 
-    /* creation of gimbal */
-    gimbalHandle = osThreadNew(GimbalTask, NULL, &gimbal_attributes);
+  /* creation of gimbal */
+  gimbalHandle = osThreadNew(GimbalTask, NULL, &gimbal_attributes);
 
-    /* creation of chassis */
-    chassisHandle = osThreadNew(ChassisTask, NULL, &chassis_attributes);
+  /* creation of chassis */
+  chassisHandle = osThreadNew(ChassisTask, NULL, &chassis_attributes);
 
-    /* creation of init */
-    initHandle = osThreadNew(StartInitTask, NULL, &init_attributes);
+  /* creation of init */
+  initHandle = osThreadNew(StartInitTask, NULL, &init_attributes);
 
-    /* creation of vision */
-    visionHandle = osThreadNew(VisionTask, NULL, &vision_attributes);
+  /* creation of vision */
+  visionHandle = osThreadNew(VisionTask, NULL, &vision_attributes);
 
-    /* creation of cmd */
-    cmdHandle = osThreadNew(CmdTask, NULL, &cmd_attributes);
+  /* creation of cmd */
+  cmdHandle = osThreadNew(CmdTask, NULL, &cmd_attributes);
 
-    /* creation of reference */
-    referenceHandle = osThreadNew(RefereeTask, NULL, &reference_attributes);
+  /* creation of reference */
+  referenceHandle = osThreadNew(RefereeTask, NULL, &reference_attributes);
 
-    /* creation of WS2812Task */
-    WS2812TaskHandle = osThreadNew(ws2812Task, NULL, &WS2812Task_attributes);
+  /* creation of WS2812Task */
+  WS2812TaskHandle = osThreadNew(ws2812Task, NULL, &WS2812Task_attributes);
 
-    /* USER CODE BEGIN RTOS_THREADS */
+  /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
     //Todo：INS_Task是测试版本
     // 创建线程
     insTaskHandle = osThreadNew(StartINSTASK, NULL, &instask_attributes);
-    /* USER CODE END RTOS_THREADS */
+  /* USER CODE END RTOS_THREADS */
 
-    /* USER CODE BEGIN RTOS_EVENTS */
+  /* USER CODE BEGIN RTOS_EVENTS */
     /* add events, ... */
-    /* USER CODE END RTOS_EVENTS */
+  /* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -264,15 +255,15 @@ void MX_FREERTOS_Init(void)
 /* USER CODE END Header_StartDefaultTask */
 __weak void StartDefaultTask(void *argument)
 {
-    /* init code for USB_DEVICE */
-    MX_USB_DEVICE_Init();
-    /* USER CODE BEGIN StartDefaultTask */
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
+  /* USER CODE BEGIN StartDefaultTask */
     /* Infinite loop */
     for (;;)
     {
         osDelay(1);
     }
-    /* USER CODE END StartDefaultTask */
+  /* USER CODE END StartDefaultTask */
 }
 
 /* USER CODE BEGIN Header_ShootTask */
@@ -284,13 +275,13 @@ __weak void StartDefaultTask(void *argument)
 /* USER CODE END Header_ShootTask */
 __weak void ShootTask(void *argument)
 {
-    /* USER CODE BEGIN ShootTask */
+  /* USER CODE BEGIN ShootTask */
     /* Infinite loop */
     for (;;)
     {
         osDelay(1);
     }
-    /* USER CODE END ShootTask */
+  /* USER CODE END ShootTask */
 }
 
 /* USER CODE BEGIN Header_GimbalTask */
@@ -302,13 +293,13 @@ __weak void ShootTask(void *argument)
 /* USER CODE END Header_GimbalTask */
 __weak void GimbalTask(void *argument)
 {
-    /* USER CODE BEGIN GimbalTask */
+  /* USER CODE BEGIN GimbalTask */
     /* Infinite loop */
     for (;;)
     {
         osDelay(1);
     }
-    /* USER CODE END GimbalTask */
+  /* USER CODE END GimbalTask */
 }
 
 /* USER CODE BEGIN Header_ChassisTask */
@@ -320,13 +311,13 @@ __weak void GimbalTask(void *argument)
 /* USER CODE END Header_ChassisTask */
 __weak void ChassisTask(void *argument)
 {
-    /* USER CODE BEGIN ChassisTask */
+  /* USER CODE BEGIN ChassisTask */
     /* Infinite loop */
     for (;;)
     {
         osDelay(1);
     }
-    /* USER CODE END ChassisTask */
+  /* USER CODE END ChassisTask */
 }
 
 /* USER CODE BEGIN Header_StartInitTask */
@@ -338,13 +329,13 @@ __weak void ChassisTask(void *argument)
 /* USER CODE END Header_StartInitTask */
 __weak void StartInitTask(void *argument)
 {
-    /* USER CODE BEGIN StartInitTask */
+  /* USER CODE BEGIN StartInitTask */
     /* Infinite loop */
     for (;;)
     {
         osDelay(1);
     }
-    /* USER CODE END StartInitTask */
+  /* USER CODE END StartInitTask */
 }
 
 /* USER CODE BEGIN Header_VisionTask */
@@ -356,13 +347,13 @@ __weak void StartInitTask(void *argument)
 /* USER CODE END Header_VisionTask */
 __weak void VisionTask(void *argument)
 {
-    /* USER CODE BEGIN VisionTask */
+  /* USER CODE BEGIN VisionTask */
     /* Infinite loop */
     for (;;)
     {
         osDelay(1);
     }
-    /* USER CODE END VisionTask */
+  /* USER CODE END VisionTask */
 }
 
 /* USER CODE BEGIN Header_CmdTask */
@@ -374,13 +365,13 @@ __weak void VisionTask(void *argument)
 /* USER CODE END Header_CmdTask */
 __weak void CmdTask(void *argument)
 {
-    /* USER CODE BEGIN CmdTask */
+  /* USER CODE BEGIN CmdTask */
     /* Infinite loop */
     for (;;)
     {
         osDelay(1);
     }
-    /* USER CODE END CmdTask */
+  /* USER CODE END CmdTask */
 }
 
 /* USER CODE BEGIN Header_RefereeTask */
@@ -392,13 +383,13 @@ __weak void CmdTask(void *argument)
 /* USER CODE END Header_RefereeTask */
 __weak void RefereeTask(void *argument)
 {
-    /* USER CODE BEGIN RefereeTask */
+  /* USER CODE BEGIN RefereeTask */
     /* Infinite loop */
     for (;;)
     {
         osDelay(1);
     }
-    /* USER CODE END RefereeTask */
+  /* USER CODE END RefereeTask */
 }
 
 /* Private application code --------------------------------------------------*/

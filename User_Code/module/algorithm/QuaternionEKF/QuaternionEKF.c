@@ -15,6 +15,7 @@
  ******************************************************************************
  */
 #include "QuaternionEKF.h"
+#include "arm_math.h"
 
 QEKF_INS_t QEKF_INS;
 
