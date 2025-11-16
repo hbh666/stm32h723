@@ -1,11 +1,10 @@
 
 GraphedExpression="(QEKF_INS).Roll", Color=#a00909
-OpenDocument="arm_mat_mult_f32.c", FilePath="C:/Users/clamar01/fork3/CMSIS_5/CMSIS/DSP/Source/MatrixFunctions/arm_mat_mult_f32.c", Line=0
 OpenDocument="stm32h7xx_hal_spi.c", FilePath="D:/RM/Elec Control/TronOneH7_Scaffold/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c", Line=3887
 OpenDocument="bsp_dwt.c", FilePath="D:/RM/Elec Control/TronOneH7_Scaffold/User_Code/bsp/dwt/bsp_dwt.c", Line=93
 OpenDocument="main.c", FilePath="D:/RM/Elec Control/TronOneH7_Scaffold/Core/Src/main.c", Line=67
 OpenDocument="robot.c", FilePath="D:/RM/Elec Control/TronOneH7_Scaffold/User_Code/application/robot.c", Line=33
-OpenDocument="tasks.c", FilePath="D:/RM/Elec Control/TronOneH7_Scaffold/Middlewares/Third_Party/FreeRTOS/Source/tasks.c", Line=2293
+OpenDocument="tasks.c", FilePath="D:/RM/Elec Control/TronOneH7_Scaffold/Middlewares/Third_Party/FreeRTOS/Source/tasks.c", Line=2303
 OpenDocument="stm32h7xx_hal.c", FilePath="D:/RM/Elec Control/TronOneH7_Scaffold/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c", Line=329
 OpenDocument="list.c", FilePath="D:/RM/Elec Control/TronOneH7_Scaffold/Middlewares/Third_Party/FreeRTOS/Source/list.c", Line=144
 OpenDocument="cmsis_gcc.h", FilePath="D:/RM/Elec Control/TronOneH7_Scaffold/Drivers/CMSIS/Include/cmsis_gcc.h", Line=264
@@ -19,28 +18,28 @@ OpenToolbar="Breakpoints", Floating=0, x=1, y=0
 OpenWindow="Registers 1", DockArea=BOTTOM, x=1, y=0, w=362, h=181, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, FilteredItems=[], RefreshRate=1
 OpenWindow="Source Files", DockArea=LEFT, x=0, y=0, w=551, h=273, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
 OpenWindow="Disassembly", DockArea=BOTTOM, x=2, y=0, w=628, h=181, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
-OpenWindow="Break & Tracepoints", DockArea=LEFT, x=0, y=1, w=551, h=286, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, VectorCatchIndexMask=254
+OpenWindow="Break & Tracepoints", DockArea=LEFT, x=0, y=1, w=551, h=285, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, VectorCatchIndexMask=254
 OpenWindow="Memory 1", DockArea=BOTTOM, x=3, y=0, w=466, h=181, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, EditorAddress=0x20005E30
-OpenWindow="Global Data", DockArea=RIGHT, x=0, y=2, w=681, h=429, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
-OpenWindow="Watched Data 1", DockArea=LEFT, x=0, y=2, w=551, h=291, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
-OpenWindow="Functions", DockArea=LEFT, x=0, y=3, w=551, h=222, TabPos=1, TopOfStack=0, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
-OpenWindow="Call Graph", DockArea=LEFT, x=0, y=3, w=551, h=222, TabPos=2, TopOfStack=1, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Global Data", DockArea=RIGHT, x=0, y=2, w=681, h=425, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Watched Data 1", DockArea=LEFT, x=0, y=2, w=551, h=290, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Functions", DockArea=LEFT, x=0, y=3, w=551, h=224, TabPos=1, TopOfStack=0, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Call Graph", DockArea=LEFT, x=0, y=3, w=551, h=224, TabPos=2, TopOfStack=1, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
 OpenWindow="Data Sampling", DockArea=BOTTOM, x=0, y=0, w=1101, h=181, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, VisibleTab=0, UniformSampleSpacing=0
-OpenWindow="Timeline", DockArea=RIGHT, x=0, y=1, w=681, h=414, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=1, DataPaneShown=1, PowerPaneShown=0, CodePaneShown=0, PinCursor="Cursor Movable", TimePerDiv="1 s / Div", TimeStampFormat="Time", DataGraphDrawAsPoints=0, DataGraphLegendShown=1, DataGraphUniformSampleSpacing=0, DataGraphLegendPosition="435;0", PowerGraphDrawAsPoints=0, PowerGraphLegendShown=0, PowerGraphAvgFilterTime=Off, PowerGraphAvgFilterLen=Off, PowerGraphUniformSampleSpacing=0, PowerGraphLegendPosition="459;-65", CodeGraphLegendShown=0, CodeGraphLegendPosition="474;0"
-OpenWindow="Console", DockArea=LEFT, x=0, y=3, w=551, h=222, TabPos=0, TopOfStack=0, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
-OpenWindow="FreeRTOS", DockArea=RIGHT, x=0, y=0, w=681, h=250, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, Showing="Task List"
-TableHeader="Call Graph", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Stack Total";"Stack Local";"Code Total";"Code Local";"Depth";"Called From"], ColWidths=[384;100;100;100;100;100;118]
+OpenWindow="Timeline", DockArea=RIGHT, x=0, y=1, w=681, h=412, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=1, DataPaneShown=1, PowerPaneShown=0, CodePaneShown=0, PinCursor="Cursor Movable", TimePerDiv="1 s / Div", TimeStampFormat="Time", DataGraphDrawAsPoints=0, DataGraphLegendShown=1, DataGraphUniformSampleSpacing=0, DataGraphLegendPosition="435;0", PowerGraphDrawAsPoints=0, PowerGraphLegendShown=0, PowerGraphAvgFilterTime=Off, PowerGraphAvgFilterLen=Off, PowerGraphUniformSampleSpacing=0, PowerGraphLegendPosition="459;-65", CodeGraphLegendShown=0, CodeGraphLegendPosition="475;0"
+OpenWindow="Console", DockArea=LEFT, x=0, y=3, w=551, h=224, TabPos=0, TopOfStack=0, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="FreeRTOS", DockArea=RIGHT, x=0, y=0, w=681, h=256, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, Showing="Task List"
 TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[1164;100;100;100;100]
-TableHeader="Global Data", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Location";"Size";"Type";"Scope"], ColWidths=[222;130;100;54;95;100]
+TableHeader="Global Data", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Location";"Size";"Type";"Scope"], ColWidths=[222;130;100;54;95;486]
 TableHeader="Vector Catches", SortCol="None", SortOrder="ASCENDING", VisibleCols=["";"Vector Catch";"Description"], ColWidths=[50;300;500]
 TableHeader="Break & Tracepoints", SortCol="None", SortOrder="ASCENDING", VisibleCols=["";"Type";"Location";"Extras"], ColWidths=[100;100;142;209]
 TableHeader="Source Files", SortCol="File", SortOrder="ASCENDING", VisibleCols=["File";"Status";"Size";"#Insts";"Path"], ColWidths=[229;100;100;100;902]
-TableHeader="Data Sampling Table", SortCol="None", SortOrder="ASCENDING", VisibleCols=["Index";"Time";" (QEKF_INS).Roll"], ColWidths=[100;100;100]
-TableHeader="Data Sampling Setup", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Type";"Value";"Min";"Max";"Average";"# Changes";"Min. Change";"Max. Change"], ColWidths=[320;100;110;102;100;110;102;118;118]
+TableHeader="Data Sampling Table", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";" (QEKF_INS).Roll"], ColWidths=[100;100;100]
+TableHeader="Data Sampling Setup", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Type";"Value";"Min";"Max";"Average";"# Changes";"Min. Change";"Max. Change"], ColWidths=[320;100;110;102;100;118;102;118;118]
 TableHeader="Power Sampling", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Ch 0"], ColWidths=[100;100;100]
-TableHeader="Task List", SortCol="None", SortOrder="ASCENDING", VisibleCols=["Name";"Run Count";"Priority";"Status";"Timeout";"Stack Info (Free / Size)";"ID";"Mutex Count";"Notified Value";"Notify State"], ColWidths=[110;110;110;110;110;110;110;110;110;110]
+TableHeader="Task List", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Run Count";"Priority";"Status";"Timeout";"Stack Info (Free / Size)";"ID";"Mutex Count";"Notified Value";"Notify State"], ColWidths=[110;110;110;110;110;110;110;110;110;110]
 TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Description"], ColWidths=[100;105;294]
-TableHeader="Watched Data 1", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location"], ColWidths=[171;101;258]
+TableHeader="Watched Data 1", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location"], ColWidths=[171;101;279]
 TableHeader="RegisterSelectionDialog", SortCol="None", SortOrder="ASCENDING", VisibleCols=[], ColWidths=[]
+TableHeader="Call Graph", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Stack Total";"Stack Local";"Code Total";"Code Local";"Depth";"Called From"], ColWidths=[384;100;100;100;100;100;118]
 TableHeader="TargetExceptionDialog", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Address";"Description"], ColWidths=[27;27;27;38]
 WatchedExpression="QEKF_INS", RefreshRate=2, Window=Watched Data 1
