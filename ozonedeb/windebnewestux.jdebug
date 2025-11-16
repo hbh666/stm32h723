@@ -33,6 +33,7 @@ void OnProjectLoad (void) {
   //
   // User settings
   //
+  Project.SetOSPlugin ("FreeRTOSPlugin");
   File.Open ("D:/RM/Elec Control/TronOneH7_Scaffold/cmake-build-debug/TronOneH7_Scaffold.elf");
 }
 

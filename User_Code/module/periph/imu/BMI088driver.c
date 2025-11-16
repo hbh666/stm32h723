@@ -246,27 +246,23 @@ uint8_t bmi088_accel_init(void)
 {
     // check commiunication
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
-    // DWT_Delay(0.001);
-    HAL_Delay(BMI088_LONG_DELAY_TIME);
+    DWT_Delay(0.001);
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
-    // DWT_Delay(0.001);
-    HAL_Delay(BMI088_LONG_DELAY_TIME);
+    DWT_Delay(0.001);
     // accel software reset
     BMI088_accel_write_single_reg(BMI088_ACC_SOFTRESET, BMI088_ACC_SOFTRESET_VALUE);
     // HAL_Delay(BMI088_LONG_DELAY_TIME);
-    HAL_Delay(BMI088_COM_WAIT_SENSOR_TIME);
+    DWT_Delay(0.08);
     // check commiunication is normal after reset
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
-    // DWT_Delay(0.001);
-    HAL_Delay(BMI088_LONG_DELAY_TIME);
+    DWT_Delay(0.001);
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
-    // DWT_Delay(0.001);
-    HAL_Delay(BMI088_LONG_DELAY_TIME);
+    DWT_Delay(0.001);
 
     // check the "who am I"
     if (res != BMI088_ACC_CHIP_ID_VALUE)
     {
-        // Todo: LOGERROR("[bmi088] Can not read bmi088 acc chip id");
+        // LOGERROR("[bmi088] Can not read bmi088 acc chip id");
         return BMI088_NO_SENSOR;
     }
 
@@ -276,12 +272,10 @@ uint8_t bmi088_accel_init(void)
 
         BMI088_accel_write_single_reg(BMI088_Accel_Init_Table[write_reg_num][0],
                                       BMI088_Accel_Init_Table[write_reg_num][1]);
-        // DWT_Delay(0.001);
-        HAL_Delay(BMI088_LONG_DELAY_TIME);
+        DWT_Delay(0.001);
 
         BMI088_accel_read_single_reg(BMI088_Accel_Init_Table[write_reg_num][0], res);
-        // DWT_Delay(0.001);
-        HAL_Delay(BMI088_LONG_DELAY_TIME);
+        DWT_Delay(0.001);
 
         if (res != BMI088_Accel_Init_Table[write_reg_num][1])
         {
@@ -297,24 +291,24 @@ uint8_t bmi088_gyro_init(void)
 {
     // check commiunication
     BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
-    HAL_Delay(BMI088_LONG_DELAY_TIME);
+    DWT_Delay(0.001);
     BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
-    HAL_Delay(BMI088_LONG_DELAY_TIME);
+    DWT_Delay(0.001);
 
     // reset the gyro sensor
     BMI088_gyro_write_single_reg(BMI088_GYRO_SOFTRESET, BMI088_GYRO_SOFTRESET_VALUE);
     // HAL_Delay(BMI088_LONG_DELAY_TIME);
-    HAL_Delay(BMI088_COM_WAIT_SENSOR_TIME);
+    DWT_Delay(0.08);
     // check commiunication is normal after reset
     BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
-    HAL_Delay(BMI088_LONG_DELAY_TIME);
+    DWT_Delay(0.001);
     BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
-    HAL_Delay(BMI088_LONG_DELAY_TIME);
+    DWT_Delay(0.001);
 
     // check the "who am I"
     if (res != BMI088_GYRO_CHIP_ID_VALUE)
     {
-        //Todo: LOGERROR("[bmi088] Can not read bmi088 gyro chip id");
+        // LOGERROR("[bmi088] Can not read bmi088 gyro chip id");
         return BMI088_NO_SENSOR;
     }
 
@@ -324,10 +318,10 @@ uint8_t bmi088_gyro_init(void)
 
         BMI088_gyro_write_single_reg(BMI088_Gyro_Init_Table[write_reg_num][0],
                                      BMI088_Gyro_Init_Table[write_reg_num][1]);
-        HAL_Delay(BMI088_LONG_DELAY_TIME);
+        DWT_Delay(0.001);
 
         BMI088_gyro_read_single_reg(BMI088_Gyro_Init_Table[write_reg_num][0], res);
-        HAL_Delay(BMI088_LONG_DELAY_TIME); //但是不知道为什么还是yaw pitch还是nan
+        DWT_Delay(0.001);
 
         if (res != BMI088_Gyro_Init_Table[write_reg_num][1])
         {
