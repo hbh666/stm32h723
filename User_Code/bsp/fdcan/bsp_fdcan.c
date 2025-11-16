@@ -150,7 +150,7 @@ FDCANInstance *FDCANRegister(FDCAN_Init_Config_s *config)
     {
         while (1)
         {
-            // LOGERROR("[bsp_fdcan] FDCAN instance exceeded MAX num, consider balance the load of FDCAN bus");
+            // Todo:LOGERROR("[bsp_fdcan] FDCAN instance exceeded MAX num, consider balance the load of FDCAN bus");
         }
     }
     for (size_t i = 0; i < idx; i++)
@@ -160,7 +160,7 @@ FDCANInstance *FDCANRegister(FDCAN_Init_Config_s *config)
         {
             while (1)
             {
-                // LOGERROR("[bsp_fdcan] FDCAN id crash ,tx [%d] or rx [%d] already registered", config->tx_id, config->rx_id);
+                // Todo:LOGERROR("[bsp_fdcan] FDCAN id crash ,tx [%d] or rx [%d] already registered", config->tx_id, config->rx_id);
             }
         }
     }
@@ -243,7 +243,7 @@ void FDCANSetDLC(FDCANInstance *_instance, uint8_t length)
     if (length > 64 || length == 0) // 安全检查
         while (1)
         {
-            //LOGERROR("[bsp_fdcan] FDCAN DLC error! check your code or wild pointer");
+            //Todo:LOGERROR("[bsp_fdcan] FDCAN DLC error! check your code or wild pointer");
         }
     _instance->txconf.DataLength = FDCANLenToDlc(length);
 }

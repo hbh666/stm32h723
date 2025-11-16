@@ -10,24 +10,14 @@
  *
  ******************************************************************************
  */
-#ifndef _USER_LIB_H
-#define _USER_LIB_H
+#ifndef USER_LIB_H
+#define USER_LIB_H
+
 #include "stdint.h"
 #include "main.h"
 #include "cmsis_os.h"
-
-enum
-{
-    CHASSIS_DEBUG = 1,
-    GIMBAL_DEBUG,
-    INS_DEBUG,
-    RC_DEBUG,
-    IMU_HEAT_DEBUG,
-    SHOOT_DEBUG,
-    AIMASSIST_DEBUG,
-};
-
-extern uint8_t GlobalDebugMode;
+#include "stm32h723xx.h"
+#include "arm_math.h"
 
 #ifndef user_malloc
 #ifdef _CMSIS_OS_H
@@ -36,6 +26,19 @@ extern uint8_t GlobalDebugMode;
 #define user_malloc malloc
 #endif
 #endif
+
+#define msin(x) (arm_sin_f32(x))
+#define mcos(x) (arm_cos_f32(x))
+
+typedef arm_matrix_instance_f32 mat;
+// 若运算速度不够,可以使用q31代替f32,但是精度会降低
+#define MatAdd arm_mat_add_f32
+#define MatSubtract arm_mat_sub_f32
+#define MatMultiply arm_mat_mult_f32
+#define MatTranspose arm_mat_trans_f32
+#define MatInverse arm_mat_inverse_f32
+
+void MatInit(mat *m, uint8_t row, uint8_t col);
 
 /* boolean type definitions */
 #ifndef TRUE
@@ -87,39 +90,8 @@ extern uint8_t GlobalDebugMode;
 #define VAL_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define VAL_MAX(a, b) ((a) > (b) ? (a) : (b))
 
-typedef struct
-{
-    float input; //输入数据
-    float out; //输出数据
-    float min_value; //限幅最小值
-    float max_value; //限幅最大值
-    float frame_period; //时间间隔
-} ramp_function_source_t;
-
-typedef __packed struct
-{
-    uint16_t Order;
-    uint32_t Count;
-
-    float *x;
-    float *y;
-
-    float k;
-    float b;
-
-    float StandardDeviation;
-
-    float t[4];
-} Ordinary_Least_Squares_t;
-
 //快速开方
 float Sqrt(float x);
-
-//斜波函数初始化
-void ramp_init(ramp_function_source_t *ramp_source_type, float frame_period, float max, float min);
-
-//斜波函数计算
-float ramp_calc(ramp_function_source_t *ramp_source_type, float input);
 
 //绝对限制
 float abs_limit(float num, float Limit);
@@ -142,24 +114,20 @@ int16_t int16_constrain(int16_t Value, int16_t minValue, int16_t maxValue);
 //循环限幅函数
 float loop_float_constrain(float Input, float minValue, float maxValue);
 
-//角度 °限幅 180 ~ -180
 float theta_format(float Ang);
 
 int float_rounding(float raw);
 
-//弧度格式化为-PI~PI
+float *Norm3d(float *v);
+
+float NormOf3d(float *v);
+
+void Cross3d(float *v1, float *v2, float *res);
+
+float Dot3d(float *v1, float *v2);
+
+float AverageFilter(float new_data, float *buf, uint8_t len);
+
 #define rad_format(Ang) loop_float_constrain((Ang), -PI, PI)
-
-void OLS_Init(Ordinary_Least_Squares_t *OLS, uint16_t order);
-
-void OLS_Update(Ordinary_Least_Squares_t *OLS, float deltax, float y);
-
-float OLS_Derivative(Ordinary_Least_Squares_t *OLS, float deltax, float y);
-
-float OLS_Smooth(Ordinary_Least_Squares_t *OLS, float deltax, float y);
-
-float Get_OLS_Derivative(Ordinary_Least_Squares_t *OLS);
-
-float Get_OLS_Smooth(Ordinary_Least_Squares_t *OLS);
 
 #endif
