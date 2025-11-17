@@ -1,9 +1,11 @@
 # TronOneH7_Scaffold
+
 # 创一达妙开发板脚手架
 
 介绍
 
-创一工作室基于达妙H7(MC02)开发板编写的c/cpp框架，使用Clion作为IDE，CMake+Ninja构建，Starm-Clang/arm-none-eabi-gcc工具链（自动检测），Ozone/Clion+OpenOCD/MDK进行调试，可以下载STM32CubeCLT进行环境安装，一键编译。
+创一工作室基于达妙H7(MC02)
+开发板编写的c/cpp框架，使用Clion作为IDE，CMake+Ninja构建，arm-none-eabi-gcc（首选）或Starm-Clang工具链（根据系统及处理器架构，环境情况自动检测），Ozone/Clion+OpenOCD/MDK进行调试，可以下载STM32CubeCLT进行环境安装，一键编译。
 
 ## 功能介绍和展示
 
@@ -12,11 +14,10 @@
 ### 优势
 
 - 轻量级框架，易于上手
-> 用软件开发的思想设计嵌入式系统是一种降维打击
->
-> <p align=right>—— 沃兹基·烁德</p>
+- 现代开发工具链，代码静态检查
 
 ---
+
 ### 效果展示
 
 实战展示：
@@ -30,6 +31,7 @@
 #### 应用封装
 
 ---
+
 ## 架构
 
 总览。
@@ -46,15 +48,13 @@
 
 ---
 
-
-
 ## 开发工具
 
 介绍完整的工作流。
 
 ### 工具链及环境配置
 
-### IDE?
+### CMake
 
 ### 调试和性能分析
 
@@ -80,34 +80,50 @@
 
 ---
 
-
-
 ## 致谢
 
 本项目高度参考以下项目的代码/库文件或仅参考设计思想，它们是：
 
-湖南大学-跃鹿 Basic_framework
+湖南大学-跃鹿 [Basic_framework](https://gitee.com/hnuyuelurm/basic_framework)
 
-大连民族大学-C.ONE One_framework
+大连民族大学-C.ONE [One_framework](https://gitee.com/dlmu-cone/one_framework)
 
-辽宁科技大学-COD COD_H7_Template_CLion
+辽宁科技大学-COD [COD_H7_Template_CLion](https://github.com/GrassFanWang/COD_H7_Template_CLion)
 
-深圳北理莫斯科大学-北极熊 StandardRobot++
+深圳北理莫斯科大学-北极熊 [StandardRobot++](https://gitee.com/SMBU-POLARBEAR/StandardRobotpp)
+
+中国科学技术大学-RoboWalker [麻神的PPT及舵轮例程，以及damiao_mc02_bsp库的内容](https://gitee.com/yssickjgd/RoboWalker2023_sentry)
 
 大连理工大学-凌Bug LingRoboMX(暂未开源)
 
 西南交通大学-Helios Helios_powerful_framework(暂未开源)
 
-青岛大学 XRobot
+青岛大学 [XRobot](https://xrobot-org.github.io/)
 
-吉林大学-吉甲大师 UIML
+吉林大学-吉甲大师 [UIML](https://github.com/wuchuang2001/UIML)
 
-哈工大深圳-南工骁鹰 EC2022
+哈工大深圳-南工骁鹰 [EC2022](https://rmbbs.robomaster.com/article/19321)
+
+---
+
+使用了以下开源库：
+
+大连民族大学-C.ONE [rpl](https://gitee.com/dlmu-cone/rpl)
+
+哈工程-创梦之翼(
+不过玺佬现在应该是在南科大叭) [IMU驱动控制程序-四元数及欧拉角解算](https://github.com/WangHongxi2001/RoboMaster-C-Board-INS-Example)
+
+西交利物浦大学-GMaster [电机功率模型](https://github.com/MaxwellDemonLin/Motor-modeling-and-power-control)
+
+香港科技大学-ENTERPRIZE [功率控制算法](https://github.com/hkustenterprize/RM2024-PowerModule)
+
+华南理工大学-华南虎 [电控SRML库](https://github.com/scutrobotlab/RM2021_Hero/tree/master/Chassis/SRML)
+
+华师佛山-VANGUARD [电控弹道解算例程](https://github.com/CodeAlanqian/SolveTrajectory)
 
 ---
 
 还要非常感谢愿意与我队电控一起交流，并无私提供帮助的这些队伍，他们是（以下排名不分先后）：
-
 
 首都师范大学 W.PIE
 
