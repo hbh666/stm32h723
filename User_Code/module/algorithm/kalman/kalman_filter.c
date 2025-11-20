@@ -266,7 +266,9 @@ void Kalman_Filter_Measure(KalmanFilter_t *kf)
     // 矩阵H K R根据量测情况自动调整
     // matrix H K R auto adjustment
     if (kf->UseAutoAdjustment != 0)
+    {
         H_K_R_Adjustment(kf);
+    }
     else
     {
         memcpy(kf->z_data, kf->MeasuredVector, sizeof_float * kf->zSize);

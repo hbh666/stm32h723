@@ -10,7 +10,7 @@ SPIInstance *SPIRegister(SPI_Init_Config_s *conf)
 {
     if (idx >= MX_SPI_BUS_SLAVE_CNT) // 超过最大实例数
         while (1);
-    SPIInstance *instance = (SPIInstance *) malloc(sizeof(SPIInstance));
+    auto instance = (SPIInstance *) malloc(sizeof(SPIInstance));
     memset(instance, 0, sizeof(SPIInstance));
 
     instance->spi_handle = conf->spi_handle;

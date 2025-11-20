@@ -165,7 +165,7 @@ FDCANInstance *FDCANRegister(FDCAN_Init_Config_s *config)
         }
     }
 
-    FDCANInstance *instance = (FDCANInstance *) malloc(sizeof(FDCANInstance)); // 分配空间
+    auto instance = (FDCANInstance *) malloc(sizeof(FDCANInstance)); // 分配空间
     memset(instance, 0, sizeof(FDCANInstance)); // 分配的空间未必是0,所以要先清空
 
     // 进行发送报文的配置

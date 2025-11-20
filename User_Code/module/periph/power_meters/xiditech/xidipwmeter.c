@@ -38,11 +38,11 @@ void PowerMeterDecode(FDCANInstance *instance)
     measure->dt = DWT_GetDeltaT(&power_meter_instance->feed_cnt);
 
     // 解析电流数据 (放大100倍，需要除以100)
-    int16_t current_raw = (int16_t) ((rxbuff[1] << 8) | rxbuff[0]);
+    auto current_raw = (int16_t) ((rxbuff[1] << 8) | rxbuff[0]);
     measure->current = (float) current_raw / 100.0f;
 
     // 解析电压数据 (放大100倍，需要除以100)
-    int16_t voltage_raw = (int16_t) ((rxbuff[3] << 8) | rxbuff[2]);
+    auto voltage_raw = (int16_t) ((rxbuff[3] << 8) | rxbuff[2]);
     measure->voltage = (float) voltage_raw / 100.0f;
 
     // 计算功率

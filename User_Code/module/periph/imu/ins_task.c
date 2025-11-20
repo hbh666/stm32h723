@@ -67,7 +67,9 @@ static void InitQuaternion(float *init_q4)
         DWT_Delay(0.001);
     }
     for (uint8_t i = 0; i < 3; ++i)
+    {
         acc_init[i] /= 100;
+    }
     Norm3d(acc_init);
     // 计算原始加速度矢量和导航系重力加速度矢量的夹角
     float angle = acosf(Dot3d(acc_init, gravity_norm));
@@ -75,7 +77,9 @@ static void InitQuaternion(float *init_q4)
     Norm3d(axis_rot);
     init_q4[0] = cosf(angle / 2.0f);
     for (uint8_t i = 0; i < 2; ++i)
+    {
         init_q4[i + 1] = axis_rot[i] * sinf(angle / 2.0f); // 轴角公式,第三轴为0(没有z轴分量)
+    }
 }
 
 attitude_t *INS_Init(void)
@@ -265,7 +269,9 @@ static void IMU_Param_Correction(IMU_Param_t *param, float gyro[3], float accel[
     }
     float gyro_temp[3];
     for (uint8_t i = 0; i < 3; ++i)
+    {
         gyro_temp[i] = gyro[i] * param->scale[i];
+    }
 
     gyro[X] = c_11 * gyro_temp[X] +
               c_12 * gyro_temp[Y] +
@@ -279,7 +285,9 @@ static void IMU_Param_Correction(IMU_Param_t *param, float gyro[3], float accel[
 
     float accel_temp[3];
     for (uint8_t i = 0; i < 3; ++i)
+    {
         accel_temp[i] = accel[i];
+    }
 
     accel[X] = c_11 * accel_temp[X] +
                c_12 * accel_temp[Y] +
