@@ -37,7 +37,7 @@ MEMORY
 /* 数据紧耦合内存 (Data TCM) - 128KB，零等待周期，用于高性能数据访问 */
 DTCMRAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
 /* D1域RAM (AXI SRAM) - 320KB，主系统内存 */
-RAM_D1 (xrw)      : ORIGIN = 0x24000000, LENGTH = 320K
+RAM_D1 (xrw)      : ORIGIN = 0x24000000, LENGTH = 128K
 /* D2域RAM (AHB SRAM) - 32KB，用于外设数据缓冲 */
 RAM_D2 (xrw)      : ORIGIN = 0x30000000, LENGTH = 32K
 /* D3域RAM (备份域RAM) - 16KB，在低功耗模式下保持数据 */
