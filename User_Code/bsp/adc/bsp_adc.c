@@ -28,10 +28,8 @@ __attribute__((section (".AXI_SRAM"))) uint16_t ADC_Voltage_Val[2];
   */
 void BSP_ADC_Init(void)
 {
-
     HAL_ADCEx_Calibration_Start(&hadc1, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED);
     HAL_ADC_Start_DMA(&hadc1, (uint32_t *) ADC_Voltage_Val, 2);
-
 }
 
 //------------------------------------------------------------------------------
@@ -43,11 +41,8 @@ void BSP_ADC_Init(void)
   */
 float USER_ADC_Voltage_Update(void)
 {
-
-    float Voltage;
-    Voltage = (ADC_Voltage_Val[0] * 3.3f / 65535) * 11.0f;
+    auto Voltage = (ADC_Voltage_Val[0] * 3.3f / 65535) * 11.0f;
     return Voltage;
-
 }
 
 //------------------------------------------------------------------------------
