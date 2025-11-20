@@ -1,14 +1,14 @@
 /**
  * @file controller.c
  * @author wanghongxi
- * @author modified by neozng
+ * @author modified by TuxMonkey
  * @brief  PID控制器定义
  * @version beta
  * @date 2022-11-01
  *
- * @copyrightCopyright (c) 2022 HNU YueLu EC all rights reserved
+ * @copyright Copyright (c) 2025 DLMU.CONE EC all rights reserved
  */
-#include "controller.h"
+#include "pid.h"
 #include "memory.h"
 
 /* ----------------------------下面是pid优化环节的实现---------------------------- */
