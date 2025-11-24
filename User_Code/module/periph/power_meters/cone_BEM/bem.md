@@ -4,7 +4,7 @@
 
 **项目名称：** 芯衡 (Bidirectional Energy Monitor)
 
-**版本：**  2025.11.24 v1.0
+**文档版本：**  2025.11.24 v1.0
 
 **作者：** TuxMonkey
 
