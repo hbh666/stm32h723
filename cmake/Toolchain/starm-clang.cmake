@@ -104,5 +104,5 @@ set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,--print-memory-usage")
 
 # 设置C++链接标志：在C链接标志基础上添加C++标准库支持
 set(CMAKE_CXX_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,--start-group -lstdc++ -lsupc++ -Wl,--end-group")
-
+#链接数学库
 set(TOOLCHAIN_LINK_LIBRARIES "m")
