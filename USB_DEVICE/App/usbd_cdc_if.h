@@ -24,7 +24,11 @@
 #define __USBD_CDC_IF_H__
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
+
+
+
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -65,6 +69,7 @@
   */
 
 /* USER CODE BEGIN EXPORTED_TYPES */
+typedef void (*USBCallback)(uint16_t);
 
 /* USER CODE END EXPORTED_TYPES */
 
@@ -106,9 +111,10 @@ extern USBD_CDC_ItfTypeDef USBD_Interface_fops_HS;
   * @{
   */
 
-uint8_t CDC_Transmit_HS(uint8_t* Buf, uint16_t Len);
+uint8_t CDC_Transmit_HS(uint8_t *Buf, uint16_t Len);
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
+uint8_t *CDCInitRxbufferNcallback(USBCallback transmit_cbk, USBCallback recv_cbk);
 
 /* USER CODE END EXPORTED_FUNCTIONS */
 
