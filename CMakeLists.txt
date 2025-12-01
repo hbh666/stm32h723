@@ -47,6 +47,10 @@ endif ()
 # 设置C++特定编译选项：启用RTTI，禁用volatile警告
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -Wno-volatile")
 
+## 最严格的一集，Warning也是Error！
+#set(CMAKE_CXX_FLAGS "$ENV{CXX_FLAGS} -Werror")  # 设置 C++ 编译选项
+#set(CMAKE_C_FLAGS "$ENV{C_FLAGS} -Werror")      # 设置 C 编译选项
+
 # 如果没有指定构建类型，默认为Debug模式
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
