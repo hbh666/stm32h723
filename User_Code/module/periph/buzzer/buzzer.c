@@ -123,7 +123,7 @@ const uint8_t sound_autoaiming[6] = {0x2D, 0x10, 0x2D, 0x10, 0x2D, 0x10}; //D_D_
 static uint16_t bzply_n = 0; //乐谱播放位置计数
 static uint8_t bzply_count = 1; //单个音的节拍延时计数
 
-auto note = 80;
+
 /*---------------------FUNCTIONS---------------------*/
 
 /***********************************************************************
@@ -287,7 +287,6 @@ void systemstart_song(void)
     // HAL_Delay(550);
 
     SongSpring(); //为什么要演奏春日影！！！
-    // SongNortheastern();
 
     // SongLaoda();
 
@@ -312,49 +311,6 @@ void SongSpring(void) //春日影！！！
     HAL_Delay(200);
     buzzer_note(150, 0.5); //re
     HAL_Delay(300);
-}
-
-void SongNortheastern(void)
-{
-    // buzzer_note(110, 0.5); //la
-    // HAL_Delay(290);
-    // buzzer_note(110, 0.5); //la
-    // HAL_Delay(290);
-    // buzzer_note(135, 0.5); //mi
-    // HAL_Delay(290);
-    // buzzer_note(160, 0.5); //so
-    // HAL_Delay(290);
-    // buzzer_note(135, 0.5); //mi
-    // HAL_Delay(290);
-    // buzzer_note(135, 0.5); //mi
-    // HAL_Delay(290);
-    // buzzer_note(138, 0.5); //so
-    // HAL_Delay(290);
-    // buzzer_note(135, 0.5); //mi
-    // HAL_Delay(290);
-    // buzzer_note(145, 0.5); //xi
-    // HAL_Delay(290);
-    // buzzer_note(110, 0.5); //la
-    // HAL_Delay(290);
-
-    // buzzer_note(85,0.5);//中音mi
-    // delay_ticks(450);
-    // buzzer_note(90,0.5);//fa
-    // delay_ticks(450);
-    // buzzer_note(100,0.5);//so
-    // delay_ticks(750);
-    // buzzer_note(85,0.5);//mi
-    // delay_ticks(250);
-    // buzzer_note(100,0.5);//so
-    // delay_ticks(250);
-    // buzzer_note(85,0.5);//mi
-    // delay_ticks(290);
-    // buzzer_note(100,0.5);//so
-    // delay_ticks(300);
-    // buzzer_note(125,0.5);//xi
-    // delay_ticks(550);
-    // buzzer_note(132,0.5);//~do
-    // delay_ticks(1000);
 }
 
 void SongLaoda(void)

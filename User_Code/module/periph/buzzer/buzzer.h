@@ -46,8 +46,6 @@ void SongLaoda(void);
 
 void SongSpring(void);
 
-void SongNortheastern(void);
-
 //
 extern void SetBuzzerOff(void);
 
