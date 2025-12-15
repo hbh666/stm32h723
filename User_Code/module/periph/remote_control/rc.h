@@ -1,12 +1,3 @@
-//
-// Created by ASUS on 2025/11/17.
-//
-
-#ifndef TRONONEH7_SCAFFOLD_RC_H
-#define TRONONEH7_SCAFFOLD_RC_H
-
-#endif //TRONONEH7_SCAFFOLD_RC_H
-
 /**
  * @file remote.h
  * @author TuxMonkey (nqx_2004@qq.com)
@@ -18,8 +9,8 @@
  *
  */
 
-#ifndef REMOTE_H
-#define REMOTE_H
+#ifndef TRONONEH7_SCAFFOLD_RC_H
+#define TRONONEH7_SCAFFOLD_RC_H
 
 //@todo：测试define
 #define REMOTE_FS_I6X
