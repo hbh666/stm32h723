@@ -27,7 +27,7 @@ typedef struct
     uint8_t recv_buff_size; // 模块接收一包数据的大小
     UART_HandleTypeDef *usart_handle; // 实例对应的usart_handle
     usart_module_callback module_callback; // 解析收到的数据的回调函数
-} USARTInstance;
+} USART_Instance;
 
 /* usart 初始化配置结构体 */
 typedef struct
@@ -42,14 +42,14 @@ typedef struct
  *
  * @param init_config 传入串口初始化结构体
  */
-USARTInstance *USARTRegister(USART_Init_Config_s *init_config);
+USART_Instance *USARTRegister(USART_Init_Config_s *init_config);
 
 /**
  * @brief 启动串口服务,需要传入一个usart实例.一般用于lost callback的情况(使用串口的模块daemon)
  *
  * @param _instance
  */
-void USARTServiceInit(USARTInstance *_instance);
+void USARTServiceInit(USART_Instance *_instance);
 
 
 /**
@@ -62,7 +62,7 @@ void USARTServiceInit(USARTInstance *_instance);
  * @param send_buf 待发送数据的buffer
  * @param send_size how many bytes to send
  */
-void USARTSend(USARTInstance *_instance, uint8_t *send_buf, uint16_t send_size, USART_TRANSFER_MODE mode);
+void USARTSend(USART_Instance *_instance, uint8_t *send_buf, uint16_t send_size, USART_TRANSFER_MODE mode);
 
 /**
  * @brief 判断串口是否准备好,用于连续或异步的IT/DMA发送
@@ -70,6 +70,6 @@ void USARTSend(USARTInstance *_instance, uint8_t *send_buf, uint16_t send_size, 
  * @param _instance 要判断的串口实例
  * @return uint8_t ready 1, busy 0
  */
-uint8_t USARTIsReady(USARTInstance *_instance);
+uint8_t USARTIsReady(USART_Instance *_instance);
 
 #endif

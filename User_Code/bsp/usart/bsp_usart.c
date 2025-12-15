@@ -17,7 +17,7 @@
 /* usart service instance, modules' info would be recoreded here using USARTRegister() */
 /* usart服务实例,所有注册了usart的模块信息会被保存在这里 */
 static uint8_t idx;
-static USARTInstance *usart_instance[DEVICE_USART_CNT] = {NULL};
+static USART_Instance *usart_instance[DEVICE_USART_CNT] = {NULL};
 
 /**
  * @brief 启动串口服务,会在每个实例注册之后自动启用接收,当前实现为DMA接收,后续可能添加IT和BLOCKING接收
@@ -27,7 +27,7 @@ static USARTInstance *usart_instance[DEVICE_USART_CNT] = {NULL};
  *
  * @param _instance instance owned by module,模块拥有的串口实例
  */
-void USARTServiceInit(USARTInstance *_instance)
+void USARTServiceInit(USART_Instance *_instance)
 {
     HAL_UARTEx_ReceiveToIdle_DMA(_instance->usart_handle, _instance->recv_buff, _instance->recv_buff_size);
     // 关闭dma half transfer中断防止两次进入HAL_UARTEx_RxEventCallback()
@@ -36,7 +36,7 @@ void USARTServiceInit(USARTInstance *_instance)
     __HAL_DMA_DISABLE_IT(_instance->usart_handle->hdmarx, DMA_IT_HT);
 }
 
-USARTInstance *USARTRegister(USART_Init_Config_s *init_config)
+USART_Instance *USARTRegister(USART_Init_Config_s *init_config)
 {
     if (idx >= DEVICE_USART_CNT) // 超过最大实例数
         while (1)
@@ -47,8 +47,8 @@ USARTInstance *USARTRegister(USART_Init_Config_s *init_config)
             while (1)
                 LOGERROR("[bsp_usart] USART instance already registered!");
 
-    USARTInstance *instance = (USARTInstance *) malloc(sizeof(USARTInstance));
-    memset(instance, 0, sizeof(USARTInstance));
+    USART_Instance *instance = (USART_Instance *) malloc(sizeof(USART_Instance));
+    memset(instance, 0, sizeof(USART_Instance));
 
     instance->usart_handle = init_config->usart_handle;
     instance->recv_buff_size = init_config->recv_buff_size;
@@ -60,7 +60,7 @@ USARTInstance *USARTRegister(USART_Init_Config_s *init_config)
 }
 
 /* @todo 当前仅进行了形式上的封装,后续要进一步考虑是否将module的行为与bsp完全分离 */
-void USARTSend(USARTInstance *_instance, uint8_t *send_buf, uint16_t send_size, USART_TRANSFER_MODE mode)
+void USARTSend(USART_Instance *_instance, uint8_t *send_buf, uint16_t send_size, USART_TRANSFER_MODE mode)
 {
     switch (mode)
     {
@@ -80,7 +80,7 @@ void USARTSend(USARTInstance *_instance, uint8_t *send_buf, uint16_t send_size, 
 }
 
 /* 串口发送时,gstate会被设为BUSY_TX */
-uint8_t USARTIsReady(USARTInstance *_instance)
+uint8_t USARTIsReady(USART_Instance *_instance)
 {
     if (_instance->usart_handle->gState | HAL_UART_STATE_BUSY_TX)
         return 0;
@@ -141,3 +141,5 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
         }
     }
 }
+
+

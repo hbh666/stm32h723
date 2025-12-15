@@ -53,6 +53,7 @@ void robotSelfCheck(void)
 void ws2812Task(void *argument)
 {
     (void) argument;
+    RobotMode_t RobotMode = REMOTE_NOT_CONNECTED; // 初始状态为遥控器未连接
     while (1)
     {
         switch (RobotMode)
