@@ -18,9 +18,7 @@ extern "C"
 #endif
 
 #include <stdint.h>
-
-// 前向声明PWM实例结构体，与bsp_pwm.h中的类型保持一致
-typedef struct PWMInstance PWMInstance;
+#include "bsp_pwm.h"
 
 /**
  * @brief MG996舵机初始化配置结构体
