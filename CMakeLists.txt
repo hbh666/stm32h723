@@ -64,7 +64,8 @@ add_executable(${CMAKE_PROJECT_NAME})
 # 包含编译选项配置文件
 include(CompileOptions)
 # 包含查找模块（当前被注释掉）
-#include(FindModules)
+include(FindModules)
+
 
 # 添加STM32CubeMX生成的源码子目录
 add_subdirectory(cmake/stm32cubemx)
@@ -73,6 +74,7 @@ add_subdirectory(cmake/stm32cubemx)
 target_link_libraries(${CMAKE_PROJECT_NAME}
         stm32cubemx  # STM32CubeMX生成的库
         #        rpl::rpl     # 第三方库（当前被注释掉）
+        ems
         ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a
 )
 

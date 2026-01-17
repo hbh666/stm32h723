@@ -15,10 +15,36 @@
  */
 
 /*---------------------INCLUDES---------------------*/
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 #include "buzzer.h"
 #include "cmsis_os.h"
 #include "tim.h"
 #include "delayticks.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+#include <ems_parser.hpp>
+
+
+using namespace ems::literals;
+constexpr auto spring =
+		R"((400)
+        2s`,,1s`,7,,1s`,2s`-,3`-2s`,1s`,,,
+        2s`,,1s`,7,,1s`,2s`-,3`-2s`,1s`,,,
+        2s`,,1s`,7,,1s`,2s`-,3`-2s`,1s`,,,
+        2s`,,1s`,7,,1s`,2s`-,3`-2s`,1s`,,7-1s`-
+        2s`,2s`,1s`,3`,2s`,1s`,1s`,1s`,7,3`,2s`,1s`,
+        1s`,,7-1s`-2s`,,,,,,7,4s`,7`,
+        6s`,,7`,6s`,,7`,6s`-5s`-4s`,,4s`,1s`,3`,
+        3`,2s`,2s`,2s`,,,3`,2s`,1s`,2s`,,4s`,
+        7,,,
+)"_ems;
 
 /*---------------------VARIABLES---------------------*/
 //
@@ -50,9 +76,11 @@
 //7 - si - 1976Hz
 
 //高中低音的实际频率 Hz
-const uint16_t music_steps[3][7] = {{262, 294, 330, 349, 392, 440, 494},
-                                    {523, 587, 659, 698, 784, 880, 988},
-                                    {1046, 1175, 1318, 1397, 1568, 1760, 1976}};
+const uint16_t music_steps[3][7] = {
+	{262, 294, 330, 349, 392, 440, 494},
+	{523, 587, 659, 698, 784, 880, 988},
+	{1046, 1175, 1318, 1397, 1568, 1760, 1976}
+};
 
 //乐谱1:小星星
 /*const uint16_t song_littlestar[42] = {0x1411,0x1411,0x1415,0x1415,0x1416,0x1416,0x1815,
@@ -135,7 +163,7 @@ static uint8_t bzply_count = 1; //单个音的节拍延时计数
 ***********************************************************************/
 void SetBuzzerOff(void)
 {
-    __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, 0);
+	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, 0);
 }
 
 /***********************************************************************
@@ -147,13 +175,12 @@ void SetBuzzerOff(void)
 ***********************************************************************/
 void SetBuzzerFrequence(uint16_t freq)
 {
-    //buzzer --> tim12.channel2
-    //分频后为1000000Hz
-    uint16_t period = 1000000 / freq - 1;
+	//buzzer --> tim12.channel2
+	//分频后为1000000Hz
+	uint16_t period = 1000000 / freq - 1;
 
-    __HAL_TIM_SET_AUTORELOAD(&htim12, period);
-    __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, period/2);
-
+	__HAL_TIM_SET_AUTORELOAD(&htim12, period);
+	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, period/2);
 }
 
 /***********************************************************************
@@ -165,8 +192,8 @@ void SetBuzzerFrequence(uint16_t freq)
 ***********************************************************************/
 void buzzer_on(uint16_t psc, uint16_t pwm)
 {
-    __HAL_TIM_PRESCALER(&htim12, psc);
-    __HAL_TIM_SetCompare(&htim12, TIM_CHANNEL_2, pwm);
+	__HAL_TIM_PRESCALER(&htim12, psc);
+	__HAL_TIM_SetCompare(&htim12, TIM_CHANNEL_2, pwm);
 }
 
 /***********************************************************************
@@ -178,7 +205,7 @@ void buzzer_on(uint16_t psc, uint16_t pwm)
 ***********************************************************************/
 void buzzer_off(void)
 {
-    __HAL_TIM_SetCompare(&htim12, TIM_CHANNEL_2, 0);
+	__HAL_TIM_SetCompare(&htim12, TIM_CHANNEL_2, 0);
 }
 
 /**
@@ -188,26 +215,26 @@ void buzzer_off(void)
  */
 void buzzer_note(uint16_t note, float volume)
 {
-    if (volume > 1.0f)
-    {
-        volume = 1.0f;
-    }
-    else if (volume < 0.0f)
-    {
-        volume = 0.0f;
-    }
-    // 禁用定时器
-    __HAL_TIM_DISABLE(&htim12);
-    // 重置定时器计数器
-    htim12.Instance->CNT = 0;
-    // 设置自动重装载寄存器（ARR），以控制PWM信号的频率
-    htim12.Instance->ARR = (1000000 / note - 1) * 1u;
-    // 设置比较寄存器（CCR3），以控制PWM信号的占空比
-    htim12.Instance->CCR3 = (8 * 10500 / note - 1) * volume * 1u;
-    // 重新启用定时器
-    __HAL_TIM_ENABLE(&htim12);
-    // 启动PWM信号
-    HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
+	if (volume > 1.0f)
+	{
+		volume = 1.0f;
+	}
+	else if (volume < 0.0f)
+	{
+		volume = 0.0f;
+	}
+	// 禁用定时器
+	__HAL_TIM_DISABLE(&htim12);
+	// 重置定时器计数器
+	htim12.Instance->CNT = 0;
+	// 设置自动重装载寄存器（ARR），以控制PWM信号的频率
+	htim12.Instance->ARR = (1000000 / note - 1) * 1u;
+	// 设置比较寄存器（CCR3），以控制PWM信号的占空比
+	htim12.Instance->CCR3 = (8 * 10500 / note - 1) * volume * 1u;
+	// 重新启用定时器
+	__HAL_TIM_ENABLE(&htim12);
+	// 启动PWM信号
+	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
 }
 
 /**
@@ -218,186 +245,178 @@ void buzzer_note(uint16_t note, float volume)
  */
 void systemstart_song(void)
 {
-    // 播放歌曲的旋律，每个音符后面都跟随一个延时
-    // buzzer_note(50,0.5);
-    // delay_ticks(450);
-    // buzzer_note(53,0.5);
-    // delay_ticks(450);
-    // buzzer_note(60,0.5);
-    // delay_ticks(750);
-    // buzzer_note(50,0.5);
-    // delay_ticks(250);
-    // buzzer_note(60,0.5);
-    // delay_ticks(250);
-    // buzzer_note(50,0.5);
-    // delay_ticks(290);
-    // buzzer_note(60,0.5);
-    // delay_ticks(300);
-    // buzzer_note(75,0.5);
-    // delay_ticks(550);
-    // buzzer_note(80,0.5);
-    // delay_ticks(1000);
-    // 播放结束后关闭蜂鸣器
-    // buzzer_off();
+	// 播放歌曲的旋律，每个音符后面都跟随一个延时
+	// buzzer_note(50,0.5);
+	// delay_ticks(450);
+	// buzzer_note(53,0.5);
+	// delay_ticks(450);
+	// buzzer_note(60,0.5);
+	// delay_ticks(750);
+	// buzzer_note(50,0.5);
+	// delay_ticks(250);
+	// buzzer_note(60,0.5);
+	// delay_ticks(250);
+	// buzzer_note(50,0.5);
+	// delay_ticks(290);
+	// buzzer_note(60,0.5);
+	// delay_ticks(300);
+	// buzzer_note(75,0.5);
+	// delay_ticks(550);
+	// buzzer_note(80,0.5);
+	// delay_ticks(1000);
+	// 播放结束后关闭蜂鸣器
+	// buzzer_off();
 
-    // buzzer_note(85,0.5);//中音mi
-    // delay_ticks(450);
-    // buzzer_note(90,0.5);
-    // delay_ticks(450);
-    // buzzer_note(100,0.5);
-    // delay_ticks(750);
-    // buzzer_note(85,0.5);
-    // delay_ticks(250);
-    // buzzer_note(100,0.5);
-    // delay_ticks(250);
-    // buzzer_note(85,0.5);
-    // delay_ticks(290);
-    // buzzer_note(100,0.5);
-    // delay_ticks(300);
-    // buzzer_note(125,0.5);
-    // delay_ticks(550);
-    // buzzer_note(132,0.5);
-    // delay_ticks(1000);
+	// buzzer_note(85,0.5);//中音mi
+	// delay_ticks(450);
+	// buzzer_note(90,0.5);
+	// delay_ticks(450);
+	// buzzer_note(100,0.5);
+	// delay_ticks(750);
+	// buzzer_note(85,0.5);
+	// delay_ticks(250);
+	// buzzer_note(100,0.5);
+	// delay_ticks(250);
+	// buzzer_note(85,0.5);
+	// delay_ticks(290);
+	// buzzer_note(100,0.5);
+	// delay_ticks(300);
+	// buzzer_note(125,0.5);
+	// delay_ticks(550);
+	// buzzer_note(132,0.5);
+	// delay_ticks(1000);
 
-    // buzzer_note(135,0.5);//高音mi
-    // delay_ticks(450);
-    // buzzer_note(140,0.5);
-    // delay_ticks(450);
-    // buzzer_note(160,0.5);
-    // delay_ticks(750);
-    // buzzer_note(135,0.5);
-    // delay_ticks(250);
-    // buzzer_note(160,0.5);
-    // delay_ticks(250);
-    // buzzer_note(135,0.5);
-    // delay_ticks(290);
-    // buzzer_note(160,0.5);
-    // delay_ticks(300);
-    // buzzer_note(200,0.5);
-    // delay_ticks(550);
-    // buzzer_note(210,0.5);
-    // delay_ticks(1000);
+	// buzzer_note(135,0.5);//高音mi
+	// delay_ticks(450);
+	// buzzer_note(140,0.5);
+	// delay_ticks(450);
+	// buzzer_note(160,0.5);
+	// delay_ticks(750);
+	// buzzer_note(135,0.5);
+	// delay_ticks(250);
+	// buzzer_note(160,0.5);
+	// delay_ticks(250);
+	// buzzer_note(135,0.5);
+	// delay_ticks(290);
+	// buzzer_note(160,0.5);
+	// delay_ticks(300);
+	// buzzer_note(200,0.5);
+	// delay_ticks(550);
+	// buzzer_note(210,0.5);
+	// delay_ticks(1000);
 
-    //DJI
-    // buzzer_note(80, 0.5); //高音do
-    // HAL_Delay(450);
-    // buzzer_note(90, 0.5); //高音re
-    // HAL_Delay(450);
-    // buzzer_note(120, 0.5); //高音sol
-    // HAL_Delay(550);
+	//DJI
+	// buzzer_note(80, 0.5); //高音do
+	// HAL_Delay(450);
+	// buzzer_note(90, 0.5); //高音re
+	// HAL_Delay(450);
+	// buzzer_note(120, 0.5); //高音sol
+	// HAL_Delay(550);
 
-    SongSpring(); //为什么要演奏春日影！！！
+	// SongSpring(); //为什么要演奏春日影！！！
 
-    // SongLaoda();
+	SongLaoda();
 
-    buzzer_off();
+	buzzer_off();
 }
 
 void SongSpring(void) //春日影！！！
 {
-    buzzer_note(165, 0.5); //mi
-    HAL_Delay(280);
-    buzzer_note(150, 0.5); //re
-    HAL_Delay(280);
-    buzzer_note(135, 0.5); //do
-    HAL_Delay(280);
-    buzzer_note(150, 0.5); //re
-    HAL_Delay(280);
-    buzzer_note(165, 0.5); //mi
-    HAL_Delay(280);
-    buzzer_note(170, 0.5); //fa
-    HAL_Delay(200);
-    buzzer_note(165, 0.5); //mi
-    HAL_Delay(200);
-    buzzer_note(150, 0.5); //re
-    HAL_Delay(300);
+	for (auto [ratio, duration_ms]: spring)
+	{
+		const auto note = static_cast<uint16_t>(ratio * 50); // 523.25Hz是中音do的频率
+		buzzer_note(note, 0.5f);
+		HAL_Delay(duration_ms);
+		// buzzer_off();
+		// HAL_Delay(1);
+	}
 }
 
 void SongLaoda(void)
 {
-    // 播放歌曲牢大
-    // buzzer_note(85,0.5);//中音mi
-    // delay_ticks(450);
-    // buzzer_note(90,0.5);
-    // delay_ticks(450);
-    buzzer_note(100, 0.5); //so
-    HAL_Delay(200);
-    buzzer_note(150, 0.5); //re
-    HAL_Delay(200);
-    buzzer_note(135, 0.5); //do
-    HAL_Delay(200);
-    buzzer_note(100, 0.5); //so
-    HAL_Delay(500);
-    buzzer_note(135, 0.5); //do
-    HAL_Delay(170);
-    buzzer_note(150, 0.5); //re
-    HAL_Delay(170);
-    buzzer_note(165, 0.5); //mi
-    HAL_Delay(170);
-    buzzer_note(150, 0.5); //re
-    HAL_Delay(170);
-    buzzer_note(135, 0.5); //do
-    HAL_Delay(170);
-    buzzer_note(150, 0.5); //re
-    HAL_Delay(170);
-    buzzer_note(100, 0.5); //so
-    HAL_Delay(215);
-    buzzer_note(150, 0.5); //re
-    HAL_Delay(215);
-    buzzer_note(135, 0.5); //do
-    HAL_Delay(215);
-    buzzer_note(100, 0.5); //so
-    HAL_Delay(215);
+	// 播放歌曲牢大
+	// buzzer_note(85,0.5);//中音mi
+	// delay_ticks(450);
+	// buzzer_note(90,0.5);
+	// delay_ticks(450);
+	buzzer_note(100, 0.5); //so
+	HAL_Delay(200);
+	buzzer_note(150, 0.5); //re
+	HAL_Delay(200);
+	buzzer_note(135, 0.5); //do
+	HAL_Delay(200);
+	buzzer_note(100, 0.5); //so
+	HAL_Delay(500);
+	buzzer_note(135, 0.5); //do
+	HAL_Delay(170);
+	buzzer_note(150, 0.5); //re
+	HAL_Delay(170);
+	buzzer_note(165, 0.5); //mi
+	HAL_Delay(170);
+	buzzer_note(150, 0.5); //re
+	HAL_Delay(170);
+	buzzer_note(135, 0.5); //do
+	HAL_Delay(170);
+	buzzer_note(150, 0.5); //re
+	HAL_Delay(170);
+	buzzer_note(100, 0.5); //so
+	HAL_Delay(215);
+	buzzer_note(150, 0.5); //re
+	HAL_Delay(215);
+	buzzer_note(135, 0.5); //do
+	HAL_Delay(215);
+	buzzer_note(100, 0.5); //so
+	HAL_Delay(215);
 
-    // buzzer_note(45,0.5);//do
-    // HAL_Delay(150);
-    // buzzer_note(50,0.5);//mi
-    // HAL_Delay(250);
-    // buzzer_note(60,0.5);//so
-    // HAL_Delay(250);
-    // buzzer_note(65,0.5);//la
-    // HAL_Delay(250);
-    // buzzer_note(60,0.5);//so
-    // HAL_Delay(500);
+	// buzzer_note(45,0.5);//do
+	// HAL_Delay(150);
+	// buzzer_note(50,0.5);//mi
+	// HAL_Delay(250);
+	// buzzer_note(60,0.5);//so
+	// HAL_Delay(250);
+	// buzzer_note(65,0.5);//la
+	// HAL_Delay(250);
+	// buzzer_note(60,0.5);//so
+	// HAL_Delay(500);
 
-    // buzzer_note(45,0.5);//do
-    // HAL_Delay(250);
-    // buzzer_note(46,0.5);//re
-    // HAL_Delay(250);
-    // buzzer_note(46,0.5);//re
-    // HAL_Delay(250);
-    // buzzer_note(45,0.5);//do
-    // HAL_Delay(250);
-    // buzzer_note(50,0.5);//mi
-    // HAL_Delay(500);
+	// buzzer_note(45,0.5);//do
+	// HAL_Delay(250);
+	// buzzer_note(46,0.5);//re
+	// HAL_Delay(250);
+	// buzzer_note(46,0.5);//re
+	// HAL_Delay(250);
+	// buzzer_note(45,0.5);//do
+	// HAL_Delay(250);
+	// buzzer_note(50,0.5);//mi
+	// HAL_Delay(500);
 
-    // buzzer_note(50,0.5);//mi
-    // HAL_Delay(200);
-    // buzzer_note(60,0.5);//so
-    // HAL_Delay(250);
-    // buzzer_note(65,0.5);//la
-    // HAL_Delay(250);
-    // buzzer_note(72,0.5);//si
-    // HAL_Delay(250);
-    // buzzer_note(65,0.5);//la
-    // HAL_Delay(250);
-    // buzzer_note(60,0.5);//so
-    // HAL_Delay(250);
-    // buzzer_note(50,0.5);//mi
-    // HAL_Delay(200);
-    // buzzer_note(46,0.5);//re
-    // HAL_Delay(250);
-    // buzzer_note(46,0.5);//re
-    // HAL_Delay(250);
-    // buzzer_note(45,0.5);//do
-    // HAL_Delay(250);
+	// buzzer_note(50,0.5);//mi
+	// HAL_Delay(200);
+	// buzzer_note(60,0.5);//so
+	// HAL_Delay(250);
+	// buzzer_note(65,0.5);//la
+	// HAL_Delay(250);
+	// buzzer_note(72,0.5);//si
+	// HAL_Delay(250);
+	// buzzer_note(65,0.5);//la
+	// HAL_Delay(250);
+	// buzzer_note(60,0.5);//so
+	// HAL_Delay(250);
+	// buzzer_note(50,0.5);//mi
+	// HAL_Delay(200);
+	// buzzer_note(46,0.5);//re
+	// HAL_Delay(250);
+	// buzzer_note(46,0.5);//re
+	// HAL_Delay(250);
+	// buzzer_note(45,0.5);//do
+	// HAL_Delay(250);
 
-    // buzzer_note(46,0.5);//re
-    // HAL_Delay(250);
-    // buzzer_note(46,0.5);//re
-    // HAL_Delay(250);
-    // buzzer_note(50,0.5);//mi
-    // HAL_Delay(250);
-    // buzzer_note(45,0.5);//do
-    // HAL_Delay(250);
+	// buzzer_note(46,0.5);//re
+	// HAL_Delay(250);
+	// buzzer_note(46,0.5);//re
+	// HAL_Delay(250);
+	// buzzer_note(50,0.5);//mi
+	// HAL_Delay(250);
+	// buzzer_note(45,0.5);//do
+	// HAL_Delay(250);
 }
