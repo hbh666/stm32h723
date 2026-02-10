@@ -1,39 +1,76 @@
-# 设置CMake最低版本要求为3.22
+# ==============================================================================
+# 大连民族大学创一工作室 达妙开发板脚手架-CMake构建系统
+# ==============================================================================
 cmake_minimum_required(VERSION 3.22)
 
-#欢迎提示
+# ------------------------------------------------------------------------------
+# 1. 机器人兵种选择开关 (Robot Configuration)
+#    请将当前需要编译的机器人设置为 ON，其余保持 OFF
+# ------------------------------------------------------------------------------
+
+option(INFANTRY_MEC        "1. 麦轮步兵 (Mecanum Infantry)"           OFF)
+option(INFANTRY_HALF_STEER "2. 半舵步兵 (Half-Steer Infantry)"        OFF)
+option(HERO_MEC            "3. 麦轮英雄 (Mecanum Hero)"               OFF)
+option(SENTRY_STEER        "4. 舵轮哨兵 (Steer Sentry)"               OFF)
+option(INFANTRY_TRANSFORM  "5. 变形步兵 (Transformable Infantry)"     OFF)
+option(BALANCE_SERIAL      "6. 串联腿平衡步兵 (Serial-Leg Balance)"    OFF)
+option(BALANCE_PARALLEL    "7. 并联腿平衡步兵 (Parallel-Leg Balance)"  OFF)
+option(DART                "8. 飞镖架 (Dart System)"                  OFF)
+
+# ------------------------------------------------------------------------------
+# 2. 安全互斥检查 (Safety Check)
+# ------------------------------------------------------------------------------
+set(ROBOT_ENABLE_COUNT 0)
+if(INFANTRY_MEC)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+if(INFANTRY_HALF_STEER)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+if(HERO_MEC)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+if(SENTRY_STEER)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+if(INFANTRY_TRANSFORM)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+if(BALANCE_SERIAL)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+if(BALANCE_PARALLEL)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+if(DART)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+
+if(ROBOT_ENABLE_COUNT GREATER 1)
+    message(FATAL_ERROR "【错误】检测到同时开启了 ${ROBOT_ENABLE_COUNT} 个兵种！请检查 option 设置，确保只有一个为 ON。")
+elseif(ROBOT_ENABLE_COUNT EQUAL 0)
+    message(WARNING "【警告】未选择任何兵种！将仅编译通用库，无法生成有效固件。")
+endif()
+
+# ------------------------------------------------------------------------------
+# 3. 基础项目配置 (Project Setup)
+# ------------------------------------------------------------------------------
 message(STATUS "欢迎使用创一工作室达妙开发板脚手架的CMake构建系统")
-message(STATUS "如报错信息为未安装环境，请先安装STM32CubeCLT，可以在ST官网找到下载链接 https://www.st.com/en/development-tools/stm32cubeclt.html")
-message(STATUS "安装完STM32CubeCLT后记得重启刷新编译器环境变量")
-message(STATUS "如使用Makefile，需要自己添加Make构建工具的环境变量，网上搜一搜教程，都有的")
-message(STATUS "本项目默认使用arm-none-eabi-gcc，如需使用starm-clang请注意编译优化设置，截止发布前无法使用starm-clang构建的elf进行debug")
 
-# 包含自定义的工具链检测脚本
 include(cmake/DetectToolchain.cmake)
-
-# 定义项目名称
 project(TronOneH7_Scaffold)
-
-# 将项目目录下的cmake文件夹添加到模块路径中
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-# 启用编译命令导出，便于clangd等工具进行代码索引
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
-# 启用对C、C++和汇编语言的支持
 enable_language(C CXX ASM)
 
-# 设置C语言标准为C23
+# 标准设置 (C23 / C++23)
 set(CMAKE_C_STANDARD 23)
-# 要求必须支持C23标准
 set(CMAKE_C_STANDARD_REQUIRED ON)
-# 启用GNU扩展（GCC/Clang特有的扩展功能）
 set(CMAKE_C_EXTENSIONS ON)
 
-# 设置C++语言标准为C++23
 set(CMAKE_CXX_STANDARD 23)
-# 要求必须支持C++23标准
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# 启用GNU扩展
 set(CMAKE_CXX_EXTENSIONS ON)
 
 #标准提示
@@ -58,75 +95,166 @@ endif ()
 message(STATUS "找到的 C 编译器路径: ${CMAKE_C_COMPILER}")
 message(STATUS "找到的 C++ 编译器路径: ${CMAKE_CXX_COMPILER}")
 
-# 设置C++特定编译选项：启用RTTI，禁用volatile警告
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -Wno-volatile")
-
-## 最严格的一集，Warning也是Error！
-#set(CMAKE_CXX_FLAGS "$ENV{CXX_FLAGS} -Werror")  # 设置 C++ 编译选项
-#set(CMAKE_C_FLAGS "$ENV{C_FLAGS} -Werror")      # 设置 C 编译选项
-
-# 如果没有指定构建类型，默认为Debug模式
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif ()
-# 打印当前构建类型
+
+# 编译器标志
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -Wno-volatile")
+
 message(STATUS "当前构建类型: ${CMAKE_BUILD_TYPE}")
 
-# 创建可执行文件目标
+# ------------------------------------------------------------------------------
+# 4. 目标与库链接 (Target & Libraries)
+# ------------------------------------------------------------------------------
 add_executable(${CMAKE_PROJECT_NAME})
 
-# 包含编译选项配置文件
 include(CompileOptions)
-# 包含查找模块（当前被注释掉）
+
+# FindModules
+# 只有运行了这个，CMake 才会去执行 git clone 云端modules 并配置它的路径
 include(FindModules)
 
-
-# 添加STM32CubeMX生成的源码子目录
+# 添加 STM32CubeMX 底层库
 add_subdirectory(cmake/stm32cubemx)
 
-# 为目标添加链接库
+# 链接库
 target_link_libraries(${CMAKE_PROJECT_NAME}
-        stm32cubemx  # STM32CubeMX生成的库
-        #        rpl::rpl     # 第三方库（当前被注释掉）
+        stm32cubemx
+        # 【关键修复 2】恢复 ems 的链接
+        # 因为 ems 是通过 FindModules 下载的外部库，不在 User_Code 里。
+        # 链接这个库会自动把 ems 的头文件路径加入到你的工程里。
         ems
         ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a
 )
 
 link_libraries("Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a")
-# 添加包含路径
+
 include_directories(
         ./Drivers/CMSIS/Include
         ./Drivers/CMSIS/DSP/Include/
 )
-# 添加链接目录
 link_directories(
         ./Drivers/CMSIS/DSP/Lib/GCC
 )
 
-# 递归查找User_Code目录下的所有C和C++源文件
-file(GLOB_RECURSE USER_SOURCES "${PROJECT_SOURCE_DIR}/User_Code/*.c" "${PROJECT_SOURCE_DIR}/User_Code/*.cpp")
+# ==============================================================================
+# 5. 源码与头文件管理 (Source & Header Management)
+# ==============================================================================
 
-# 将用户源文件添加到可执行目标中
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-        ${USER_SOURCES}
-        # 可以在此处添加其他用户源文件
-)
-
-# 递归查找用户头文件
+# ------------------------------------------------------------------------------
+# A. 头文件管理：全自动模式 (The Old Way)
+#    扫描 User_Code 下的所有头文件。
+# ------------------------------------------------------------------------------
+message(STATUS ">> [Header] 正在全自动递归扫描 User_Code 下所有头文件路径...")
 file(GLOB_RECURSE USER_HEADERS "${CMAKE_SOURCE_DIR}/User_Code/*.h" "${CMAKE_SOURCE_DIR}/User_Code/*.hpp")
 
-# 为每个头文件所在目录添加包含路径
 foreach (header ${USER_HEADERS})
     get_filename_component(dir ${header} DIRECTORY)  # 获取头文件所在目录
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${dir})  # 添加为私有包含目录
 endforeach ()
 
-# 添加其他包含路径（当前为空）
+
+# ------------------------------------------------------------------------------
+# B. 源文件管理：半自动模式 (防止兵种冲突)
+#    通用部分全自动扫描，特定兵种部分根据开关选择性扫描。
+# ------------------------------------------------------------------------------
+
+# 1. 添加通用代码 (BSP & Module & Application 通用框架)
+#    包含 bsp, module 以及 application 下的通用组件 (chassis_app 等)
+file(GLOB_RECURSE COMMON_SOURCES
+        "${PROJECT_SOURCE_DIR}/User_Code/bsp/*.c"
+        "${PROJECT_SOURCE_DIR}/User_Code/bsp/*.cpp"
+        "${PROJECT_SOURCE_DIR}/User_Code/module/*.c"
+        "${PROJECT_SOURCE_DIR}/User_Code/module/*.cpp"
+        # 包含 application 根目录下的 robot.c 等文件 (不递归)
+        "${PROJECT_SOURCE_DIR}/User_Code/application/*.c"
+        "${PROJECT_SOURCE_DIR}/User_Code/application/*.cpp"
+        # 包含 application 下的通用模块 (根据目录结构递归)
+        "${PROJECT_SOURCE_DIR}/User_Code/application/chassis_app/*.c" "${PROJECT_SOURCE_DIR}/User_Code/application/chassis_app/*.cpp"
+        "${PROJECT_SOURCE_DIR}/User_Code/application/gimbal_app/*.c"  "${PROJECT_SOURCE_DIR}/User_Code/application/gimbal_app/*.cpp"
+        "${PROJECT_SOURCE_DIR}/User_Code/application/shoot_app/*.c"   "${PROJECT_SOURCE_DIR}/User_Code/application/shoot_app/*.cpp"
+        "${PROJECT_SOURCE_DIR}/User_Code/application/indicator_app/*.c" "${PROJECT_SOURCE_DIR}/User_Code/application/indicator_app/*.cpp"
+        "${PROJECT_SOURCE_DIR}/User_Code/application/vision_app/*.c"   "${PROJECT_SOURCE_DIR}/User_Code/application/vision_app/*.cpp"
+)
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${COMMON_SOURCES})
+
+
+# 2. 根据开关添加特定兵种代码 (Specific Code)
+
+# 定义一个变量来存储当前激活的 App 路径
+set(ACTIVE_APP_DIR "")
+
+# 1. 麦轮步兵
+if(INFANTRY_MEC)
+    message(WARNING ">> 当前构建兵种: 麦轮步兵 (INFANTRY_MEC)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_mec")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_MEC)
+
+    # 2. 半舵步兵
+elseif(INFANTRY_HALF_STEER)
+    message(WARNING ">> 当前构建兵种: 半舵步兵 (INFANTRY_HALF_STEER)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_half_steer")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_HALF_STEER)
+
+    # 3. 麦轮英雄
+elseif(HERO_MEC)
+    message(WARNING ">> 当前构建兵种: 麦轮英雄 (HERO_MEC)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/hero_mec")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE HERO_MEC)
+
+    # 4. 舵轮哨兵
+elseif(SENTRY_STEER)
+    message(WARNING ">> 当前构建兵种: 舵轮哨兵 (SENTRY_STEER)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/sentry_steer")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE SENTRY_STEER SENTRY)
+
+    # 5. 变形步兵
+elseif(INFANTRY_TRANSFORM)
+    message(WARNING ">> 当前构建兵种: 变形步兵 (INFANTRY_TRANSFORM)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_transform")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_TRANSFORM)
+
+    # 6. 串联腿平衡步兵
+elseif(BALANCE_SERIAL)
+    message(WARNING ">> 当前构建兵种: 串联腿平衡步兵 (BALANCE_SERIAL)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/balance_serial")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE BALANCE_SERIAL BALANCE)
+
+    # 7. 并联腿平衡步兵
+elseif(BALANCE_PARALLEL)
+    message(WARNING ">> 当前构建兵种: 并联腿平衡步兵 (BALANCE_PARALLEL)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/balance_parallel")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE BALANCE_PARALLEL BALANCE)
+
+    # 8. 飞镖架
+elseif(DART)
+    message(WARNING ">> 当前构建兵种: 飞镖架 (DART)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/dart")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE DART)
+
+endif()
+
+# 执行特定代码的添加
+if(ACTIVE_APP_DIR)
+    if(EXISTS "${ACTIVE_APP_DIR}")
+        # 添加该兵种目录下的所有源码
+        file(GLOB_RECURSE APP_SOURCES "${ACTIVE_APP_DIR}/*.c" "${ACTIVE_APP_DIR}/*.cpp")
+        target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${APP_SOURCES})
+    else()
+        message(FATAL_ERROR ">> [ERROR] 选中的兵种目录不存在: ${ACTIVE_APP_DIR}")
+    endif()
+endif()
+
+# ------------------------------------------------------------------------------
+# 6. 其他设置
+# ------------------------------------------------------------------------------
+
+# 其他自定义头文件路径（如果还有不在 User_Code 里的）
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
         # 可以在此处添加其他包含目录
 )
 
-# 添加全局宏定义
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-        #        RM_REFEREE  # 裁判系统宏定义（当前被注释掉）
+        # RM_REFEREE
 )
