@@ -42,6 +42,47 @@ static void IMUPWMSet(uint16_t pwm)
 }
 
 /**
+ * @brief 死区滤波函数
+ * @param input 输入数据
+ * @param dead_zone 死区阈值
+ * @return 滤波后的数据
+ */
+static float DeadZoneFilter(float input, float dead_zone)
+{
+    if (fabsf(input) < dead_zone)
+    {
+        return 0.0f;
+    }
+    else if (input > 0)
+    {
+        return input - dead_zone;
+    }
+    else
+    {
+        return input + dead_zone;
+    }
+}
+
+/**
+ * @brief 应用死区滤波到IMU数据
+ * @param gyro 陀螺仪数据
+ * @param accel 加速度计数据
+ */
+static void ApplyDeadZoneFilter(float gyro[3], float accel[3])
+{
+    for (uint8_t i = 0; i < 3; ++i)
+    {
+        // 保存原始数据
+        INS.GyroRaw[i] = gyro[i];
+        INS.AccelRaw[i] = accel[i];
+        
+        // 应用死区滤波
+        gyro[i] = DeadZoneFilter(gyro[i], INS.GyroDeadZone[i]);
+        accel[i] = DeadZoneFilter(accel[i], INS.AccelDeadZone[i]);
+    }
+}
+
+/**
  * @brief 温度控制
  *
  */
@@ -115,6 +156,18 @@ attitude_t *INS_Init(void)
 
     // noise of accel is relatively big and of high freq,thus lpf is used
     INS.AccelLPF = 0.0085;
+    
+    // 设置默认死区阈值 - 根据实际零漂情况调整这些值
+    // 陀螺仪死区阈值 (单位: rad/s)
+    INS.GyroDeadZone[X] = 0.01f; // X轴死区
+    INS.GyroDeadZone[Y] = 0.01f; // Y轴死区
+    INS.GyroDeadZone[Z] = 0.01f; // Z轴死区
+    
+    // 加速度计死区阈值 (单位: m/s²)
+    INS.AccelDeadZone[X] = 0.05f; // X轴死区
+    INS.AccelDeadZone[Y] = 0.05f; // Y轴死区
+    INS.AccelDeadZone[Z] = 0.05f; // Z轴死区
+    
     DWT_GetDeltaT(&INS_DWT_Count);
     return (attitude_t *) &INS.Gyro; // @todo: 这里偷懒了,不要这样做! 修改INT_t结构体可能会导致异常,待修复.
 }
@@ -133,12 +186,16 @@ void INS_Task(void)
     {
         BMI088_Read(&BMI088);
 
+        // 读取原始IMU数据
         INS.Accel[X] = BMI088.Accel[X];
         INS.Accel[Y] = BMI088.Accel[Y];
         INS.Accel[Z] = BMI088.Accel[Z];
         INS.Gyro[X] = BMI088.Gyro[X];
         INS.Gyro[Y] = BMI088.Gyro[Y];
         INS.Gyro[Z] = BMI088.Gyro[Z];
+
+        // 应用死区滤波处理零漂
+        ApplyDeadZoneFilter(INS.Gyro, INS.Accel);
 
         // demo function,用于修正安装误差,可以不管,本demo暂时没用
         IMU_Param_Correction(&IMU_Param, INS.Gyro, INS.Accel);

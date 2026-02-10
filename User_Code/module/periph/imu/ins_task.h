@@ -45,6 +45,12 @@ typedef struct
 
     float AccelLPF; // 加速度低通滤波系数
 
+    // 死区滤波参数 - 用于处理零漂
+    float GyroDeadZone[3]; // 陀螺仪死区阈值
+    float AccelDeadZone[3]; // 加速度计死区阈值
+    float GyroRaw[3];      // 原始陀螺仪数据
+    float AccelRaw[3];     // 原始加速度计数据
+
     // bodyframe在绝对系的向量表示
     float xn[3];
     float yn[3];
