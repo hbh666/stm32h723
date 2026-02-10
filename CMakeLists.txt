@@ -1,6 +1,13 @@
 # 设置CMake最低版本要求为3.22
 cmake_minimum_required(VERSION 3.22)
 
+#欢迎提示
+message(STATUS "欢迎使用创一工作室达妙开发板脚手架的CMake构建系统")
+message(STATUS "如报错信息为未安装环境，请先安装STM32CubeCLT，可以在ST官网找到下载链接 https://www.st.com/en/development-tools/stm32cubeclt.html")
+message(STATUS "安装完STM32CubeCLT后记得重启刷新编译器环境变量")
+message(STATUS "如使用Makefile，需要自己添加Make构建工具的环境变量，网上搜一搜教程，都有的")
+message(STATUS "本项目默认使用arm-none-eabi-gcc，如需使用starm-clang请注意编译优化设置，截止发布前无法使用starm-clang构建的elf进行debug")
+
 # 包含自定义的工具链检测脚本
 include(cmake/DetectToolchain.cmake)
 
@@ -29,6 +36,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # 启用GNU扩展
 set(CMAKE_CXX_EXTENSIONS ON)
 
+#标准提示
+message(STATUS "本项目使用 C ${CMAKE_C_STANDARD} 及 C++ ${CMAKE_CXX_STANDARD} 标准")
+
 # 根据构建类型设置不同的编译选项
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_C_FLAGS_DEBUG "-O0 -g")  # 调试模式：无优化，包含调试信息
@@ -44,6 +54,10 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
 endif ()
 
+# 输出编译器路径
+message(STATUS "找到的 C 编译器路径: ${CMAKE_C_COMPILER}")
+message(STATUS "找到的 C++ 编译器路径: ${CMAKE_CXX_COMPILER}")
+
 # 设置C++特定编译选项：启用RTTI，禁用volatile警告
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -Wno-volatile")
 
@@ -56,7 +70,7 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif ()
 # 打印当前构建类型
-message("Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "当前构建类型: ${CMAKE_BUILD_TYPE}")
 
 # 创建可执行文件目标
 add_executable(${CMAKE_PROJECT_NAME})
