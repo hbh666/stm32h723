@@ -82,7 +82,7 @@
 
 ## 致谢
 
-本项目高度参考以下项目的代码/库文件或仅参考设计思想，它们是：
+本项目高度参考以下项目的代码/库文件或仅参考部分设计思想，它们是：
 
 湖南大学-跃鹿 [Basic_framework](https://gitee.com/hnuyuelurm/basic_framework)
 
