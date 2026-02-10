@@ -315,7 +315,7 @@ void systemstart_song(void)
 
 	// SongSpring(); //为什么要演奏春日影！！！
 
-	SongLaoda();
+	// SongLaoda();
 
 	buzzer_off();
 }
