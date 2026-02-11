@@ -23,6 +23,7 @@ option(INFANTRY_TRANSFORM  "5. 变形步兵 (Transformable Infantry)"     OFF)
 option(BALANCE_SERIAL      "6. 串联腿平衡步兵 (Serial-Leg Balance)"    OFF)
 option(BALANCE_PARALLEL    "7. 并联腿平衡步兵 (Parallel-Leg Balance)"  OFF)
 option(DART                "8. 飞镖架 (Dart System)"                  OFF)
+option(DEV_DEBUG           "9. 调试模式 (Debug Mode)"                 ON)
 
 # ------------------------------------------------------------------------------
 # 2. 安全互斥检查 (Safety Check)
@@ -50,6 +51,9 @@ if(BALANCE_PARALLEL)
     math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
 endif()
 if(DART)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+if(DEV_DEBUG)
     math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
 endif()
 
@@ -164,9 +168,9 @@ endforeach ()
 #    通用部分全自动扫描，特定兵种部分根据开关选择性扫描。
 # ------------------------------------------------------------------------------
 
-message(NOTICE ">> [BSP Source] 正在全自动递归扫描 User_Code/bsp下所有源文件路径...")
-message(NOTICE ">> [Module Source] 正在全自动递归扫描 User_Code/module下所有源文件路径...")
-message(NOTICE ">> [Application Source] 正在全自动递归扫描 User_Code/application下所有通用APP模块的源文件路径...")
+message(NOTICE ">> [INFO] 正在全自动递归扫描 User_Code/bsp下所有源文件路径...")
+message(NOTICE ">> [INFO] 正在全自动递归扫描 User_Code/module下所有源文件路径...")
+message(NOTICE ">> [INFO] 正在全自动递归扫描 User_Code/application下所有通用APP模块的源文件路径...")
 
 # 1. 添加通用代码 (BSP & Module & Application 通用框架)
 #    包含 bsp, module 以及 application 下的通用组件
@@ -190,7 +194,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${COMMON_SOURCES})
 list(LENGTH COMMON_SOURCES COMMON_SOURCES_COUNT)
 
 # 输出统计结果
-message(NOTICE ">> [General Source] 通用库源文件扫描结束，在通用库中共扫描到 ${COMMON_SOURCES_COUNT} 个源文件")
+message(NOTICE ">> [INFO] 通用库源文件扫描结束，在通用库中共扫描到 ${COMMON_SOURCES_COUNT} 个源文件")
 
 # 2. 根据开关添加特定兵种代码 (Specific Code)
 
@@ -200,69 +204,81 @@ set(ACTIVE_APP_DIR "")
 # 1. 麦轮步兵
 if(INFANTRY_MEC)
     message(WARNING ">> 当前构建兵种: 麦轮步兵 (INFANTRY_MEC)")
-    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_mec")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/infantry_mec")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_MEC)
     message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 麦轮步兵 (INFANTRY_MEC)")
 
     # 2. 半舵步兵
 elseif(INFANTRY_HALF_STEER)
     message(NOTICE ">> 当前构建兵种: 半舵步兵 (INFANTRY_HALF_STEER)")
-    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_half_steer")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/infantry_half_steer")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_HALF_STEER)
     message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 半舵步兵 (INFANTRY_HALF_STEER)")
 
     # 3. 麦轮英雄
 elseif(HERO_MEC)
     message(NOTICE ">> 当前构建兵种: 麦轮英雄 (HERO_MEC)")
-    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/hero_mec")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/hero_mec")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE HERO_MEC)
     message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 麦轮英雄 (HERO_MEC)")
 
     # 4. 舵轮哨兵
 elseif(SENTRY_STEER)
     message(NOTICE ">> 当前构建兵种: 舵轮哨兵 (SENTRY_STEER)")
-    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/sentry_steer")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/sentry_steer")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE SENTRY_STEER SENTRY)
     message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 舵轮哨兵 (SENTRY_STEER)")
 
     # 5. 变形步兵
 elseif(INFANTRY_TRANSFORM)
     message(NOTICE ">> 当前构建兵种: 变形步兵 (INFANTRY_TRANSFORM)")
-    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_transform")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/infantry_transform")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_TRANSFORM)
     message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 变形步兵 (INFANTRY_TRANSFORM)")
 
     # 6. 串联腿平衡步兵
 elseif(BALANCE_SERIAL)
     message(NOTICE ">> 当前构建兵种: 串联腿平衡步兵 (BALANCE_SERIAL)")
-    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/balance_serial")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/balance_serial")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE BALANCE_SERIAL BALANCE)
     message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 串联腿平衡步兵 (BALANCE_SERIAL)")
 
     # 7. 并联腿平衡步兵
 elseif(BALANCE_PARALLEL)
     message(NOTICE ">> 当前构建兵种: 并联腿平衡步兵 (BALANCE_PARALLEL)")
-    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/balance_parallel")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/balance_parallel")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE BALANCE_PARALLEL BALANCE)
     message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 并联腿平衡步兵 (BALANCE_PARALLEL)")
 
     # 8. 飞镖架
 elseif(DART)
     message(NOTICE ">> 当前构建兵种: 飞镖架 (DART)")
-    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/dart")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/dart")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE DART)
     message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 飞镖架 (DART)")
 
-endif()
+# 9. 调试模式
+elseif(DEV_DEBUG)
+    message(NOTICE ">> 当前构建兵种: 调试模式 (DEV_DEBUG)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/dev_tasks")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE DEV_DEBUG)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 调试模式 (DEV_DEBUG)")
 
-# message(NOTICE ">> [Application Source] 正在全自动递归扫描 ${ACTIVE_APP_DIR} 下所有源文件路径...")
+endif()
 
 # 执行特定代码的添加
 if(ACTIVE_APP_DIR)
     if(EXISTS "${ACTIVE_APP_DIR}")
         # 添加该兵种目录下的所有源码
         file(GLOB_RECURSE APP_SOURCES "${ACTIVE_APP_DIR}/*.c" "${ACTIVE_APP_DIR}/*.cpp")
+
+        # --- 新增：统计文件数量 ---
+        list(LENGTH APP_SOURCES APP_SOURCES_COUNT)
+        message(NOTICE ">> [INFO] 兵种对应的源文件目录: ${ACTIVE_APP_DIR}")
+        message(NOTICE ">> [INFO] 已添加源文件数量: ${APP_SOURCES_COUNT}")
+
         target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${APP_SOURCES})
+
     else()
         message(FATAL_ERROR ">> [ERROR] 选中的兵种目录不存在: ${ACTIVE_APP_DIR}")
     endif()
