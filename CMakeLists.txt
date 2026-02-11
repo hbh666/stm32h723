@@ -190,7 +190,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${COMMON_SOURCES})
 list(LENGTH COMMON_SOURCES COMMON_SOURCES_COUNT)
 
 # 输出统计结果
-message(NOTICE ">> [General Source] 源文件扫描结束，在通用库中共扫描到 ${COMMON_SOURCES_COUNT} 个源文件")
+message(NOTICE ">> [General Source] 通用库源文件扫描结束，在通用库中共扫描到 ${COMMON_SOURCES_COUNT} 个源文件")
 
 # 2. 根据开关添加特定兵种代码 (Specific Code)
 
