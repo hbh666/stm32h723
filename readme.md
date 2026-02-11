@@ -110,8 +110,9 @@
 
 大连民族大学-C.ONE [rpl](https://gitee.com/dlmu-cone/rpl)
 
-哈工程-创梦之翼(
-不过玺佬现在应该是在南科大叭) [IMU驱动控制程序-四元数及欧拉角解算](https://github.com/WangHongxi2001/RoboMaster-C-Board-INS-Example)
+大连民族大学-C.ONE [ems](https://gitee.com/dlmu-cone/ems)
+
+哈工程-创梦之翼(不过玺佬现在应该是在南科大叭) [IMU驱动控制程序-四元数及欧拉角解算](https://github.com/WangHongxi2001/RoboMaster-C-Board-INS-Example)
 
 西交利物浦大学-GMaster [电机功率模型](https://github.com/MaxwellDemonLin/Motor-modeling-and-power-control)
 

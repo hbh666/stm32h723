@@ -3,6 +3,13 @@
 # ==============================================================================
 cmake_minimum_required(VERSION 3.22)
 
+#欢迎提示
+message(NOTICE ">> 欢迎使用创一工作室达妙开发板脚手架的CMake构建系统")
+message(NOTICE ">> 如报错信息为未安装环境或找不到可用编译器，请先安装STM32CubeCLT，可以在ST官网找到下载链接 https://www.st.com/en/development-tools/stm32cubeclt.html")
+message(NOTICE ">> 安装完STM32CubeCLT后记得重启刷新编译器环境变量或自己添加到环境变量PATH中")
+message(NOTICE ">> 如使用Makefile，需要自己添加Make构建工具的环境变量，网上搜一搜教程，都有的")
+message(NOTICE ">> 本项目默认使用arm-none-eabi-gcc，如需使用starm-clang请注意编译优化设置，截止发布前无法使用starm-clang构建的elf进行debug")
+
 # ------------------------------------------------------------------------------
 # 1. 机器人兵种选择开关 (Robot Configuration)
 #    请将当前需要编译的机器人设置为 ON，其余保持 OFF
@@ -55,7 +62,6 @@ endif()
 # ------------------------------------------------------------------------------
 # 3. 基础项目配置 (Project Setup)
 # ------------------------------------------------------------------------------
-message(STATUS "欢迎使用创一工作室达妙开发板脚手架的CMake构建系统")
 
 include(cmake/DetectToolchain.cmake)
 project(TronOneH7_Scaffold)
@@ -74,7 +80,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 #标准提示
-message(STATUS "本项目使用 C ${CMAKE_C_STANDARD} 及 C++ ${CMAKE_CXX_STANDARD} 标准")
+message(NOTICE ">> 本项目使用 C ${CMAKE_C_STANDARD} 及 C++ ${CMAKE_CXX_STANDARD} 标准")
 
 # 根据构建类型设置不同的编译选项
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -92,8 +98,8 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
 endif ()
 
 # 输出编译器路径
-message(STATUS "找到的 C 编译器路径: ${CMAKE_C_COMPILER}")
-message(STATUS "找到的 C++ 编译器路径: ${CMAKE_CXX_COMPILER}")
+message(NOTICE ">> [Assembler] 找到的 C 编译器路径: ${CMAKE_C_COMPILER}")
+message(NOTICE ">> [Assembler] 找到的 C++ 编译器路径: ${CMAKE_CXX_COMPILER}")
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
@@ -102,7 +108,7 @@ endif ()
 # 编译器标志
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -Wno-volatile")
 
-message(STATUS "当前构建类型: ${CMAKE_BUILD_TYPE}")
+message(NOTICE ">> [Build Type] 当前构建类型: ${CMAKE_BUILD_TYPE}")
 
 # ------------------------------------------------------------------------------
 # 4. 目标与库链接 (Target & Libraries)
@@ -121,9 +127,8 @@ add_subdirectory(cmake/stm32cubemx)
 # 链接库
 target_link_libraries(${CMAKE_PROJECT_NAME}
         stm32cubemx
-        # 【关键修复 2】恢复 ems 的链接
         # 因为 ems 是通过 FindModules 下载的外部库，不在 User_Code 里。
-        # 链接这个库会自动把 ems 的头文件路径加入到你的工程里。
+        # 链接这个库会自动把 ems 的头文件路径加入到工程里。
         ems
         ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a
 )
@@ -143,10 +148,9 @@ link_directories(
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# A. 头文件管理：全自动模式 (The Old Way)
-#    扫描 User_Code 下的所有头文件。
+# A. 头文件管理：全自动模式，扫描 User_Code 下的所有头文件。
 # ------------------------------------------------------------------------------
-message(STATUS ">> [Header] 正在全自动递归扫描 User_Code 下所有头文件路径...")
+message(NOTICE ">> [Header] 正在全自动递归扫描 User_Code 下所有头文件路径...")
 file(GLOB_RECURSE USER_HEADERS "${CMAKE_SOURCE_DIR}/User_Code/*.h" "${CMAKE_SOURCE_DIR}/User_Code/*.hpp")
 
 foreach (header ${USER_HEADERS})
@@ -159,6 +163,10 @@ endforeach ()
 # B. 源文件管理：半自动模式 (防止兵种冲突)
 #    通用部分全自动扫描，特定兵种部分根据开关选择性扫描。
 # ------------------------------------------------------------------------------
+
+message(NOTICE ">> [BSP Source] 正在全自动递归扫描 User_Code/bsp下所有源文件路径...")
+message(NOTICE ">> [Module Source] 正在全自动递归扫描 User_Code/module下所有源文件路径...")
+message(NOTICE ">> [Application Source] 正在全自动递归扫描 User_Code/application下所有通用APP模块路径...")
 
 # 1. 添加通用代码 (BSP & Module & Application 通用框架)
 #    包含 bsp, module 以及 application 下的通用组件 (chassis_app 等)
@@ -179,6 +187,10 @@ file(GLOB_RECURSE COMMON_SOURCES
 )
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${COMMON_SOURCES})
 
+list(LENGTH COMMON_SOURCES COMMON_SOURCES_COUNT)
+
+# 输出统计结果
+message(NOTICE ">> [Source] 源文件扫描结束，在通用库中共扫描到 ${COMMON_SOURCES_COUNT} 个源文件")
 
 # 2. 根据开关添加特定兵种代码 (Specific Code)
 
@@ -193,47 +205,49 @@ if(INFANTRY_MEC)
 
     # 2. 半舵步兵
 elseif(INFANTRY_HALF_STEER)
-    message(WARNING ">> 当前构建兵种: 半舵步兵 (INFANTRY_HALF_STEER)")
+    message(NOTICE ">> 当前构建兵种: 半舵步兵 (INFANTRY_HALF_STEER)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_half_steer")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_HALF_STEER)
 
     # 3. 麦轮英雄
 elseif(HERO_MEC)
-    message(WARNING ">> 当前构建兵种: 麦轮英雄 (HERO_MEC)")
+    message(NOTICE ">> 当前构建兵种: 麦轮英雄 (HERO_MEC)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/hero_mec")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE HERO_MEC)
 
     # 4. 舵轮哨兵
 elseif(SENTRY_STEER)
-    message(WARNING ">> 当前构建兵种: 舵轮哨兵 (SENTRY_STEER)")
+    message(NOTICE ">> 当前构建兵种: 舵轮哨兵 (SENTRY_STEER)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/sentry_steer")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE SENTRY_STEER SENTRY)
 
     # 5. 变形步兵
 elseif(INFANTRY_TRANSFORM)
-    message(WARNING ">> 当前构建兵种: 变形步兵 (INFANTRY_TRANSFORM)")
+    message(NOTICE ">> 当前构建兵种: 变形步兵 (INFANTRY_TRANSFORM)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_transform")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_TRANSFORM)
 
     # 6. 串联腿平衡步兵
 elseif(BALANCE_SERIAL)
-    message(WARNING ">> 当前构建兵种: 串联腿平衡步兵 (BALANCE_SERIAL)")
+    message(NOTICE ">> 当前构建兵种: 串联腿平衡步兵 (BALANCE_SERIAL)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/balance_serial")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE BALANCE_SERIAL BALANCE)
 
     # 7. 并联腿平衡步兵
 elseif(BALANCE_PARALLEL)
-    message(WARNING ">> 当前构建兵种: 并联腿平衡步兵 (BALANCE_PARALLEL)")
+    message(NOTICE ">> 当前构建兵种: 并联腿平衡步兵 (BALANCE_PARALLEL)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/balance_parallel")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE BALANCE_PARALLEL BALANCE)
 
     # 8. 飞镖架
 elseif(DART)
-    message(WARNING ">> 当前构建兵种: 飞镖架 (DART)")
+    message(NOTICE ">> 当前构建兵种: 飞镖架 (DART)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/dart")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE DART)
 
 endif()
+
+# message(NOTICE ">> [Application Source] 正在全自动递归扫描 ${ACTIVE_APP_DIR} 下所有源文件路径...")
 
 # 执行特定代码的添加
 if(ACTIVE_APP_DIR)
