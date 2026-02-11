@@ -3,7 +3,7 @@
 #include "string.h"
 #include "bsp_log.h"
 
-/* message_center是fake head node,是方便链表编写的技巧,这样就不需要处理链表头的特殊情况 */
+/* message_hub 是fake head node,是方便链表编写的技巧,这样就不需要处理链表头的特殊情况 */
 static Publisher_t message_hub = {
         .topic_name = "Message_Manager",
         .first_subs = NULL,
