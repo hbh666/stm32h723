@@ -12,7 +12,7 @@
  ******************************************************************************
  */
 #include "ins_task.h"
-#include "../../algorithm/controller/pid/pid.h"
+#include "pid.h"
 #include "QuaternionEKF.h"
 #include "spi.h"
 #include "tim.h"
