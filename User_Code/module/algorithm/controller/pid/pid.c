@@ -2,13 +2,15 @@
  * @file controller.c
  * @author wanghongxi
  * @author modified by TuxMonkey
- * @brief  PID控制器定义
+ * @brief  PID控制器及前馈控制器
  * @version beta
  * @date 2026-02-12
  *
  * @copyright Copyright (c) 2025 DLMU.CONE EC all rights reserved
  */
+
 #include "pid.h"
+#include "ffc.h"
 #include "memory.h"
 
 /* ----------------------------下面是pid优化环节的实现---------------------------- */
@@ -80,7 +82,8 @@ static void f_Output_Filter(PIDInstance *pid)
                   pid->Last_Output * pid->Output_LPF_RC / (pid->Output_LPF_RC + pid->dt);
 }
 
-// 前馈控制计算
+// 前馈控制计算（后续考虑写成电流/速度前馈）
+
 static void f_FeedForward_Control(PIDInstance *pid)
 {
     // 更新设定值历史

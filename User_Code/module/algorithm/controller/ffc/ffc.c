@@ -44,7 +44,7 @@ float FFC_FeedForwardCalc(FFC_Handle_t *handle, float target) {
     handle->result = abs_clip(handle->result, handle->configs.MaxOutput);
 
     // 更新历史状态
-    // 注意：原 C++ 代码中先更新 LAST 再更新 LLAST，这会导致移位寄存器逻辑变为 LLAST = (新的)LAST。
+    // 注意：原代码中先更新 LAST 再更新 LLAST，这会导致移位寄存器逻辑变为 LLAST = (新的)LAST。
     // 为了保持转换的一致性，这里保留原代码的顺序。
     handle->set[FFC_LAST]  = handle->set[FFC_NOW];
     handle->set[FFC_LLAST] = handle->set[FFC_LAST];
@@ -70,7 +70,6 @@ void FFC_CheckPointer(FFC_Handle_t *handle, float *get) {
 void FFC_Init(FFC_Handle_t *handle, FFC_Init_Config_s config, float *get) {
     if (handle == NULL) return;
 
-    // 对应 C++: FFCSetConfig(config, get)
     FFC_SetConfig(handle, config);
     if (get != NULL) {
         FFC_CheckPointer(handle, get);
