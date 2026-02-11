@@ -8,7 +8,7 @@ message(NOTICE ">> 欢迎使用创一工作室达妙开发板脚手架的CMake�
 message(NOTICE ">> 如报错信息为未安装环境或找不到可用编译器，请先安装STM32CubeCLT，可以在ST官网找到下载链接 https://www.st.com/en/development-tools/stm32cubeclt.html")
 message(NOTICE ">> 安装完STM32CubeCLT后记得重启刷新编译器环境变量或自己添加到环境变量PATH中")
 message(NOTICE ">> 如使用Makefile，需要自己添加Make构建工具的环境变量，网上搜一搜教程，都有的")
-message(NOTICE ">> 本项目默认使用arm-none-eabi-gcc，如需使用starm-clang请注意编译优化设置，截止发布前无法使用starm-clang构建的elf进行debug")
+message(NOTICE ">> 本项目默认使用arm-none-eabi-gcc，如需使用starm-clang请注意编译优化设置，截止发布前暂无法使用starm-clang构建的elf进行debug，无法打断点")
 
 # ------------------------------------------------------------------------------
 # 1. 机器人兵种选择开关 (Robot Configuration)
@@ -150,7 +150,7 @@ link_directories(
 # ------------------------------------------------------------------------------
 # A. 头文件管理：全自动模式，扫描 User_Code 下的所有头文件。
 # ------------------------------------------------------------------------------
-message(NOTICE ">> [Header] 正在全自动递归扫描 User_Code 下所有头文件路径...")
+message(NOTICE ">> [Searching All Header] 正在全自动递归扫描 User_Code 下所有头文件路径...")
 file(GLOB_RECURSE USER_HEADERS "${CMAKE_SOURCE_DIR}/User_Code/*.h" "${CMAKE_SOURCE_DIR}/User_Code/*.hpp")
 
 foreach (header ${USER_HEADERS})
@@ -166,10 +166,10 @@ endforeach ()
 
 message(NOTICE ">> [BSP Source] 正在全自动递归扫描 User_Code/bsp下所有源文件路径...")
 message(NOTICE ">> [Module Source] 正在全自动递归扫描 User_Code/module下所有源文件路径...")
-message(NOTICE ">> [Application Source] 正在全自动递归扫描 User_Code/application下所有通用APP模块路径...")
+message(NOTICE ">> [Application Source] 正在全自动递归扫描 User_Code/application下所有通用APP模块的源文件路径...")
 
 # 1. 添加通用代码 (BSP & Module & Application 通用框架)
-#    包含 bsp, module 以及 application 下的通用组件 (chassis_app 等)
+#    包含 bsp, module 以及 application 下的通用组件
 file(GLOB_RECURSE COMMON_SOURCES
         "${PROJECT_SOURCE_DIR}/User_Code/bsp/*.c"
         "${PROJECT_SOURCE_DIR}/User_Code/bsp/*.cpp"
@@ -190,7 +190,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${COMMON_SOURCES})
 list(LENGTH COMMON_SOURCES COMMON_SOURCES_COUNT)
 
 # 输出统计结果
-message(NOTICE ">> [Source] 源文件扫描结束，在通用库中共扫描到 ${COMMON_SOURCES_COUNT} 个源文件")
+message(NOTICE ">> [General Source] 源文件扫描结束，在通用库中共扫描到 ${COMMON_SOURCES_COUNT} 个源文件")
 
 # 2. 根据开关添加特定兵种代码 (Specific Code)
 
@@ -202,48 +202,56 @@ if(INFANTRY_MEC)
     message(WARNING ">> 当前构建兵种: 麦轮步兵 (INFANTRY_MEC)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_mec")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_MEC)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 麦轮步兵 (INFANTRY_MEC)")
 
     # 2. 半舵步兵
 elseif(INFANTRY_HALF_STEER)
     message(NOTICE ">> 当前构建兵种: 半舵步兵 (INFANTRY_HALF_STEER)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_half_steer")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_HALF_STEER)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 半舵步兵 (INFANTRY_HALF_STEER)")
 
     # 3. 麦轮英雄
 elseif(HERO_MEC)
     message(NOTICE ">> 当前构建兵种: 麦轮英雄 (HERO_MEC)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/hero_mec")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE HERO_MEC)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 麦轮英雄 (HERO_MEC)")
 
     # 4. 舵轮哨兵
 elseif(SENTRY_STEER)
     message(NOTICE ">> 当前构建兵种: 舵轮哨兵 (SENTRY_STEER)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/sentry_steer")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE SENTRY_STEER SENTRY)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 舵轮哨兵 (SENTRY_STEER)")
 
     # 5. 变形步兵
 elseif(INFANTRY_TRANSFORM)
     message(NOTICE ">> 当前构建兵种: 变形步兵 (INFANTRY_TRANSFORM)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/infantry_transform")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE INFANTRY_TRANSFORM)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 变形步兵 (INFANTRY_TRANSFORM)")
 
     # 6. 串联腿平衡步兵
 elseif(BALANCE_SERIAL)
     message(NOTICE ">> 当前构建兵种: 串联腿平衡步兵 (BALANCE_SERIAL)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/balance_serial")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE BALANCE_SERIAL BALANCE)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 串联腿平衡步兵 (BALANCE_SERIAL)")
 
     # 7. 并联腿平衡步兵
 elseif(BALANCE_PARALLEL)
     message(NOTICE ">> 当前构建兵种: 并联腿平衡步兵 (BALANCE_PARALLEL)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/balance_parallel")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE BALANCE_PARALLEL BALANCE)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 并联腿平衡步兵 (BALANCE_PARALLEL)")
 
     # 8. 飞镖架
 elseif(DART)
     message(NOTICE ">> 当前构建兵种: 飞镖架 (DART)")
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/application/dart")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE DART)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 飞镖架 (DART)")
 
 endif()
 
