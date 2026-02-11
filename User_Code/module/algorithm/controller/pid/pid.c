@@ -4,7 +4,7 @@
  * @author modified by TuxMonkey
  * @brief  PID控制器定义
  * @version beta
- * @date 2022-11-01
+ * @date 2026-02-12
  *
  * @copyright Copyright (c) 2025 DLMU.CONE EC all rights reserved
  */
@@ -78,6 +78,45 @@ static void f_Output_Filter(PIDInstance *pid)
 {
     pid->Output = pid->Output * pid->dt / (pid->Output_LPF_RC + pid->dt) +
                   pid->Last_Output * pid->Output_LPF_RC / (pid->Output_LPF_RC + pid->dt);
+}
+
+// 前馈控制计算
+static void f_FeedForward_Control(PIDInstance *pid)
+{
+    // 更新设定值历史
+    pid->FFC_Set_History[2] = pid->FFC_Set_History[1]; // LLAST = LAST
+    pid->FFC_Set_History[1] = pid->FFC_Set_History[0]; // LAST = NOW
+    pid->FFC_Set_History[0] = pid->Ref; // NOW = 当前设定值
+
+    // 低通滤波处理
+    float denominator = pid->FFC_LPF_RC + pid->dt;
+    if (denominator > 0.000001f) {
+        pid->FFC_Set_History[0] = pid->FFC_Set_History[0] * pid->dt / denominator +
+                                  pid->FFC_Set_History[0] * pid->FFC_LPF_RC / denominator;
+    }
+
+    // 前馈计算: P + D + A
+    float p_term = pid->FFC_Kp * pid->FFC_Set_History[0]; // 比例项
+    float d_term = 0.0f;
+    float a_term = 0.0f;
+
+    if (pid->dt > 0.000001f) { // 防止除以零
+        // 微分项: 速度前馈
+        d_term = pid->FFC_Kd * (pid->FFC_Set_History[0] - pid->FFC_Set_History[1]) / pid->dt;
+        
+        // 加速度项: 加速度前馈
+        a_term = pid->FFC_Ka * (pid->FFC_Set_History[0] - 2 * pid->FFC_Set_History[1] + pid->FFC_Set_History[2]) / (pid->dt * pid->dt);
+    }
+
+    pid->FFC_Output = p_term + d_term + a_term;
+
+    // 前馈输出限幅
+    if (pid->FFC_Output > pid->MaxOut) {
+        pid->FFC_Output = pid->MaxOut;
+    }
+    if (pid->FFC_Output < -(pid->MaxOut)) {
+        pid->FFC_Output = -(pid->MaxOut);
+    }
 }
 
 // 输出限幅
@@ -184,12 +223,23 @@ float PIDCalculate(PIDInstance *pid, float measure, float ref)
         pid->Iout += pid->ITerm; // 累加积分
         pid->Output = pid->Pout + pid->Iout + pid->Dout; // 计算输出
 
+        // 前馈控制
+        if (pid->Improve & PID_FeedForward)
+            f_FeedForward_Control(pid);
+
         // 输出滤波
         if (pid->Improve & PID_OutputFilter)
             f_Output_Filter(pid);
 
         // 输出限幅
         f_Output_Limit(pid);
+
+        // 前馈输出叠加到总输出
+        if (pid->Improve & PID_FeedForward) {
+            pid->Output += pid->FFC_Output;
+            // 再次限幅确保总输出不超过限制
+            f_Output_Limit(pid);
+        }
     }
     else // 进入死区, 则清空积分和输出
     {

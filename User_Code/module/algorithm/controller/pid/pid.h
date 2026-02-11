@@ -37,6 +37,7 @@ typedef enum
     PID_ChangingIntegrationRate = 0b00100000, // 变积分
     PID_DerivativeFilter = 0b01000000, // 微分滤波
     PID_ErrorHandle = 0b10000000, // 误差处理
+    PID_FeedForward = 0b100000000, // 前馈控制
 } PID_Improvement_e;
 
 /* PID 报错类型枚举*/
@@ -70,6 +71,15 @@ typedef struct
     float CoefB; // 变速积分 ITerm = Err*((A-abs(err)+B)/A)  when B<|err|<A+B
     float Output_LPF_RC; // 输出滤波器 RC = 1/omegac
     float Derivative_LPF_RC; // 微分滤波器系数
+
+    //-----------------------------------
+    // Feed Forward Control (FFC) parameters
+    float FFC_Kp; // 前馈比例系数
+    float FFC_Kd; // 前馈微分系数
+    float FFC_Ka; // 前馈加速度系数
+    float FFC_LPF_RC; // 前馈低通滤波器系数
+    float FFC_Output; // 前馈输出值
+    float FFC_Set_History[3]; // 前馈设定值历史 [NOW, LAST, LLAST]
 
     //-----------------------------------
     // for calculating
@@ -113,6 +123,12 @@ typedef struct // config parameter
     float CoefB; // ITerm = Err*((A-abs(err)+B)/A)  when B<|err|<A+B
     float Output_LPF_RC; // RC = 1/omegac
     float Derivative_LPF_RC;
+
+    // Feed Forward Control (FFC) parameters
+    float FFC_Kp; // 前馈比例系数
+    float FFC_Kd; // 前馈微分系数
+    float FFC_Ka; // 前馈加速度系数
+    float FFC_LPF_RC; // 前馈低通滤波器系数
 } PID_Init_Config_s;
 
 /**
