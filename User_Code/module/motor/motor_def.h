@@ -5,7 +5,7 @@
 #ifndef TRONONEH7_SCAFFOLD_MOTOR_DEF_H
 #define TRONONEH7_SCAFFOLD_MOTOR_DEF_H
 
-#include "controller.h"
+#include "pid.h"
 #include "stdint.h"
 
 #define LIMIT_MIN_MAX(x, min, max) (x) = (((x) <= (min)) ? (min) : (((x) >= (max)) ? (max) : (x)))
@@ -125,7 +125,7 @@ typedef struct
     Motor_Controller_Init_s controller_param_init_config;
     Motor_Control_Setting_s controller_setting_init_config;
     Motor_Type_e motor_type;
-    CAN_Init_Config_s can_init_config;
+    FDCAN_Init_Config_s fdcan_init_config;
 } Motor_Init_Config_s;
 
 

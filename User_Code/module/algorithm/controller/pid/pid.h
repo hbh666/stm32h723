@@ -28,16 +28,17 @@
 // PID 优化环节使能标志位
 typedef enum
 {
-    PID_IMPROVE_NONE = 0b000000000,                 // 无优化 0
-    PID_Integral_Limit = 0b000000001,               // 积分限幅 1
-    PID_Derivative_On_Measurement = 0b000000010,    // 微分先行 2
-    PID_Trapezoid_Intergral = 0b000000100,          // 梯形积分 4
-    PID_Proportional_On_Measurement = 0b000001000,  // 比例先行 8
-    PID_OutputFilter = 0b000010000,                 // 输出滤波 16
-    PID_ChangingIntegrationRate = 0b000100000,      // 变速积分 32
-    PID_DerivativeFilter = 0b001000000,             // 微分滤波 64
-    PID_ErrorHandle = 0b010000000,                  // 错误处理 128
-    PID_FeedForward = 0b100000000,                  // 前馈控制 256
+    PID_IMPROVE_NONE = 0b0000000000,                 // 无优化 0
+    PID_Integral_Limit = 0b0000000001,               // 积分限幅 1
+    PID_Derivative_On_Measurement = 0b0000000010,    // 微分先行 2
+    PID_Trapezoid_Intergral = 0b0000000100,          // 梯形积分 4
+    PID_Proportional_On_Measurement = 0b0000001000,  // 比例先行 8
+    PID_OutputFilter = 0b0000010000,                 // 输出滤波 16
+    PID_ChangingIntegrationRate = 0b0000100000,      // 变速积分 32
+    PID_DerivativeFilter = 0b0001000000,             // 微分滤波 64
+    PID_ErrorHandle = 0b0010000000,                  // 错误处理 128
+    PID_FeedForward = 0b0100000000,                  // 前馈控制 256
+    PID_FFC_SimpleMode = 0b1000000000,              // 简单前馈模式 (与PID_FeedForward组合使用) 512
 } PID_Improvement_e;
 
 /* PID 报错类型枚举*/
@@ -74,9 +75,10 @@ typedef struct
 
     //-----------------------------------
     // Feed Forward Control (FFC) parameters
-    float FFC_Kp; // 前馈比例系数
-    float FFC_Kd; // 前馈微分系数
-    float FFC_Ka; // 前馈加速度系数
+    float FFC_K;  // 简单前馈增益系数
+    float FFC_Kp; // 前馈比例系数 (复杂模式)
+    float FFC_Kd; // 前馈微分系数 (复杂模式)
+    float FFC_Ka; // 前馈加速度系数 (复杂模式)
     float FFC_LPF_RC; // 前馈低通滤波器系数
     float FFC_Output; // 前馈输出值
     float FFC_Set_History[3]; // 前馈设定值历史 [NOW, LAST, LLAST]
@@ -125,9 +127,10 @@ typedef struct // config parameter
     float Derivative_LPF_RC;
 
     // Feed Forward Control (FFC) parameters
-    float FFC_Kp; // 前馈比例系数
-    float FFC_Kd; // 前馈微分系数
-    float FFC_Ka; // 前馈加速度系数
+    float FFC_K;  // 简单前馈增益系数
+    float FFC_Kp; // 前馈比例系数 (复杂模式)
+    float FFC_Kd; // 前馈微分系数 (复杂模式)
+    float FFC_Ka; // 前馈加速度系数 (复杂模式)
     float FFC_LPF_RC; // 前馈低通滤波器系数
 } PID_Init_Config_s;
 

@@ -13,7 +13,7 @@ static DJIMotorInstance *dji_motor_instance[DJI_MOTOR_CNT] = {NULL}; // 会在co
 
 
 #ifdef FDCAN
-static CANInstance sender_assignment[9] = {
+static FDCANInstance sender_assignment[9] = {
     [0] = {.can_handle = &hfdcan1, .txconf.Identifier = 0x1ff, .txconf.IdType = FDCAN_STANDARD_ID, .txconf.TxFrameType = FDCAN_DATA_FRAME, .txconf.DataLength = FDCAN_DLC_BYTES_8, .txconf.FDFormat = FDCAN_CLASSIC_CAN,.txconf.BitRateSwitch = FDCAN_BRS_OFF, .tx_buff = {0}},
     [1] = {.can_handle = &hfdcan1, .txconf.Identifier = 0x200, .txconf.IdType = FDCAN_STANDARD_ID, .txconf.TxFrameType = FDCAN_DATA_FRAME, .txconf.DataLength = FDCAN_DLC_BYTES_8, .txconf.FDFormat = FDCAN_CLASSIC_CAN,.txconf.BitRateSwitch = FDCAN_BRS_OFF, .tx_buff = {0}},
     [2] = {.can_handle = &hfdcan1, .txconf.Identifier = 0x2ff, .txconf.IdType = FDCAN_STANDARD_ID, .txconf.TxFrameType = FDCAN_DATA_FRAME, .txconf.DataLength = FDCAN_DLC_BYTES_8, .txconf.FDFormat = FDCAN_CLASSIC_CAN,.txconf.BitRateSwitch = FDCAN_BRS_OFF, .tx_buff = {0}},
@@ -60,7 +60,7 @@ static uint8_t sender_enable_flag[9] = {0};
  * @brief 根据电调/拨码开关上的ID,根据说明书的默认id分配方式计算发送ID和接收ID,
  *        并对电机进行分组以便处理多电机控制命令
  */
-static void MotorSenderGrouping(DJIMotorInstance *motor, CAN_Init_Config_s *config)
+static void MotorSenderGrouping(DJIMotorInstance *motor, FDCAN_Init_Config_s *config)
 {
     uint8_t motor_id = config->tx_id - 1; // 下标从零开始,先减一方便赋值
     uint8_t motor_send_num;
@@ -68,11 +68,11 @@ static void MotorSenderGrouping(DJIMotorInstance *motor, CAN_Init_Config_s *conf
 
     uint8_t grouping_offset;
     //通过CAN计算分组偏移量
-    if(config->can_handle == &hcan1)
+    if(config->can_handle == &hfdcan1)
     {
         grouping_offset=0;
     }
-    else if(config->can_handle == &hcan2)
+    else if(config->can_handle == &hfdcan2)
     {
         grouping_offset=3;
     }
@@ -106,7 +106,7 @@ static void MotorSenderGrouping(DJIMotorInstance *motor, CAN_Init_Config_s *conf
         // 检查是否发生id冲突
         for (size_t i = 0; i < idx; ++i)
         {
-            if (dji_motor_instance[i]->motor_can_instance->can_handle == config->can_handle && dji_motor_instance[i]->motor_can_instance->rx_id == config->rx_id)
+            if (dji_motor_instance[i]->motor_fdcan_instance->can_handle == config->can_handle && dji_motor_instance[i]->motor_fdcan_instance->rx_id == config->rx_id)
             {
                 LOGERROR("[dji_motor] ID crash. Check in debug mode, add dji_motor_instance to watch to get more information.");
                 uint16_t can_bus = config->can_handle == &hcan1 ? 1 : 2;
@@ -135,7 +135,7 @@ static void MotorSenderGrouping(DJIMotorInstance *motor, CAN_Init_Config_s *conf
 
         for (size_t i = 0; i < idx; ++i)
         {
-            if (dji_motor_instance[i]->motor_can_instance->can_handle == config->can_handle && dji_motor_instance[i]->motor_can_instance->rx_id == config->rx_id)
+            if (dji_motor_instance[i]->motor_fdcan_instance->can_handle == config->can_handle && dji_motor_instance[i]->motor_fdcan_instance->rx_id == config->rx_id)
             {
                 LOGERROR("[dji_motor] ID crash. Check in debug mode, add dji_motor_instance to watch to get more information.");
                 uint16_t can_bus = config->can_handle == &hcan1 ? 1 : 2;
@@ -157,7 +157,7 @@ static void MotorSenderGrouping(DJIMotorInstance *motor, CAN_Init_Config_s *conf
  *
  * @param _instance 收到数据的instance,通过遍历与所有电机进行对比以选择正确的实例
  */
-static void DecodeDJIMotor(CANInstance *_instance)
+static void DecodeDJIMotor(FDCANInstance *_instance)
 {
     // 这里对can instance的id进行了强制转换,从而获得电机的instance实例地址
     // _instance指针指向的id是对应电机instance的地址,通过强制转换为电机instance的指针,再通过->运算符访问电机的成员motor_measure,最后取地址获得指针
@@ -189,8 +189,8 @@ static void DecodeDJIMotor(CANInstance *_instance)
 static void DJIMotorLostCallback(void *motor_ptr)
 {
     DJIMotorInstance *motor = (DJIMotorInstance *)motor_ptr;
-    uint16_t can_bus = motor->motor_can_instance->can_handle == &hcan1 ? 1 : 2;
-    LOGWARNING("[dji_motor] Motor lost, can bus [%d] , id [%d]", can_bus, motor->motor_can_instance->tx_id);
+    uint16_t can_bus = motor->motor_fdcan_instance->can_handle == &hcan1 ? 1 : 2;
+    LOGWARNING("[dji_motor] Motor lost, can bus [%d] , id [%d]", can_bus, motor->motor_fdcan_instance->tx_id);
 }
 
 // 电机初始化,返回一个电机实例
@@ -214,12 +214,12 @@ DJIMotorInstance *DJIMotorInit(Motor_Init_Config_s *config)
     // 后续增加电机前馈控制器(速度和电流)
 
     // 电机分组,因为至多4个电机可以共用一帧CAN控制报文
-    MotorSenderGrouping(instance, &config->can_init_config);
+    MotorSenderGrouping(instance, &config->fdcan_init_config);
 
     // 注册电机到CAN总线
-    config->can_init_config.can_module_callback = DecodeDJIMotor; // set callback
-    config->can_init_config.id = instance;                        // set id,eq to address(it is identity)
-    instance->motor_can_instance = CANRegister(&config->can_init_config);
+    config->fdcan_init_config.can_module_callback = DecodeDJIMotor; // set callback
+    config->fdcan_init_config.id = instance;                        // set id,eq to address(it is identity)
+    instance->motor_fdcan_instance = CANRegister(&config->fdcan_init_config);
 
     // 注册守护线程
     Daemon_Init_Config_s daemon_config = {

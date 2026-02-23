@@ -1,5 +1,5 @@
 /**
- * @file controller.c
+ * @file pid.c
  * @author wanghongxi
  * @author modified by TuxMonkey
  * @brief  PID控制器及前馈控制器
@@ -80,6 +80,61 @@ static void f_Output_Filter(PIDInstance *pid)
 {
     pid->Output = pid->Output * pid->dt / (pid->Output_LPF_RC + pid->dt) +
                   pid->Last_Output * pid->Output_LPF_RC / (pid->Output_LPF_RC + pid->dt);
+}
+
+// 简单前馈模式: f_out = K_F * (Target - Pre_Target) / dt
+static void f_FeedForward_Control_Simple(PIDInstance *pid)
+{
+    if (pid->dt > 0.000001f) { // 防止除以零
+        pid->FFC_Output = pid->FFC_K * (pid->Ref - pid->FFC_Set_History[0]) / pid->dt;
+    } else {
+        pid->FFC_Output = 0.0f;
+    }
+    
+    // 更新设定值历史
+    pid->FFC_Set_History[0] = pid->Ref; // 保存当前设定值用于下次计算
+}
+
+// 复杂前馈模式: P + D + A 三阶前馈
+static void f_FeedForward_Control_Complex(PIDInstance *pid)
+{
+    // 更新设定值历史
+    pid->FFC_Set_History[2] = pid->FFC_Set_History[1]; // LLAST = LAST
+    pid->FFC_Set_History[1] = pid->FFC_Set_History[0]; // LAST = NOW
+    pid->FFC_Set_History[0] = pid->Ref; // NOW = 当前设定值
+
+    // 低通滤波处理
+    float denominator = pid->FFC_LPF_RC + pid->dt;
+    if (denominator > 0.000001f) {
+        pid->FFC_Set_History[0] = pid->FFC_Set_History[0] * pid->dt / denominator +
+                                  pid->FFC_Set_History[0] * pid->FFC_LPF_RC / denominator;
+    }
+
+    // 前馈计算: P + D + A
+    float p_term = pid->FFC_Kp * pid->FFC_Set_History[0]; // 比例项
+    float d_term = 0.0f;
+    float a_term = 0.0f;
+
+    if (pid->dt > 0.000001f) { // 防止除以零
+        // 微分项: 速度前馈
+        d_term = pid->FFC_Kd * (pid->FFC_Set_History[0] - pid->FFC_Set_History[1]) / pid->dt;
+        
+        // 加速度项: 加速度前馈
+        a_term = pid->FFC_Ka * (pid->FFC_Set_History[0] - 2 * pid->FFC_Set_History[1] + pid->FFC_Set_History[2]) / (pid->dt * pid->dt);
+    }
+
+    pid->FFC_Output = p_term + d_term + a_term;
+}
+
+// 前馈输出限幅
+static void f_FeedForward_Limit(PIDInstance *pid)
+{
+    if (pid->FFC_Output > pid->MaxOut) {
+        pid->FFC_Output = pid->MaxOut;
+    }
+    if (pid->FFC_Output < -(pid->MaxOut)) {
+        pid->FFC_Output = -(pid->MaxOut);
+    }
 }
 
 // 前馈控制计算（后续考虑写成电流/速度前馈）
@@ -226,9 +281,18 @@ float PIDCalculate(PIDInstance *pid, float measure, float ref)
         pid->Iout += pid->ITerm; // 累加积分
         pid->Output = pid->Pout + pid->Iout + pid->Dout; // 计算输出
 
-        // 前馈控制
-        if (pid->Improve & PID_FeedForward)
-            f_FeedForward_Control(pid);
+        // 前馈控制 (根据模式选择)
+        if (pid->Improve & PID_FeedForward) {
+            if (pid->Improve & PID_FFC_SimpleMode) {
+                // 简单前馈模式
+                f_FeedForward_Control_Simple(pid);
+            } else {
+                // 复杂前馈模式
+                f_FeedForward_Control_Complex(pid);
+            }
+            // 前馈输出限幅
+            f_FeedForward_Limit(pid);
+        }
 
         // 输出滤波
         if (pid->Improve & PID_OutputFilter)

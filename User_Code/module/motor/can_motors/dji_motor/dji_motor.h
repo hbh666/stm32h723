@@ -6,7 +6,7 @@
 #define TRONONEH7_SCAFFOLD_DJI_MOTOR_H
 
 #include "bsp_fdcan.h"
-#include "controller.h"
+#include "pid.h"
 #include "motor_def.h"
 #include "stdint.h"
 #include "daemon.h"
@@ -42,7 +42,7 @@ typedef struct
     Motor_Control_Setting_s motor_settings; // 电机设置
     Motor_Controller_s motor_controller;    // 电机控制器
 
-    CANInstance *motor_can_instance; // 电机CAN实例
+    FDCANInstance *motor_fdcan_instance; // 电机CAN实例
     // 分组发送设置
     uint8_t sender_group;
     uint8_t message_num;
@@ -50,7 +50,7 @@ typedef struct
     Motor_Type_e motor_type;        // 电机类型
     Motor_Working_Type_e stop_flag; // 启停标志
 
-    DaemonInstance* daemon;
+    Daemon_Instance* daemon;
     uint32_t feed_cnt;
     float dt;
 } DJIMotorInstance;
