@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file	 controller.h
+ * @file	pid.h
  * @author  Wang Hongxi
  * @version V1.1.3
  * @date    2021/7/3
@@ -10,8 +10,8 @@
  *
  ******************************************************************************
  */
-#ifndef _CONTROLLER_H
-#define _CONTROLLER_H
+#ifndef _PID_H
+#define _PID_H
 
 #include "main.h"
 #include "stdint.h"
