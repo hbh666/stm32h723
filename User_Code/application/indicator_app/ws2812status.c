@@ -160,7 +160,7 @@ void BlinkPurple(void)
     delay_ticks(500); // 延时500毫秒
 }
 
-void PWMControwLed(void)
+void PWMControlLed(void)
 {
     //
 
