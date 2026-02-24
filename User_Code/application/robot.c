@@ -53,6 +53,10 @@ void RobotInit()
     // 若必须,则只允许使用DWT_Delay()
     __disable_irq();
 
+    // HAL_GPIO_WritePin(Power1_GPIO_Port, Power1_Pin, GPIO_PIN_SET);//使能24V电源
+    // HAL_GPIO_WritePin(Power2_GPIO_Port, Power2_Pin, GPIO_PIN_SET);//使能24V电源
+    // HAL_GPIO_WritePin(Power_5V_EN_GPIO_Port, Power_5V_EN_Pin, GPIO_PIN_SET);//使能5V电源
+
     BSPInit();
 
 #if defined(ONE_BOARD) || defined(GIMBAL_BOARD)
