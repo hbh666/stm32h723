@@ -263,7 +263,7 @@ void CANSetDLC(FDCANInstance *_instance, uint8_t length)
  * @brief 此函数会被下面两个函数调用,用于处理FIFO0和FIFO1溢出中断(说明收到了新的数据)
  *        所有的实例都会被遍历,找到can_handle和rx_id相等的实例时,调用该实例的回调函数
  *
- * @param _fdhcan
+ * @param _hfdcan
  * @param fifox passed to HAL_CAN_GetRxMessage() to get mesg from a specific fifo
  */
 static void FDCANFIFOxCallback(FDCAN_HandleTypeDef *_hfdcan, uint32_t fifox)
