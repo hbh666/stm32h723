@@ -124,13 +124,9 @@ extern USBD_HandleTypeDef hUsbDeviceHS;
   */
 
 static int8_t CDC_Init_HS(void);
-
 static int8_t CDC_DeInit_HS(void);
-
-static int8_t CDC_Control_HS(uint8_t cmd, uint8_t *pbuf, uint16_t length);
-
-static int8_t CDC_Receive_HS(uint8_t *pbuf, uint32_t *Len);
-
+static int8_t CDC_Control_HS(uint8_t cmd, uint8_t* pbuf, uint16_t length);
+static int8_t CDC_Receive_HS(uint8_t* pbuf, uint32_t *Len);
 static int8_t CDC_TransmitCplt_HS(uint8_t *pbuf, uint32_t *Len, uint8_t epnum);
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */
@@ -143,11 +139,11 @@ static int8_t CDC_TransmitCplt_HS(uint8_t *pbuf, uint32_t *Len, uint8_t epnum);
 
 USBD_CDC_ItfTypeDef USBD_Interface_fops_HS =
 {
-        CDC_Init_HS,
-        CDC_DeInit_HS,
-        CDC_Control_HS,
-        CDC_Receive_HS,
-        CDC_TransmitCplt_HS
+  CDC_Init_HS,
+  CDC_DeInit_HS,
+  CDC_Control_HS,
+  CDC_Receive_HS,
+  CDC_TransmitCplt_HS
 };
 
 /* Private functions ---------------------------------------------------------*/
@@ -158,12 +154,12 @@ USBD_CDC_ItfTypeDef USBD_Interface_fops_HS =
   */
 static int8_t CDC_Init_HS(void)
 {
-    /* USER CODE BEGIN 8 */
+  /* USER CODE BEGIN 8 */
     /* Set Application Buffers */
     USBD_CDC_SetTxBuffer(&hUsbDeviceHS, UserTxBufferHS, 0);
     USBD_CDC_SetRxBuffer(&hUsbDeviceHS, UserRxBufferHS);
     return (USBD_OK);
-    /* USER CODE END 8 */
+  /* USER CODE END 8 */
 }
 
 /**
@@ -173,9 +169,9 @@ static int8_t CDC_Init_HS(void)
   */
 static int8_t CDC_DeInit_HS(void)
 {
-    /* USER CODE BEGIN 9 */
+  /* USER CODE BEGIN 9 */
     return (USBD_OK);
-    /* USER CODE END 9 */
+  /* USER CODE END 9 */
 }
 
 /**
@@ -185,9 +181,9 @@ static int8_t CDC_DeInit_HS(void)
   * @param  length: Number of data to be sent (in bytes)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
   */
-static int8_t CDC_Control_HS(uint8_t cmd, uint8_t *pbuf, uint16_t length)
+static int8_t CDC_Control_HS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 {
-    /* USER CODE BEGIN 10 */
+  /* USER CODE BEGIN 10 */
     switch (cmd)
     {
         case CDC_SEND_ENCAPSULATED_COMMAND:
@@ -248,7 +244,7 @@ static int8_t CDC_Control_HS(uint8_t cmd, uint8_t *pbuf, uint16_t length)
     }
 
     return (USBD_OK);
-    /* USER CODE END 10 */
+  /* USER CODE END 10 */
 }
 
 /**
@@ -266,13 +262,13 @@ static int8_t CDC_Control_HS(uint8_t cmd, uint8_t *pbuf, uint16_t length)
   * @param  Len: Number of data received (in bytes)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAILL
   */
-static int8_t CDC_Receive_HS(uint8_t *Buf, uint32_t *Len)
+static int8_t CDC_Receive_HS(uint8_t* Buf, uint32_t *Len)
 {
-    /* USER CODE BEGIN 11 */
+  /* USER CODE BEGIN 11 */
     USBD_CDC_SetRxBuffer(&hUsbDeviceHS, &Buf[0]);
     USBD_CDC_ReceivePacket(&hUsbDeviceHS);
     return (USBD_OK);
-    /* USER CODE END 11 */
+  /* USER CODE END 11 */
 }
 
 /**
@@ -282,10 +278,10 @@ static int8_t CDC_Receive_HS(uint8_t *Buf, uint32_t *Len)
   * @param  Len: Number of data to be sent (in bytes)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY
   */
-uint8_t CDC_Transmit_HS(uint8_t *Buf, uint16_t Len)
+uint8_t CDC_Transmit_HS(uint8_t* Buf, uint16_t Len)
 {
-    uint8_t result = USBD_OK;
-    /* USER CODE BEGIN 12 */
+  uint8_t result = USBD_OK;
+  /* USER CODE BEGIN 12 */
     USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef *) hUsbDeviceHS.pClassData;
     if (hcdc->TxState != 0)
     {
@@ -293,8 +289,8 @@ uint8_t CDC_Transmit_HS(uint8_t *Buf, uint16_t Len)
     }
     USBD_CDC_SetTxBuffer(&hUsbDeviceHS, Buf, Len);
     result = USBD_CDC_TransmitPacket(&hUsbDeviceHS);
-    /* USER CODE END 12 */
-    return result;
+  /* USER CODE END 12 */
+  return result;
 }
 
 /**
@@ -311,15 +307,15 @@ uint8_t CDC_Transmit_HS(uint8_t *Buf, uint16_t Len)
   */
 static int8_t CDC_TransmitCplt_HS(uint8_t *Buf, uint32_t *Len, uint8_t epnum)
 {
-    uint8_t result = USBD_OK;
-    /* USER CODE BEGIN 14 */
+  uint8_t result = USBD_OK;
+  /* USER CODE BEGIN 14 */
     UNUSED(Buf);
     UNUSED(Len);
     UNUSED(epnum);
     if (tx_cbk)
         tx_cbk(*Len);
-    /* USER CODE END 14 */
-    return result;
+  /* USER CODE END 14 */
+  return result;
 }
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */

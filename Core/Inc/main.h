@@ -57,6 +57,12 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define Power2_Pin GPIO_PIN_13
+#define Power2_GPIO_Port GPIOC
+#define Power1_Pin GPIO_PIN_14
+#define Power1_GPIO_Port GPIOC
+#define Power_5V_EN_Pin GPIO_PIN_15
+#define Power_5V_EN_GPIO_Port GPIOC
 #define ACC_CS_Pin GPIO_PIN_0
 #define ACC_CS_GPIO_Port GPIOC
 #define GYRO_CS_Pin GPIO_PIN_3

@@ -141,10 +141,10 @@ void MX_FDCAN3_Init(void)
   hfdcan3.Init.AutoRetransmission = ENABLE;
   hfdcan3.Init.TransmitPause = DISABLE;
   hfdcan3.Init.ProtocolException = ENABLE;
-  hfdcan3.Init.NominalPrescaler = 24;
+  hfdcan3.Init.NominalPrescaler = 3;
   hfdcan3.Init.NominalSyncJumpWidth = 10;
-  hfdcan3.Init.NominalTimeSeg1 = 2;
-  hfdcan3.Init.NominalTimeSeg2 = 2;
+  hfdcan3.Init.NominalTimeSeg1 = 29;
+  hfdcan3.Init.NominalTimeSeg2 = 10;
   hfdcan3.Init.DataPrescaler = 3;
   hfdcan3.Init.DataSyncJumpWidth = 10;
   hfdcan3.Init.DataTimeSeg1 = 29;
@@ -160,7 +160,7 @@ void MX_FDCAN3_Init(void)
   hfdcan3.Init.RxBufferSize = FDCAN_DATA_BYTES_8;
   hfdcan3.Init.TxEventsNbr = 0;
   hfdcan3.Init.TxBuffersNbr = 0;
-  hfdcan3.Init.TxFifoQueueElmtsNbr = 6;
+  hfdcan3.Init.TxFifoQueueElmtsNbr = 32;
   hfdcan3.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
   hfdcan3.Init.TxElmtSize = FDCAN_DATA_BYTES_8;
   if (HAL_FDCAN_Init(&hfdcan3) != HAL_OK)

@@ -122,6 +122,8 @@
 
 华师佛山-VANGUARD [电控弹道解算例程](https://github.com/CodeAlanqian/SolveTrajectory)
 
+达妙科技H7(MC02)开发板说明书及例程 ：[达妙H7(MC02)开发板官方资料](https://gitee.com/kit-miao/dm-mc02)
+
 ---
 
 还要非常感谢愿意与我队电控一起交流，并无私提供帮助的这些队伍，他们是（以下排名不分先后）：
