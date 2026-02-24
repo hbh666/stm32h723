@@ -4,6 +4,7 @@
 #include "stdlib.h"
 #include "bsp_dwt.h"
 #include "bsp_log.h"
+//说是fdcan实际上就是配置成了经典的CAN
 
 /* can instance ptrs storage, used for recv callback */
 // 在CAN产生接收中断会遍历数组,选出hcan和rxid与发生中断的实例相同的那个,调用其回调函数
@@ -251,7 +252,7 @@ void CANSetDLC(FDCANInstance *_instance, uint8_t length)
         	LOGERROR("[bsp_can] CAN DLC error! check your code or wild pointer");
         }
 
-    _instance->txconf.DataLength = length;
+    _instance->txconf.DataLength = DLC_LookUp_Table[length];
 }
 
 /* -----------------------belows are callback definitions--------------------------*/
