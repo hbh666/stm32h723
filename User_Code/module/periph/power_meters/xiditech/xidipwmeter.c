@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "daemon.h"
+
 static PowerMeterInstance *power_meter_instance = NULL;
 
 /**
@@ -84,7 +86,7 @@ PowerMeterInstance *PowerMeterInit(FDCAN_HandleTypeDef *can_handle)
     }
     memset(power_meter_instance, 0, sizeof(PowerMeterInstance));
 
-    // 配置FDCAN初始化参数 - 完全适配您的FDCAN驱动
+    // 配置功率计初始化参数
     FDCAN_Init_Config_s can_config = {
             .can_handle = can_handle,
             .rx_id = 0x213, // 功率计反馈标识符
@@ -93,7 +95,7 @@ PowerMeterInstance *PowerMeterInit(FDCAN_HandleTypeDef *can_handle)
             .id = power_meter_instance, // 将实例指针作为ID传递
     };
 
-    // 注册FDCAN实例 - 使用FDCANRegister函数
+    // 注册FDCAN实例
     power_meter_instance->can_instance = CANRegister(&can_config);
     if (power_meter_instance->can_instance == NULL)
     {
@@ -102,13 +104,13 @@ PowerMeterInstance *PowerMeterInit(FDCAN_HandleTypeDef *can_handle)
         return NULL;
     }
 
-    // 注册守护进程
-    // Daemon_Init_Config_s daemon_config = {
-    //         .callback = PowerMeterLostCallback,
-    //         .owner_id = power_meter_instance,
-    //         .reload_count = 5, // 50ms未收到数据则认为丢失 (1000Hz发送，5个周期)
-    // };
-    // power_meter_instance->daemon = DaemonRegister(&daemon_config);
+    //注册守护进程
+    Daemon_Init_Config_s daemon_config = {
+            .callback = PowerMeterLostCallback,
+            .owner_id = power_meter_instance,
+            .reload_count = 5, // 50ms未收到数据则认为丢失 (1000Hz发送，5个周期)
+    };
+    power_meter_instance->daemon = DaemonRegister(&daemon_config);
 
     return power_meter_instance;
 }

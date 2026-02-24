@@ -5,9 +5,10 @@
 #ifndef TRONONEH7_SCAFFOLD_XIDIPWMETER_H
 #define TRONONEH7_SCAFFOLD_XIDIPWMETER_H
 
-#include "general_def.h"
 #include "bsp_dwt.h"
 #include "bsp_fdcan.h"
+#include "daemon.h"
+#include "general_def.h"
 
 /* 功率计测量数据结构 */
 typedef struct
@@ -25,7 +26,7 @@ typedef struct
 {
     FDCANInstance *can_instance; // FDCAN实例指针
     PowerMeter_Measure_s measure; // 测量数据
-    // DaemonInstance *daemon; // 守护进程
+    Daemon_Instance *daemon; // 守护进程
     uint32_t feed_cnt; // 喂狗计数器
 } PowerMeterInstance;
 
