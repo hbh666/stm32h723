@@ -94,7 +94,7 @@ PowerMeterInstance *PowerMeterInit(FDCAN_HandleTypeDef *can_handle)
     };
 
     // 注册FDCAN实例 - 使用FDCANRegister函数
-    power_meter_instance->can_instance = FDCANRegister(&can_config);
+    power_meter_instance->can_instance = CANRegister(&can_config);
     if (power_meter_instance->can_instance == NULL)
     {
         free(power_meter_instance);
