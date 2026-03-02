@@ -1,0 +1,8 @@
+//
+// Created by esqwt on 2026/3/2.
+//
+
+#ifndef TRONONEH7_SCAFFOLD_GIMBAL_H
+#define TRONONEH7_SCAFFOLD_GIMBAL_H
+
+#endif // TRONONEH7_SCAFFOLD_GIMBAL_H

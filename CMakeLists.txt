@@ -179,13 +179,12 @@ file(GLOB_RECURSE COMMON_SOURCES
         "${PROJECT_SOURCE_DIR}/User_Code/bsp/*.cpp"
         "${PROJECT_SOURCE_DIR}/User_Code/module/*.c"
         "${PROJECT_SOURCE_DIR}/User_Code/module/*.cpp"
-        # 包含 application 根目录下的 robot.c 等文件 (不递归)
+        # 包含 application 根目录下的 robot.c 等文件 (不递归) todo 需重写
         "${PROJECT_SOURCE_DIR}/User_Code/application/*.c"
         "${PROJECT_SOURCE_DIR}/User_Code/application/*.cpp"
-        # 包含 application 下的通用模块 (根据目录结构递归)
+        # 包含 application 下的通用模块 (根据目录结构递归) todo 需重写
         "${PROJECT_SOURCE_DIR}/User_Code/application/chassis_app/*.c" "${PROJECT_SOURCE_DIR}/User_Code/application/chassis_app/*.cpp"
-        "${PROJECT_SOURCE_DIR}/User_Code/application/gimbal_app/*.c"  "${PROJECT_SOURCE_DIR}/User_Code/application/gimbal_app/*.cpp"
-        "${PROJECT_SOURCE_DIR}/User_Code/application/shoot_app/*.c"   "${PROJECT_SOURCE_DIR}/User_Code/application/shoot_app/*.cpp"
+        "${PROJECT_SOURCE_DIR}/User_Code/application/gimbal_app/*.c"  "${PROJECT_SOURCE_DIR}/User_Code/application/gimbal_app/*.cpp" "${PROJECT_SOURCE_DIR}/User_Code/application/shoot_app/*.c"   "${PROJECT_SOURCE_DIR}/User_Code/application/shoot_app/*.cpp"
         "${PROJECT_SOURCE_DIR}/User_Code/application/indicator_app/*.c" "${PROJECT_SOURCE_DIR}/User_Code/application/indicator_app/*.cpp"
         "${PROJECT_SOURCE_DIR}/User_Code/application/vision_app/*.c"   "${PROJECT_SOURCE_DIR}/User_Code/application/vision_app/*.cpp"
 )
