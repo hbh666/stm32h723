@@ -55,7 +55,7 @@ void RobotCMDInit(void)
 /**
  * @brief 任务核心循环 (放置于 RTOS Task 中)
  */
-void RobotCMDTask(void)
+void CmdTask(void)
 {
     if (!task_data.init_done) return;
 

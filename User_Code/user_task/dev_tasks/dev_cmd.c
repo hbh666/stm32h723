@@ -19,24 +19,28 @@ static float current_energy_j = 0.0f;
 void RobotCMDInit()
 {
     chassis_power_meter = PowerMeterInit(&hfdcan1);
-    if(chassis_power_meter == NULL)
+    if (chassis_power_meter == NULL)
     {
         LOGERROR("[CMD] Power Meter Init Failed!");
     }
 }
 
 // ==================== 4. 在控制任务中读取使用 ====================
-void RobotCMDTask()
+void CmdTask()
 {
-    if(chassis_power_meter != NULL)
+    RobotCMDInit();
+    while (1)
     {
-        current_power_w = PowerMeterGetPower(chassis_power_meter);
-        current_voltage_v = PowerMeterGetVoltage(chassis_power_meter);
-        current_energy_j = PowerMeterGetEnergy(chassis_power_meter);
+        if (chassis_power_meter != NULL)
+        {
+            current_power_w = PowerMeterGetPower(chassis_power_meter);
+            current_voltage_v = PowerMeterGetVoltage(chassis_power_meter);
+            current_energy_j = PowerMeterGetEnergy(chassis_power_meter);
 
-        // 你可以将获取到的功率写入要发送给底盘的 cmd 中，例如限制最大速度
-        // chassis_cmd_send.real_power = current_power_w;
+            // 你可以将获取到的功率写入要发送给底盘的 cmd 中，例如限制最大速度
+            // chassis_cmd_send.real_power = current_power_w;
+        }
+
+        osDelay(10); // 根据实际需要调整读取频率
     }
-
-    osDelay(10); // 根据实际需要调整读取频率
 }

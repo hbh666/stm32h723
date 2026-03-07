@@ -22,12 +22,12 @@ void OnProjectLoad (void) {
   //
   // Dialog-generated settings
   //
-  Project.AddPathSubstitute ("D:/RM/Elec Control/TronOneH7_Scaffold/ozonedeb", "$(ProjectDir)");
-  Project.AddPathSubstitute ("d:/rm/elec control/trononeh7_scaffold/ozonedeb", "$(ProjectDir)");
   Project.SetDevice ("STM32H723VG");
-  Project.SetHostIF ("USB", "602717886");
+  Project.SetHostIF ("USB", "602712948");
   Project.SetTargetIF ("SWD");
   Project.SetTIFSpeed ("4 MHz");
+  Project.AddPathSubstitute ("D:/RM/Elec Control/TronOneH7_Scaffold/ozonedeb", "$(ProjectDir)");
+  Project.AddPathSubstitute ("d:/rm/elec control/trononeh7_scaffold/ozonedeb", "$(ProjectDir)");
   Project.AddSvdFile ("$(InstallDir)/Config/CPU/Cortex-M7F.svd");
   Project.AddSvdFile ("D:/ST/STM32CubeCLT_1.19.0/STMicroelectronics_CMSIS_SVD/STM32H723.svd");
   //
