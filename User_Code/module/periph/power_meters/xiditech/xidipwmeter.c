@@ -88,11 +88,11 @@ PowerMeterInstance *PowerMeterInit(FDCAN_HandleTypeDef *can_handle)
 
     // 配置功率计初始化参数
     FDCAN_Init_Config_s can_config = {
-            .can_handle = can_handle,
-            .rx_id = 0x213, // 功率计反馈标识符
-            .tx_id = 0x000, // 不需要发送，设为0
-            .can_module_callback = PowerMeterDecode,
-            .id = power_meter_instance, // 将实例指针作为ID传递
+        .can_handle = can_handle,
+        .rx_id = 0x213, // 功率计反馈标识符
+        .tx_id = 0x000, // 不需要发送，设为0
+        .can_module_callback = PowerMeterDecode,
+        .id = power_meter_instance, // 将实例指针作为ID传递
     };
 
     // 注册FDCAN实例
