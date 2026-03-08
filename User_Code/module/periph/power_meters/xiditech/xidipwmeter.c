@@ -7,11 +7,11 @@
 
 #include "daemon.h"
 
-static PowerMeterInstance *power_meter_instance = NULL;
+static XidiPowerMeterInstance *power_meter_instance = NULL;
 
 /**
  * @brief 功率计数据解码函数
- * @param instance FDCAN实例指针
+ * @param _instance FDCAN实例指针
  *
  * @note 数据格式:
  *        DATA[0]: 电流数值低8位
@@ -22,13 +22,13 @@ static PowerMeterInstance *power_meter_instance = NULL;
  *
  *        电压电流数值均为放大100倍后的整数，需要除以100.0得到实际值
  */
-void PowerMeterDecode(FDCANInstance *instance)
+void XidiPowerMeterDecode(FDCANInstance *_instance)
 {
     if (power_meter_instance == NULL)
         return;
 
-    uint8_t *rxbuff = instance->rx_buff;
-    PowerMeter_Measure_s *measure = &power_meter_instance->measure;
+    uint8_t *rxbuff = _instance->rx_buff;
+    XidiPowerMeter_Msg_s *measure = &power_meter_instance->powermeter_msg;
 
     // 重载守护进程
     // if (power_meter_instance->daemon != NULL)
@@ -60,57 +60,51 @@ void PowerMeterDecode(FDCANInstance *instance)
  * @brief 功率计丢失回调函数
  * @param power_meter_ptr 功率计实例指针
  */
-void PowerMeterLostCallback(void *power_meter_ptr)
+void XidiPowerMeterLostCallback(void *power_meter_ptr)
 {
-    PowerMeterInstance *power_meter = (PowerMeterInstance *) power_meter_ptr;
+    XidiPowerMeterInstance *power_meter = (XidiPowerMeterInstance *) power_meter_ptr;
 }
 
 /**
  * @brief 功率计初始化
- * @param can_handle FDCAN句柄指针
- * @return PowerMeterInstance* 功率计实例指针
+ * @param XidiPowerMeter_config 功率计初始化配置结构体指针 (必须确保其生命周期是全局或静态的)
+ * @return XidiPowerMeterInstance* 功率计实例指针
  */
-PowerMeterInstance *PowerMeterInit(FDCAN_HandleTypeDef *can_handle)
+XidiPowerMeterInstance *XidiPowerMeterInit(XidiPowerMeter_Init_Config_s *XidiPowerMeter_config)
 {
-    // 检查是否已经初始化
+    // 1. 检查是否已经初始化
     if (power_meter_instance != NULL)
     {
         return power_meter_instance;
     }
 
-    // 分配内存
-    power_meter_instance = (PowerMeterInstance *) malloc(sizeof(PowerMeterInstance));
+    // 2. 分配内存并清零
+    power_meter_instance = (XidiPowerMeterInstance *)malloc(sizeof(XidiPowerMeterInstance));
     if (power_meter_instance == NULL)
     {
         return NULL;
     }
-    memset(power_meter_instance, 0, sizeof(PowerMeterInstance));
+    memset(power_meter_instance, 0, sizeof(XidiPowerMeterInstance));
 
-    // 配置功率计初始化参数
-    FDCAN_Init_Config_s can_config = {
-        .can_handle = can_handle,
-        .rx_id = 0x213, // 功率计反馈标识符
-        .tx_id = 0x000, // 不需要发送，设为0
-        .can_module_callback = PowerMeterDecode,
-        .id = power_meter_instance, // 将实例指针作为ID传递
-    };
+    // 3. 配置并注册 FDCAN 实例
+    // (rx_id, tx_id, can_handle 等参数由外部 config 提供，这里只绑定回调和私有指针)
+    XidiPowerMeter_config->can_config.can_module_callback = XidiPowerMeterDecode;
+    XidiPowerMeter_config->can_config.id = power_meter_instance;
 
-    // 注册FDCAN实例
-    power_meter_instance->can_instance = CANRegister(&can_config);
-    if (power_meter_instance->can_instance == NULL)
+    power_meter_instance->fdcan_ins = CANRegister(&XidiPowerMeter_config->can_config);
+    if (power_meter_instance->fdcan_ins == NULL)
     {
         free(power_meter_instance);
         power_meter_instance = NULL;
         return NULL;
     }
 
-    //注册守护进程
-    Daemon_Init_Config_s daemon_config = {
-        .callback = PowerMeterLostCallback,
-        .owner_id = power_meter_instance,
-        .reload_count = 5, // 50ms未收到数据则认为丢失 (1000Hz发送，5个周期)
-    };
-    power_meter_instance->daemon = DaemonRegister(&daemon_config);
+    // 4. 配置并注册 守护进程
+    // (reload_count 等参数由外部 config 提供，这里只绑定回调和私有指针)
+    XidiPowerMeter_config->daemon_config.callback = XidiPowerMeterLostCallback;
+    XidiPowerMeter_config->daemon_config.owner_id = power_meter_instance;
+
+    power_meter_instance->daemon = DaemonRegister(&XidiPowerMeter_config->daemon_config);
 
     return power_meter_instance;
 }
@@ -120,11 +114,11 @@ PowerMeterInstance *PowerMeterInit(FDCAN_HandleTypeDef *can_handle)
  * @param power_meter 功率计实例指针
  * @return float 电压值 (V)
  */
-float PowerMeterGetVoltage(PowerMeterInstance *power_meter)
+float XidiPowerMeterGetVoltage(XidiPowerMeterInstance *power_meter)
 {
     if (power_meter == NULL)
         return 0.0f;
-    return power_meter->measure.voltage;
+    return power_meter->powermeter_msg.voltage;
 }
 
 /**
@@ -132,11 +126,11 @@ float PowerMeterGetVoltage(PowerMeterInstance *power_meter)
  * @param power_meter 功率计实例指针
  * @return float 电流值 (A)
  */
-float PowerMeterGetCurrent(PowerMeterInstance *power_meter)
+float XidiPowerMeterGetCurrent(XidiPowerMeterInstance *power_meter)
 {
     if (power_meter == NULL)
         return 0.0f;
-    return power_meter->measure.current;
+    return power_meter->powermeter_msg.current;
 }
 
 /**
@@ -144,11 +138,11 @@ float PowerMeterGetCurrent(PowerMeterInstance *power_meter)
  * @param power_meter 功率计实例指针
  * @return float 功率值 (W)
  */
-float PowerMeterGetPower(PowerMeterInstance *power_meter)
+float XidiPowerMeterGetPower(XidiPowerMeterInstance *power_meter)
 {
     if (power_meter == NULL)
         return 0.0f;
-    return power_meter->measure.power;
+    return power_meter->powermeter_msg.power;
 }
 
 /**
@@ -156,22 +150,22 @@ float PowerMeterGetPower(PowerMeterInstance *power_meter)
  * @param power_meter 功率计实例指针
  * @return float 累计能量 (J)
  */
-float PowerMeterGetEnergy(PowerMeterInstance *power_meter)
+float XidiPowerMeterGetEnergy(XidiPowerMeterInstance *power_meter)
 {
     if (power_meter == NULL)
         return 0.0f;
-    return power_meter->measure.energy;
+    return power_meter->powermeter_msg.energy;
 }
 
 /**
  * @brief 重置累计能量
  * @param power_meter 功率计实例指针
  */
-void PowerMeterResetEnergy(PowerMeterInstance *power_meter)
+void XidiPowerMeterResetEnergy(XidiPowerMeterInstance *power_meter)
 {
     if (power_meter != NULL)
     {
-        power_meter->measure.energy = 0.0f;
+        power_meter->powermeter_msg.energy = 0.0f;
     }
 }
 
@@ -179,7 +173,7 @@ void PowerMeterResetEnergy(PowerMeterInstance *power_meter)
  * @brief 获取功率计实例（用于外部访问）
  * @return PowerMeterInstance* 功率计实例指针
  */
-PowerMeterInstance *GetPowerMeterInstance(void)
+XidiPowerMeterInstance *GetXidiPowerMeterInstance(void)
 {
     return power_meter_instance;
 }

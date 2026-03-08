@@ -19,34 +19,40 @@ typedef struct
     float energy; // 累计能量 (J)
     uint32_t update_cnt; // 更新计数器
     float dt; // 更新时间间隔
-} PowerMeter_Measure_s;
+} XidiPowerMeter_Msg_s;
 
 /* 功率计实例结构 */
 typedef struct
 {
-    FDCANInstance *can_instance; // FDCAN实例指针
-    PowerMeter_Measure_s measure; // 测量数据
+    FDCANInstance *fdcan_ins; // FDCAN实例指针
+    XidiPowerMeter_Msg_s powermeter_msg; // 测量数据
     Daemon_Instance *daemon; // 守护进程
     uint32_t feed_cnt; // 喂狗计数器
-} PowerMeterInstance;
+} XidiPowerMeterInstance;
+
+/* 功率计初始化配置 */
+typedef struct {
+    FDCAN_Init_Config_s can_config;
+    Daemon_Init_Config_s daemon_config;
+} XidiPowerMeter_Init_Config_s;
 
 /* 函数声明 */
-PowerMeterInstance *PowerMeterInit(FDCAN_HandleTypeDef *can_handle);
+XidiPowerMeterInstance *XidiPowerMeterInit(XidiPowerMeter_Init_Config_s *XidiPowerMeter_config);
 
-void PowerMeterDecode(FDCANInstance *instance);
+void XidiPowerMeterDecode(FDCANInstance *_instance);
 
-void PowerMeterLostCallback(void *power_meter_ptr);
+void XidiPowerMeterLostCallback(void *power_meter_ptr);
 
-float PowerMeterGetVoltage(PowerMeterInstance *power_meter);
+float XidiPowerMeterGetVoltage(XidiPowerMeterInstance *power_meter);
 
-float PowerMeterGetCurrent(PowerMeterInstance *power_meter);
+float XidiPowerMeterGetCurrent(XidiPowerMeterInstance *power_meter);
 
-float PowerMeterGetPower(PowerMeterInstance *power_meter);
+float XidiPowerMeterGetPower(XidiPowerMeterInstance *power_meter);
 
-float PowerMeterGetEnergy(PowerMeterInstance *power_meter);
+float XidiPowerMeterGetEnergy(XidiPowerMeterInstance *power_meter);
 
-void PowerMeterResetEnergy(PowerMeterInstance *power_meter);
+void XidiPowerMeterResetEnergy(XidiPowerMeterInstance *power_meter);
 
-PowerMeterInstance *GetPowerMeterInstance(void);
+XidiPowerMeterInstance *GetPowerMeterInstance(void);
 
 #endif //TRONONEH7_SCAFFOLD_XIDIPWMETER_H
