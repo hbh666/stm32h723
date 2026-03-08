@@ -106,9 +106,9 @@ PowerMeterInstance *PowerMeterInit(FDCAN_HandleTypeDef *can_handle)
 
     //注册守护进程
     Daemon_Init_Config_s daemon_config = {
-            .callback = PowerMeterLostCallback,
-            .owner_id = power_meter_instance,
-            .reload_count = 5, // 50ms未收到数据则认为丢失 (1000Hz发送，5个周期)
+        .callback = PowerMeterLostCallback,
+        .owner_id = power_meter_instance,
+        .reload_count = 5, // 50ms未收到数据则认为丢失 (1000Hz发送，5个周期)
     };
     power_meter_instance->daemon = DaemonRegister(&daemon_config);
 
