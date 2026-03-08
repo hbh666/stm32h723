@@ -1,0 +1,48 @@
+
+
+Breakpoint=/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/User_Code/module/periph/power_meters/xiditech/xidipwmeter.c:26, State=BP_STATE_DISABLED
+Breakpoint=/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/User_Code/module/periph/power_meters/xiditech/xidipwmeter.c:64, State=BP_STATE_ON
+Breakpoint=/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/User_Code/module/periph/power_meters/xiditech/xidipwmeter.c:91, State=BP_STATE_DISABLED
+OpenDocument="stm32h7xx_it.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/Core/Src/stm32h7xx_it.c", Line=107
+OpenDocument="portmacro.h", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h", Line=188
+OpenDocument="port.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c", Line=211
+OpenDocument="daemon.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/User_Code/module/software/daemon/daemon.c", Line=46
+OpenDocument="xidipwmeter.h", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/User_Code/module/periph/power_meters/xiditech/xidipwmeter.h", Line=35
+OpenDocument="tasks.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/Middlewares/Third_Party/FreeRTOS/Source/tasks.c", Line=2298
+OpenDocument="main.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/Core/Src/main.c", Line=74
+OpenDocument="delayticks.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/User_Code/bsp/delayticks/delayticks.c", Line=12
+OpenDocument="stm32h7xx_hal_fdcan.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_fdcan.c", Line=2014
+OpenDocument="bsp_fdcan.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/User_Code/bsp/fdcan/bsp_fdcan.c", Line=112
+OpenDocument="xidipwmeter.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/User_Code/module/periph/power_meters/xiditech/xidipwmeter.c", Line=57
+OpenDocument="stm32h7xx_hal_spi.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c", Line=1553
+OpenDocument="dev_cmd.c", FilePath="/home/tuxmonkey/CLionProjects/tronone-h7-scaffold/User_Code/user_task/dev_tasks/dev_cmd.c", Line=15
+OpenToolbar="Debug", Floating=0, x=0, y=0
+OpenWindow="Registers 1", DockArea=BOTTOM, x=5, y=0, w=497, h=285, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, FilteredItems=[], RefreshRate=1
+OpenWindow="Source Files", DockArea=LEFT, x=0, y=0, w=539, h=198, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Disassembly", DockArea=BOTTOM, x=0, y=0, w=432, h=285, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Break & Tracepoints", DockArea=LEFT, x=0, y=1, w=539, h=239, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, VectorCatchIndexMask=254
+OpenWindow="Memory 1", DockArea=BOTTOM, x=4, y=0, w=442, h=285, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, EditorAddress=0x200003D8
+OpenWindow="Global Data", DockArea=RIGHT, x=0, y=2, w=561, h=173, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Watched Data 1", DockArea=LEFT, x=0, y=2, w=539, h=204, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Functions", DockArea=BOTTOM, x=3, y=0, w=415, h=285, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Data Sampling", DockArea=BOTTOM, x=1, y=0, w=359, h=285, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, VisibleTab=0, UniformSampleSpacing=0
+OpenWindow="Timeline", DockArea=RIGHT, x=0, y=1, w=561, h=293, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=1, DataPaneShown=1, PowerPaneShown=0, CodePaneShown=0, PinCursor="Cursor Movable", TimePerDiv="1 ns / Div", TimeStampFormat="Time", DataGraphDrawAsPoints=0, DataGraphLegendShown=1, DataGraphUniformSampleSpacing=0, DataGraphLegendPosition="355;0", DataGraphShowNamesAtCursor=0, PowerGraphDrawAsPoints=0, PowerGraphLegendShown=0, PowerGraphAvgFilterTime=Off, PowerGraphAvgFilterLen=Off, PowerGraphUniformSampleSpacing=0, PowerGraphLegendPosition="360;-67", CodeGraphLegendShown=0, CodeGraphLegendPosition="369;0"
+OpenWindow="Console", DockArea=BOTTOM, x=2, y=0, w=410, h=285, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="FreeRTOS", DockArea=RIGHT, x=0, y=0, w=561, h=175, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, Showing="Task List"
+SmartViewPlugin="", Page="", Toolbar="Hidden", Window="SmartView 1"
+TableHeader="Global Data", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Location";"Size";"Type";"Access";"Scope"], ColWidths=[100;100;100;100;100;0;100]
+TableHeader="Vector Catches", SortCol="", SortOrder="ASCENDING", VisibleCols=["";"Vector Catch";"Description"], ColWidths=[50;300;500]
+TableHeader="Break & Tracepoints", SortCol="None", SortOrder="ASCENDING", VisibleCols=["";"Type";"Location";"Extras"], ColWidths=[100;100;100;553]
+TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Class";"Source"], ColWidths=[1435;100;100;100;27;245]
+TableHeader="Source Files", SortCol="File", SortOrder="ASCENDING", VisibleCols=["File";"Status";"Size";"#Insts";"Path"], ColWidths=[225;100;100;100;931]
+TableHeader="Data Sampling Table", SortCol="None", SortOrder="ASCENDING", VisibleCols=["Index";"Time"], ColWidths=[100;100]
+TableHeader="Data Sampling Setup", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Type";"Value";"Min";"Max";"Average";"# Changes";"Min. Change";"Max. Change"], ColWidths=[126;100;100;100;100;100;100;100;100]
+TableHeader="Power Sampling", SortCol="None", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Ch 0"], ColWidths=[100;100;100]
+TableHeader="Task List", SortCol="None", SortOrder="ASCENDING", VisibleCols=["Name";"Run Count";"Priority";"Status";"Timeout";"Stack Info";"ID";"Mutex Count";"Notified Value";"Notify State"], ColWidths=[110;110;110;110;110;110;110;110;110;110]
+TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Description"], ColWidths=[100;105;276]
+TableHeader="Watched Data 1", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh";"Access"], ColWidths=[170;100;100;169;100]
+TableHeader="RegisterSelectionDialog", SortCol="None", SortOrder="ASCENDING", VisibleCols=[], ColWidths=[]
+TableHeader="TargetExceptionDialog", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Address";"Description"], ColWidths=[200;100;100;358]
+WatchedExpression="Daemon_Init_Config_s", RefreshRate=2, Window=Watched Data 1
+WatchedExpression="power_meter_instance", Window=Watched Data 1
+WatchedExpression="powermeter_msg", Window=Watched Data 1
