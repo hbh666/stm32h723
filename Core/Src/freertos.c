@@ -34,6 +34,7 @@
 // // #include "ins_task.h"
 // #include "bsp_log.h"
 #include "dev_cmd.h"
+#include "daemon.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -145,7 +146,7 @@ const osThreadAttr_t daemon_attributes = {
 //@Todo:测试使用
 osThreadId daemonHandle;
 
-void DaemonTask();
+void StartDaemonTask(void *argument); // <--- 新的，带参数的标准 RTOS 线程声明
 
 /* USER CODE END FunctionPrototypes */
 
@@ -264,9 +265,9 @@ void MX_FREERTOS_Init(void)
   // 创建线程
   insTaskHandle = osThreadNew(StartINSTASK, NULL, &instask_attributes);
 
-    //@Todo:daemon是测试版本
-    // 创建线程
-    daemonHandle = osThreadNew(DaemonTask, NULL, &daemon_attributes);
+  //@Todo:daemon是测试版本
+  // 创建线程
+  daemonHandle = osThreadNew(StartDaemonTask, NULL, &daemon_attributes); // <--- 换成新的函数名
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -447,19 +448,27 @@ __attribute__((noreturn)) void StartINSTASK(void *argument)
 * @brief Function implementing the reference thread.
 * @param argument: Not used
 * @retval None
-* @Todo:Deamon task
+* @Todo:Deamon task 后期加入cmd和def
 */
 /* USER CODE END Header_RefereeTask */
-__weak void DaemonTask()
+__attribute__((noreturn)) void StartDaemonTask(void *argument)
 {
-    /* USER CODE BEGIN DaemonTask */
+    /* USER CODE BEGIN StartDaemonTask */
+    // LOGINFO("[freeRTOS] Daemon Task Start");
+
     /* Infinite loop */
     for (;;)
     {
-        osDelay(1);
+        // 1. 执行核心的数据刷新逻辑
+        Daemon_Update();
+
+        // 2. 线程休眠 10ms (100Hz 运行频率)
+        osDelay(10);
     }
-    /* USER CODE END RefereeTask */
+    /* USER CODE END StartDaemonTask */
 }
+
+// 注意：把你原来写在 freertos.c 里的那个 __weak void DaemonTask() 整个删掉，防止干扰！
 
 /* USER CODE END Application */
 

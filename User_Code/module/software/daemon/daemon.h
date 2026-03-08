@@ -67,6 +67,6 @@ uint8_t DaemonIsOnline(Daemon_Instance *daemon);
  *        模块成功接受数据或成功操作则会重载temp_count的值为reload_count.
  *
  */
-void DaemonTask(void);
+void Daemon_Update(void);
 
 #endif // DAEMON_H

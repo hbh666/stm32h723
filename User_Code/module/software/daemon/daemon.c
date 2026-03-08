@@ -50,16 +50,20 @@ uint8_t DaemonIsOnline(Daemon_Instance *daemon)
  *        模块成功接受数据或成功操作则会重载temp_count的值为reload_count.
  *
  */
-void DaemonTask(void)
+// === 在 daemon.c 中修改 ===
+
+/**
+ * @brief 轮询刷新所有的守护进程实例
+ */
+void Daemon_Update(void) // 名字改掉，不要叫 Task，避免和 RTOS 线程混淆
 {
     Daemon_Instance *daemon;
     for (uint8_t i = 0; i < idx; i++)
     {
         daemon = daemon_instances[i];
-        if (daemon->temp_count > 0) // 如果计数器还有值,说明上一次喂狗后还没有超时,则计数器减一
+        if (daemon->temp_count > 0)
             daemon->temp_count--;
-        else if (daemon->callback != NULL) // 等于零说明超时了,调用回调函数(如果有的话)
+        else if (daemon->callback != NULL)
             daemon->callback(daemon->id);
-        // @todo 可以加入蜂鸣器或者led等提示
     }
 }
