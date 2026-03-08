@@ -45,9 +45,10 @@ void RobotCMDInit()
     }
 }
 // ==================== 4. 在控制任务中读取使用 ====================
-void CmdTask()
+void CmdTask(void *argument)
 {
     RobotCMDInit();
+    DaemonReload(chassis_power_meter->daemon);
     while (1)
     {
         if (chassis_power_meter != NULL)

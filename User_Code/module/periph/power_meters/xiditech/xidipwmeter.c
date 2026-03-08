@@ -31,10 +31,10 @@ void XidiPowerMeterDecode(FDCANInstance *_instance)
     XidiPowerMeter_Msg_s *measure = &power_meter_instance->powermeter_msg;
 
     // 重载守护进程
-    // if (power_meter_instance->daemon != NULL)
-    // {
-    //     DaemonReload(power_meter_instance->daemon);
-    // }
+    if (power_meter_instance->daemon != NULL)
+    {
+        DaemonReload(power_meter_instance->daemon);
+    }
 
     // 计算时间间隔
     measure->dt = DWT_GetDeltaT(&power_meter_instance->feed_cnt);

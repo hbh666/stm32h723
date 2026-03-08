@@ -131,7 +131,21 @@ const osThreadAttr_t instask_attributes = {
 //@Todo:测试使用
 osThreadId insTaskHandle;
 
-void StartINSTASK(void const *argument);
+void StartINSTASK(void *argument);
+
+
+
+//@Todo:测试daemon(但是没有daemon注册)
+const osThreadAttr_t daemon_attributes = {
+    .name = "daemon",
+    .priority = osPriorityAboveNormal, // 较高优先级
+    .stack_size = 1024 * 4 // 栈大小，单位是字节（通常是字数的4倍）
+  };
+
+//@Todo:测试使用
+osThreadId daemonHandle;
+
+void DaemonTask();
 
 /* USER CODE END FunctionPrototypes */
 
@@ -249,6 +263,10 @@ void MX_FREERTOS_Init(void)
   //@Todo:INS_Task是测试版本
   // 创建线程
   insTaskHandle = osThreadNew(StartINSTASK, NULL, &instask_attributes);
+
+    //@Todo:daemon是测试版本
+    // 创建线程
+    daemonHandle = osThreadNew(DaemonTask, NULL, &daemon_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -406,7 +424,7 @@ __weak void RefereeTask(void *argument)
 /* USER CODE BEGIN Application */
 
 //@Todo:INS_Task是测试阶段使用。
-__attribute__((noreturn)) void StartINSTASK(void const *argument)
+__attribute__((noreturn)) void StartINSTASK(void *argument)
 {
   static float ins_start;
   static float ins_dt;
@@ -425,6 +443,23 @@ __attribute__((noreturn)) void StartINSTASK(void const *argument)
   }
 }
 
+/**
+* @brief Function implementing the reference thread.
+* @param argument: Not used
+* @retval None
+* @Todo:Deamon task
+*/
+/* USER CODE END Header_RefereeTask */
+__weak void DaemonTask()
+{
+    /* USER CODE BEGIN DaemonTask */
+    /* Infinite loop */
+    for (;;)
+    {
+        osDelay(1);
+    }
+    /* USER CODE END RefereeTask */
+}
 
 /* USER CODE END Application */
 

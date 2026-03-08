@@ -1,7 +1,8 @@
 #include "daemon.h"
 #include "bsp_dwt.h"
-#include "stdlib.h"
+#include "cmsis_os2.h"
 #include "memory.h"
+#include "stdlib.h"
 
 /* 用于保存所有的daemon instance */
 static Daemon_Instance *daemon_instances[DAEMON_MAX_NUM];
