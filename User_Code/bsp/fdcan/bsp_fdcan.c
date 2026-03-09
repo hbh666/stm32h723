@@ -78,7 +78,7 @@ static void CANAddFilter(FDCANInstance *_instance)
 	fdcan_filter_conf.IsCalibrationMsg = 0;
 	//fdcan_filter_conf.RxBufferIndex=0;
 
-	// ================== 【核心修复区】 ==================
+	// ================== 【核心修复区】 ==================@todo：有问题 我要验牌
 	// 1. 强制让 FDCAN 进入 INIT 模式，否则无法写入 Message RAM
 	HAL_FDCAN_Stop(_instance->can_handle);
 
@@ -87,9 +87,14 @@ static void CANAddFilter(FDCANInstance *_instance)
 
 	// 3. 重新启动 FDCAN
 	HAL_FDCAN_Start(_instance->can_handle);
-	// ====================================================
 
-	HAL_FDCAN_ConfigFilter(_instance->can_handle, &fdcan_filter_conf);
+	// 4. 【救命稻草】HAL_FDCAN_Stop 关闭了所有中断，必须在这里重新激活！
+	uint32_t FDCAN_RXActiveITs = FDCAN_IT_RX_FIFO0_NEW_MESSAGE | FDCAN_IT_RX_FIFO0_FULL |
+	                             FDCAN_IT_RX_FIFO0_WATERMARK | FDCAN_IT_RX_FIFO0_MESSAGE_LOST |
+	                             FDCAN_IT_RX_FIFO1_NEW_MESSAGE | FDCAN_IT_RX_FIFO1_FULL |
+	                             FDCAN_IT_RX_FIFO1_WATERMARK | FDCAN_IT_RX_FIFO1_MESSAGE_LOST;
+	HAL_FDCAN_ActivateNotification(_instance->can_handle, FDCAN_RXActiveITs, 0);
+	// ====================================================
 
 #else
 	CAN_FilterTypeDef can_filter_conf;

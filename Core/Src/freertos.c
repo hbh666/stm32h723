@@ -151,30 +151,20 @@ void StartDaemonTask(void *argument); // <--- 新的，带参数的标准 RTOS �
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
-
 void ShootTask(void *argument);
-
 void GimbalTask(void *argument);
-
 void ChassisTask(void *argument);
-
 void StartInitTask(void *argument);
-
 void VisionTask(void *argument);
-
 void CmdTask(void *argument);
-
 void RefereeTask(void *argument);
-
 extern void ws2812Task(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
-
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* Hook prototypes */
 void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
-
 void vApplicationMallocFailedHook(void);
 
 /* USER CODE BEGIN 4 */
@@ -209,8 +199,7 @@ void vApplicationMallocFailedHook(void)
   * @param  None
   * @retval None
   */
-void MX_FREERTOS_Init(void)
-{
+void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -273,6 +262,7 @@ void MX_FREERTOS_Init(void)
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
+
 }
 
 /* USER CODE BEGIN Header_StartDefaultTask */

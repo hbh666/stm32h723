@@ -21,7 +21,7 @@ static XidiPowerMeter_Init_Config_s xidi_pm_config = {
     .can_config = {
         .can_handle = &hfdcan1, // 原来直接传的句柄，现在放进结构体里
         .rx_id = 0x213, // 接收 ID
-        .tx_id = 0x001, // 发送 ID (不发送填0)
+        .tx_id = 0x000, // 发送 ID (不发送填0)
     },
     .daemon_config = {
         .reload_count = 5, // 守护进程超时周期 (例如：5次没收到算离线)
