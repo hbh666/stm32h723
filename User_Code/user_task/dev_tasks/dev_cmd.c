@@ -19,12 +19,12 @@ static float current_energy_j = 0.0f;
 // 1. 定义为静态变量（static），确保它的内存空间常驻，防止底层指针悬垂！
 static XidiPowerMeter_Init_Config_s xidi_pm_config = {
     .can_config = {
-        .can_handle = &hfdcan1,  // 原来直接传的句柄，现在放进结构体里
-        .rx_id = 0x213,          // 接收 ID
-        .tx_id = 0x000,          // 发送 ID (不发送填0)
+        .can_handle = &hfdcan1, // 原来直接传的句柄，现在放进结构体里
+        .rx_id = 0x213, // 接收 ID
+        .tx_id = 0x001, // 发送 ID (不发送填0)
     },
     .daemon_config = {
-        .reload_count = 5,       // 守护进程超时周期 (例如：5次没收到算离线)
+        .reload_count = 5, // 守护进程超时周期 (例如：5次没收到算离线)
     }
 };
 
@@ -44,6 +44,7 @@ void RobotCMDInit()
         LOGINFO("[CMD] Power Meter Init Success!");
     }
 }
+
 // ==================== 4. 在控制任务中读取使用 ====================
 void CmdTask(void *argument)
 {
