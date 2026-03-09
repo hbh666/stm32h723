@@ -13,14 +13,15 @@ static XidiPowerMeterInstance *power_meter_instance = NULL;
  * @brief 功率计数据解码函数
  * @param _instance FDCAN实例指针
  *
- * @note 数据格式:
- *        DATA[0]: 电流数值低8位
- *        DATA[1]: 电流数值高8位
- *        DATA[2]: 电压数值低8位
- *        DATA[3]: 电压数值高8位
- *        DATA[4]-DATA[7]: 保留
- *
- *        电压电流数值均为放大100倍后的整数，需要除以100.0得到实际值
+ * @note 新版数据格式 (大端模式):
+ * DATA[0]: 电压高8位
+ * DATA[1]: 电压低8位
+ * DATA[2]: 电流高8位
+ * DATA[3]: 电流低8位
+ * DATA[4]: 功率高8位
+ * DATA[5]: 功率低8位
+ * DATA[6]: 标识符
+ * DATA[7]: 校验和
  */
 void XidiPowerMeterDecode(FDCANInstance *_instance)
 {
@@ -39,18 +40,20 @@ void XidiPowerMeterDecode(FDCANInstance *_instance)
     // 计算时间间隔
     measure->dt = DWT_GetDeltaT(&power_meter_instance->feed_cnt);
 
-    // 解析电流数据 (放大100倍，需要除以100)
-    auto current_raw = (int16_t) ((rxbuff[1] << 8) | rxbuff[0]);
-    measure->current = (float) current_raw / 100.0f;
-
-    // 解析电压数据 (放大100倍，需要除以100)
-    auto voltage_raw = (int16_t) ((rxbuff[3] << 8) | rxbuff[2]);
+    // 1. 解析电压 (高8位在前，低8位在后)
+    uint16_t voltage_raw = (rxbuff[0] << 8) | rxbuff[1];
     measure->voltage = (float) voltage_raw / 100.0f;
 
-    // 计算功率
-    measure->power = measure->voltage * measure->current;
+    // 2. 解析电流 (高8位在前，低8位在后)
+    uint16_t current_raw = (rxbuff[2] << 8) | rxbuff[3];
+    measure->current = (float) current_raw / 100.0f;
 
-    // 计算累计能量 (功率 × 时间)
+    // 3. 解析功率 (高8位在前，低8位在后)
+    // 既然协议里直接发了功率，我们就直接读硬件算好的，比自己用 U*I 算更准
+    uint16_t power_raw = (rxbuff[4] << 8) | rxbuff[5];
+    measure->power = (float) power_raw / 100.0f;
+
+    // 4. 计算累计能量 (功率 × 时间)
     measure->energy += measure->power * measure->dt * 0.001f; // dt单位是ms，转换为秒
 
     measure->update_cnt++;
@@ -79,7 +82,7 @@ XidiPowerMeterInstance *XidiPowerMeterInit(XidiPowerMeter_Init_Config_s *XidiPow
     }
 
     // 2. 分配内存并清零
-    power_meter_instance = (XidiPowerMeterInstance *)malloc(sizeof(XidiPowerMeterInstance));
+    power_meter_instance = (XidiPowerMeterInstance *) malloc(sizeof(XidiPowerMeterInstance));
     if (power_meter_instance == NULL)
     {
         return NULL;

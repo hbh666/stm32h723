@@ -19,7 +19,7 @@ static float current_energy_j = 0.0f;
 // 1. 定义为静态变量（static），确保它的内存空间常驻，防止底层指针悬垂！
 static XidiPowerMeter_Init_Config_s xidi_pm_config = {
     .can_config = {
-        .can_handle = &hfdcan1, // 原来直接传的句柄，现在放进结构体里
+        .can_handle = &hfdcan2, // 原来直接传的句柄，现在放进结构体里
         .rx_id = 0x213, // 接收 ID
         .tx_id = 0x000, // 发送 ID (不发送填0)
     },
@@ -52,16 +52,7 @@ void CmdTask(void *argument)
     DaemonReload(chassis_power_meter->daemon);
     while (1)
     {
-        if (chassis_power_meter != NULL)
-        {
-            current_power_w = XidiPowerMeterGetPower(chassis_power_meter);
-            current_voltage_v = XidiPowerMeterGetVoltage(chassis_power_meter);
-            current_energy_j = XidiPowerMeterGetEnergy(chassis_power_meter);
-
-            // 你可以将获取到的功率写入要发送给底盘的 cmd 中，例如限制最大速度
-            // chassis_cmd_send.real_power = current_power_w;
-        }
-
+        DaemonReload(chassis_power_meter->daemon);
         osDelay(10); // 根据实际需要调整读取频率
     }
 }
