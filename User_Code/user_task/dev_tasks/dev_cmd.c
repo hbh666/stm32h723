@@ -52,7 +52,6 @@ void CmdTask(void *argument)
     DaemonReload(chassis_power_meter->daemon);
     while (1)
     {
-        DaemonReload(chassis_power_meter->daemon);
         osDelay(10); // 根据实际需要调整读取频率
     }
 }
