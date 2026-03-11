@@ -13,15 +13,12 @@ static XidiPowerMeterInstance *power_meter_instance = NULL;
  * @brief 功率计数据解码函数
  * @param _instance FDCAN实例指针
  *
- * @note 新版数据格式 (大端模式):
- * DATA[0]: 电压高8位
- * DATA[1]: 电压低8位
- * DATA[2]: 电流高8位
- * DATA[3]: 电流低8位
- * DATA[4]: 功率高8位
- * DATA[5]: 功率低8位
- * DATA[6]: 标识符
- * DATA[7]: 校验和
+ * @note 依据实际硬件与官方示例代码 (小端模式):
+ * DATA[0]: 电压低8位
+ * DATA[1]: 电压高8位
+ * DATA[2]: 电流低8位
+ * DATA[3]: 电流高8位
+ * 功率使用 P = U * I 直接计算
  */
 void XidiPowerMeterDecode(FDCANInstance *_instance)
 {
@@ -40,18 +37,17 @@ void XidiPowerMeterDecode(FDCANInstance *_instance)
     // 计算时间间隔
     measure->dt = DWT_GetDeltaT(&power_meter_instance->feed_cnt);
 
-    // 1. 解析电压 (高8位在前，低8位在后)
-    uint16_t voltage_raw = (rxbuff[0] << 8) | rxbuff[1];
+    // 1. 按照图片解析电压 (小端模式：[1]为高位，[0]为低位)
+    // 使用 int16_t 强转是为了兼容可能出现的负数波动
+    int16_t voltage_raw = (int16_t) ((rxbuff[1] << 8) | rxbuff[0]);
     measure->voltage = (float) voltage_raw / 100.0f;
 
-    // 2. 解析电流 (高8位在前，低8位在后)
-    uint16_t current_raw = (rxbuff[2] << 8) | rxbuff[3];
+    // 2. 按照图片解析电流 (小端模式：[3]为高位，[2]为低位)
+    int16_t current_raw = (int16_t) ((rxbuff[3] << 8) | rxbuff[2]);
     measure->current = (float) current_raw / 100.0f;
 
-    // 3. 解析功率 (高8位在前，低8位在后)
-    // 既然协议里直接发了功率，我们就直接读硬件算好的，比自己用 U*I 算更准
-    uint16_t power_raw = (rxbuff[4] << 8) | rxbuff[5];
-    measure->power = (float) power_raw / 100.0f;
+    // 3. 按照图片直接计算功率 (电压 * 电流)
+    measure->power = measure->voltage * measure->current;
 
     // 4. 计算累计能量 (功率 × 时间)
     measure->energy += measure->power * measure->dt * 0.001f; // dt单位是ms，转换为秒
