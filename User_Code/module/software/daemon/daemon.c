@@ -1,6 +1,7 @@
 #include "daemon.h"
 #include "bsp_dwt.h"
 #include "cmsis_os2.h"
+#include "main.h"
 #include "memory.h"
 #include "stdlib.h"
 
@@ -16,8 +17,7 @@ Daemon_Instance *DaemonRegister(Daemon_Init_Config_s *config)
     daemon_instance->id = config->owner_id;
     daemon_instance->reload_count = config->reload_count == 0 ? 100 : config->reload_count; // 默认重载值为100
     daemon_instance->callback = config->callback;
-    daemon_instance->temp_count = config->init_count == 0 ? 100 : config->init_count; // 默认上线等待时间为100
-    daemon_instance->temp_count = config->reload_count;
+    daemon_instance->temp_count = config->init_count == 0 ? daemon_instance->reload_count : config->init_count;
 
     daemon_instances[idx++] = daemon_instance;
 
@@ -31,7 +31,13 @@ Daemon_Instance *DaemonRegister(Daemon_Init_Config_s *config)
  */
 void DaemonReload(Daemon_Instance *daemon)
 {
+    if (daemon == NULL)
+        return;
+
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();
     daemon->temp_count = daemon->reload_count;
+    __set_PRIMASK(primask);
 }
 
 /**
@@ -42,7 +48,14 @@ void DaemonReload(Daemon_Instance *daemon)
  */
 uint8_t DaemonIsOnline(Daemon_Instance *daemon)
 {
-    return daemon->temp_count > 0;
+    if (daemon == NULL)
+        return 0;
+
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();
+    uint8_t online = daemon->temp_count > 0;
+    __set_PRIMASK(primask);
+    return online;
 }
 
 /**
@@ -61,9 +74,17 @@ void Daemon_Update(void) // 名字改掉，不要叫 Task，避免和 RTOS 线�
     for (uint8_t i = 0; i < idx; i++)
     {
         daemon = daemon_instances[i];
+        uint8_t expired = 0;
+
+        uint32_t primask = __get_PRIMASK();
+        __disable_irq();
         if (daemon->temp_count > 0)
             daemon->temp_count--;
-        else if (daemon->callback != NULL)
+        else
+            expired = 1;
+        __set_PRIMASK(primask);
+
+        if (expired && daemon->callback != NULL)
             daemon->callback(daemon->id);
     }
 }

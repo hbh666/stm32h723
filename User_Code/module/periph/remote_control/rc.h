@@ -125,21 +125,30 @@ typedef struct
     uint8_t key_count[3][16];
 } RC_ctrl_t;
 #endif // FSI6X
+
 /* ------------------------- Internal Data ----------------------------------- */
 
 /**
  * @brief 初始化遥控器,该函数会将遥控器注册到串口
  *
- * @attention 注意分配正确的串口硬件,遥控器在C板上使用USART3
+ * @attention 当前板级配置使用UART5/PD2接收SBUS
  *
  */
 RC_ctrl_t *RemoteControlInit(UART_HandleTypeDef *rc_usart_handle);
+
+/**
+ * @brief 原子复制当前遥控器数据
+ *
+ * @param out 接收遥控器数据快照
+ * @return uint8_t 1:快照有效 0:未初始化、离线或参数无效
+ */
+uint8_t RemoteControlReadSnapshot(RC_ctrl_t *out);
 
 /**
  * @brief 检查遥控器是否在线,若尚未初始化也视为离线
  *
  * @return uint8_t 1:在线 0:离线
  */
-uint8_t RemoteControlIsOnline();
+uint8_t RemoteControlIsOnline(void);
 
 #endif // REMOTE_H

@@ -77,22 +77,30 @@
 
 #define REMOTE_CONTROL_FRAME_SIZE 25u // 遥控器接收的buffer大小
 
-//@todo：测试define
-#define REMOTE_FS_I6X
-
 // 定义SBUS协议的起始标志
 #define SBUS_HEAD 0X0F
 
 // 定义SBUS协议的结束标志
 #define SBUS_END 0X00
+#define SBUS_FLAG_FRAME_LOST (1u << 2)
+#define SBUS_FLAG_FAILSAFE   (1u << 3)
 
 // 遥控器数据
 static RC_ctrl_t rc_ctrl[2]; //[0]:当前数据TEMP,[1]:上一次的数据LAST.用于按键持续按下和切换的判断
 static uint8_t rc_init_flag = 0; // 遥控器初始化标志位
+static volatile uint8_t rc_data_valid = 0;
+static volatile uint32_t rc_valid_frame_count = 0;
+static volatile uint32_t rc_invalid_frame_count = 0;
+static volatile uint32_t rc_failsafe_count = 0;
 
 // 遥控器拥有的串口实例,因为遥控器是单例,所以这里只有一个,就不封装了
 static USART_Instance *rc_usart_instance;
 static Daemon_Instance *rc_daemon_instance;
+
+static uint8_t SBusEndByteIsValid(uint8_t value)
+{
+    return value == SBUS_END || value == 0x04u || value == 0x14u || value == 0x24u || value == 0x34u;
+}
 
 
 #ifdef REMOTE_DJI_DT7
@@ -112,8 +120,11 @@ static void RectifyRCjoystick()
  *
  * @param sbus_buf 接收buffer
  */
-static void sbus_to_rc(const uint8_t *sbus_buf)
+static uint8_t sbus_to_rc(const uint8_t *sbus_buf, uint16_t size)
 {
+    if (size != 18u)
+        return 0;
+
     // 摇杆,直接解算时减去偏置
     rc_ctrl[TEMP].rc.rocker_r_ = ((sbus_buf[0] | (sbus_buf[1] << 8)) & 0x07ff) - RC_CH_VALUE_OFFSET; //!< Channel 0
     rc_ctrl[TEMP].rc.rocker_r1 = (((sbus_buf[1] >> 3) | (sbus_buf[2] << 5)) & 0x07ff) - RC_CH_VALUE_OFFSET;
@@ -169,6 +180,7 @@ static void sbus_to_rc(const uint8_t *sbus_buf)
     }
 
     memcpy(&rc_ctrl[LAST], &rc_ctrl[TEMP], sizeof(RC_ctrl_t)); // 保存上一次的数据,用于按键持续按下和切换的判断
+    return 1;
 }
 #endif
 
@@ -178,7 +190,7 @@ static void sbus_to_rc(const uint8_t *sbus_buf)
  *
  * @param sbus_buf 接收buffer
  */
-static void sbus_to_rc(const uint8_t *sbus_buf)
+static uint8_t sbus_to_rc(const uint8_t *sbus_buf, uint16_t size)
 {
     // // 摇杆,直接解算时减去偏置
     // rc_ctrl[TEMP].rc.rocker_r_ = ((sbus_buf[0] | (sbus_buf[1] << 8)) & 0x07ff) - RC_CH_VALUE_OFFSET;                              //!< Channel 0
@@ -230,8 +242,11 @@ static void sbus_to_rc(const uint8_t *sbus_buf)
     //         rc_ctrl[TEMP].key_count[KEY_PRESS_WITH_SHIFT][i]++;
     // }
 
-    if ((sbus_buf[0] != SBUS_HEAD) || (sbus_buf[24] != SBUS_END))
-        return;
+    if (size != REMOTE_CONTROL_FRAME_SIZE || sbus_buf[0] != SBUS_HEAD || !SBusEndByteIsValid(sbus_buf[24]))
+        return 0;
+
+    if ((sbus_buf[23] & (SBUS_FLAG_FRAME_LOST | SBUS_FLAG_FAILSAFE)) != 0u)
+        return 0;
 
     // if (sbus_buf[23] == 0x0C)
     // 	rc_ctrl->online = 0;
@@ -261,20 +276,18 @@ static void sbus_to_rc(const uint8_t *sbus_buf)
     // rc_ctrl[TEMP].rc.ch[9] = ((sbus_buf[12] >> 3 | sbus_buf[13] << 5) & 0x07FF);			   // 通道10 (VrB旋钮)
 
     rc_ctrl[TEMP].sw_a = (rc_ctrl[TEMP].rc.ch[4] == 0x00F0) ? RC_SW_UP : RC_SW_DOWN;
-    rc_ctrl[TEMP].sw_b = rc_ctrl[TEMP].rc.ch[5]; //3档
-    rc_ctrl[TEMP].sw_c = rc_ctrl[TEMP].rc.ch[6]; //3档
     rc_ctrl[TEMP].sw_d = (rc_ctrl[TEMP].rc.ch[7] == 0x00F0) ? RC_SW_UP : RC_SW_DOWN;
 
     // 解析SWB状态
-    if (rc_ctrl[TEMP].rc.ch[6] == 0x00F0)
+    if (rc_ctrl[TEMP].rc.ch[5] == 0x00F0)
     {
         rc_ctrl[TEMP].sw_b = RC_SW_UP;
     }
-    else if (rc_ctrl[TEMP].rc.ch[6] == 0x0400)
+    else if (rc_ctrl[TEMP].rc.ch[5] == 0x0400)
     {
         rc_ctrl[TEMP].sw_b = RC_SW_MID;
     }
-    else if (rc_ctrl[TEMP].rc.ch[6] == 0x070F)
+    else if (rc_ctrl[TEMP].rc.ch[5] == 0x070F)
     {
         rc_ctrl[TEMP].sw_b = RC_SW_DOWN;
     }
@@ -283,27 +296,14 @@ static void sbus_to_rc(const uint8_t *sbus_buf)
         rc_ctrl[TEMP].sw_b = 0;
     }
 
-    if (rc_ctrl[TEMP].sw_b != rc_ctrl[TEMP].sw_b_last)
-    {
-        if (rc_ctrl[TEMP].sw_b == RC_SW_UP)
-        {
-            rc_ctrl[TEMP].sw_b_midtoup_flag = 1;
-            rc_ctrl[TEMP].sw_b_uptomid_flag = 0;
-            rc_ctrl[TEMP].sw_b_midtodown_flag = 0;
-        }
-        else if (rc_ctrl[TEMP].sw_b == RC_SW_MID)
-        {
-            rc_ctrl[TEMP].sw_b_midtoup_flag = 0;
-            rc_ctrl[TEMP].sw_b_uptomid_flag = 1;
-            rc_ctrl[TEMP].sw_b_midtodown_flag = 0;
-        }
-        else if (rc_ctrl[TEMP].sw_b == RC_SW_DOWN)
-        {
-            rc_ctrl[TEMP].sw_b_midtoup_flag = 0;
-            rc_ctrl[TEMP].sw_b_uptomid_flag = 0;
-            rc_ctrl[TEMP].sw_b_midtodown_flag = 1;
-        }
-    }
+    rc_ctrl[TEMP].sw_b_midtoup_flag =
+        rc_ctrl[TEMP].sw_b_last == RC_SW_MID && rc_ctrl[TEMP].sw_b == RC_SW_UP;
+    rc_ctrl[TEMP].sw_b_uptomid_flag =
+        rc_ctrl[TEMP].sw_b_last == RC_SW_UP && rc_ctrl[TEMP].sw_b == RC_SW_MID;
+    rc_ctrl[TEMP].sw_b_midtodown_flag =
+        rc_ctrl[TEMP].sw_b_last == RC_SW_MID && rc_ctrl[TEMP].sw_b == RC_SW_DOWN;
+    rc_ctrl[TEMP].sw_b_downtomid_flag =
+        rc_ctrl[TEMP].sw_b_last == RC_SW_DOWN && rc_ctrl[TEMP].sw_b == RC_SW_MID;
     rc_ctrl[TEMP].sw_b_last = rc_ctrl[TEMP].sw_b;
 
     // 解析SWC状态
@@ -324,46 +324,22 @@ static void sbus_to_rc(const uint8_t *sbus_buf)
         rc_ctrl[TEMP].sw_c = 0;
     }
 
-    if (rc_ctrl[TEMP].sw_c != rc_ctrl[TEMP].sw_c_last)
-    {
-        if (rc_ctrl[TEMP].sw_c == RC_SW_UP)
-        {
-            rc_ctrl[TEMP].sw_c_midtoup_flag = 1;
-            rc_ctrl[TEMP].sw_c_uptomid_flag = 0;
-            rc_ctrl[TEMP].sw_c_midtodown_flag = 0;
-        }
-        else if (rc_ctrl[TEMP].sw_c == RC_SW_MID)
-        {
-            rc_ctrl[TEMP].sw_c_midtoup_flag = 0;
-            rc_ctrl[TEMP].sw_c_uptomid_flag = 1;
-            rc_ctrl[TEMP].sw_c_midtodown_flag = 0;
-        }
-        else if (rc_ctrl[TEMP].sw_c == RC_SW_DOWN)
-        {
-            rc_ctrl[TEMP].sw_c_midtoup_flag = 0;
-            rc_ctrl[TEMP].sw_c_uptomid_flag = 0;
-            rc_ctrl[TEMP].sw_c_midtodown_flag = 1;
-        }
-    }
+    rc_ctrl[TEMP].sw_c_midtoup_flag =
+        rc_ctrl[TEMP].sw_c_last == RC_SW_MID && rc_ctrl[TEMP].sw_c == RC_SW_UP;
+    rc_ctrl[TEMP].sw_c_uptomid_flag =
+        rc_ctrl[TEMP].sw_c_last == RC_SW_UP && rc_ctrl[TEMP].sw_c == RC_SW_MID;
+    rc_ctrl[TEMP].sw_c_midtodown_flag =
+        rc_ctrl[TEMP].sw_c_last == RC_SW_MID && rc_ctrl[TEMP].sw_c == RC_SW_DOWN;
+    rc_ctrl[TEMP].sw_c_downtomid_flag =
+        rc_ctrl[TEMP].sw_c_last == RC_SW_DOWN && rc_ctrl[TEMP].sw_c == RC_SW_MID;
     rc_ctrl[TEMP].sw_c_last = rc_ctrl[TEMP].sw_c;
 
-    // SWA和SWB的状态变化
-    if (rc_ctrl[TEMP].sw_a != rc_ctrl[TEMP].sw_a_last)
-    {
-        rc_ctrl[TEMP].sw_a_up_to_down_flag = (rc_ctrl[TEMP].sw_a == RC_SW_UP) ? 1 : 0;
-    }
+    // SWA和SWD的下降沿
+    rc_ctrl[TEMP].sw_a_up_to_down_flag =
+        rc_ctrl[TEMP].sw_a_last == RC_SW_UP && rc_ctrl[TEMP].sw_a == RC_SW_DOWN;
     rc_ctrl[TEMP].sw_a_last = rc_ctrl[TEMP].sw_a;
-
-    // if (rc_ctrl[TEMP].sw_b != rc_ctrl[TEMP].sw_b_last) {
-    //     rc_ctrl[TEMP].sw_b_up_to_down_flag = (rc_ctrl[TEMP].sw_b == RC_SW_UP) ? 1 : 0;
-    // }
-    // rc_ctrl[TEMP].sw_b_last = rc_ctrl[TEMP].sw_b;
-
-    // SWD的状态变化
-    if (rc_ctrl[TEMP].sw_d != rc_ctrl[TEMP].sw_d_last)
-    {
-        rc_ctrl[TEMP].sw_d_up_to_down_flag = (rc_ctrl[TEMP].sw_d == RC_SW_UP) ? 1 : 0;
-    }
+    rc_ctrl[TEMP].sw_d_up_to_down_flag =
+        rc_ctrl[TEMP].sw_d_last == RC_SW_UP && rc_ctrl[TEMP].sw_d == RC_SW_DOWN;
     rc_ctrl[TEMP].sw_d_last = rc_ctrl[TEMP].sw_d;
 
     // 修正 ch1~ch4
@@ -374,17 +350,54 @@ static void sbus_to_rc(const uint8_t *sbus_buf)
     // ...existing code...
 
     memcpy(&rc_ctrl[LAST], &rc_ctrl[TEMP], sizeof(RC_ctrl_t)); // 保存上一次的数据,用于按键持续按下和切换的判断
+    return 1;
 }
 #endif
+
+static void RemoteControlPublishOffline(uint8_t force)
+{
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();
+
+    uint8_t daemon_expired = rc_daemon_instance != NULL && rc_daemon_instance->temp_count == 0;
+    if (force || daemon_expired)
+    {
+        rc_data_valid = 0;
+        memset(rc_ctrl, 0, sizeof(rc_ctrl));
+        if (RobotMode != SYS_ERROR_OCCURRED)
+            RobotMode = REMOTE_NOT_CONNECTED;
+    }
+
+    __set_PRIMASK(primask);
+}
 
 /**
  * @brief 对sbus_to_rc的简单封装,用于注册到bsp_usart的回调函数中
  *
  */
-static void RemoteControlRxCallback()
+static void RemoteControlRxCallback(USART_Instance *instance, const uint8_t *recv_data, uint16_t recv_size)
 {
-    sbus_to_rc(rc_usart_instance->recv_buff); // 进行协议解析
-    DaemonReload(rc_daemon_instance); // 先喂狗
+    (void) instance;
+
+    if (recv_size == REMOTE_CONTROL_FRAME_SIZE && recv_data[0] == SBUS_HEAD &&
+        SBusEndByteIsValid(recv_data[24]) && (recv_data[23] & SBUS_FLAG_FAILSAFE) != 0u)
+    {
+        rc_failsafe_count++;
+        RemoteControlPublishOffline(1);
+        return;
+    }
+
+    if (!sbus_to_rc(recv_data, recv_size))
+    {
+        rc_invalid_frame_count++;
+        return;
+    }
+
+    rc_valid_frame_count++;
+    rc_data_valid = 1;
+    DaemonReload(rc_daemon_instance);
+    if (RobotMode == REMOTE_NOT_CONNECTED)
+        RobotMode = REMOTE_CONNECTED;
 }
 
 /**
@@ -393,38 +406,74 @@ static void RemoteControlRxCallback()
  */
 static void RCLostCallback(void *id)
 {
-    memset(rc_ctrl, 0, sizeof(rc_ctrl)); // 清空遥控器数据
-    USARTServiceInit(rc_usart_instance); // 尝试重新启动接收
-
-    RobotMode = REMOTE_NOT_CONNECTED;
+    (void) id;
+    RemoteControlPublishOffline(0);
 
     // LEDErrLog(0, LED_COLOR_R); // 红灯常亮 表示遥控器离线
 }
 
 RC_ctrl_t *RemoteControlInit(UART_HandleTypeDef *rc_usart_handle)
 {
-    USART_Init_Config_s conf;
-    conf.module_callback = RemoteControlRxCallback;
-    conf.usart_handle = rc_usart_handle;
-    conf.recv_buff_size = REMOTE_CONTROL_FRAME_SIZE;
+    if (rc_init_flag)
+        return &rc_ctrl[TEMP];
+    if (rc_usart_handle == NULL || rc_usart_handle->hdmarx == NULL)
+        return NULL;
 
-    rc_usart_instance = USARTRegister(&conf);
+    memset(rc_ctrl, 0, sizeof(rc_ctrl));
+    rc_data_valid = 0;
 
-    // 进行守护进程的注册,用于定时检查遥控器是否正常工作
-    Daemon_Init_Config_s daemon_conf = {
-        .reload_count = 10, // 100ms未收到数据视为离线,遥控器的接收频率实际上是1000/14Hz(大约70Hz)
-        .callback = RCLostCallback,
-        .owner_id = NULL, // 只有1个遥控器,不需要owner_id
-    };
-    rc_daemon_instance = DaemonRegister(&daemon_conf);
+    if (rc_usart_instance == NULL)
+    {
+        USART_Init_Config_s conf = {
+            .module_callback = RemoteControlRxCallback,
+            .usart_handle = rc_usart_handle,
+            .recv_buff_size = REMOTE_CONTROL_FRAME_SIZE,
+        };
+        rc_usart_instance = USARTRegister(&conf);
+        if (rc_usart_instance == NULL)
+            return NULL;
+    }
+
+    if (rc_daemon_instance == NULL)
+    {
+        // 100ms未收到有效数据视为离线,SBUS接收频率约70Hz.
+        Daemon_Init_Config_s daemon_conf = {
+            .reload_count = 10,
+            .callback = RCLostCallback,
+            .owner_id = NULL,
+        };
+        rc_daemon_instance = DaemonRegister(&daemon_conf);
+    }
 
     rc_init_flag = 1;
-    return rc_ctrl;
+    if (USARTServiceInit(rc_usart_instance) != HAL_OK)
+        rc_usart_instance->rx_restart_error_count++;
+    return &rc_ctrl[TEMP];
 }
 
-uint8_t RemoteControlIsOnline()
+uint8_t RemoteControlReadSnapshot(RC_ctrl_t *out)
 {
-    if (rc_init_flag)
-        return DaemonIsOnline(rc_daemon_instance);
-    return 0;
+    if (out == NULL)
+        return 0;
+
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();
+    uint8_t valid = rc_init_flag && rc_data_valid && rc_daemon_instance != NULL &&
+                    rc_daemon_instance->temp_count > 0;
+    if (valid)
+        memcpy(out, &rc_ctrl[TEMP], sizeof(*out));
+    __set_PRIMASK(primask);
+
+    return valid;
+}
+
+uint8_t RemoteControlIsOnline(void)
+{
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();
+    uint8_t online = rc_init_flag && rc_data_valid && rc_daemon_instance != NULL &&
+                     rc_daemon_instance->temp_count > 0;
+    __set_PRIMASK(primask);
+
+    return online;
 }

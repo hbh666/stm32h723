@@ -24,6 +24,7 @@
 #include "delayticks.h"
 
 #include "robot_def.h"
+#include "rc.h"
 
 /*---------------------VARIABLES---------------------*/
 uint8_t r = 0;
@@ -53,10 +54,13 @@ void robotSelfCheck(void)
 void ws2812Task(void *argument)
 {
     (void) argument;
-    RobotMode_t RobotMode = REMOTE_NOT_CONNECTED; // 初始状态为遥控器未连接
     while (1)
     {
-        switch (RobotMode)
+        RobotMode_t display_mode = RobotMode;
+        if (display_mode != SYS_ERROR_OCCURRED && !RemoteControlIsOnline())
+            display_mode = REMOTE_NOT_CONNECTED;
+
+        switch (display_mode)
         {
             case NORMAL_MODE:
                 BlinkGreen();

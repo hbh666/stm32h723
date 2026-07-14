@@ -16,6 +16,8 @@
 
 #include "bsp_init.h"
 #include "robot.h"
+#include "rc.h"
+#include "robot_def.h"
 
 #include "cmsis_gcc.h"
 // #include "robot_def.h"
@@ -26,6 +28,8 @@
 // #define ROBOT_DEF_PARAM_WARNING
 // #pragma message "check if you have configured the parameters in robot_def.h, IF NOT, please refer to the comments AND DO IT, otherwise the robot will have FATAL ERRORS!!!"
 // #endif // !ROBOT_DEF_PARAM_WARNING
+
+volatile RobotMode_t RobotMode = REMOTE_NOT_CONNECTED;
 
 // #if defined(ONE_BOARD) || defined(CHASSIS_BOARD)
 // #include "chassis.h"
@@ -58,6 +62,9 @@ void RobotInit()
     // HAL_GPIO_WritePin(Power_5V_EN_GPIO_Port, Power_5V_EN_Pin, GPIO_PIN_SET);//使能5V电源
 
     BSPInit();
+
+    if (RemoteControlInit(&huart5) == NULL)
+        RobotMode = SYS_ERROR_OCCURRED;
 
 #if defined(ONE_BOARD) || defined(GIMBAL_BOARD)
     RobotCMDInit();

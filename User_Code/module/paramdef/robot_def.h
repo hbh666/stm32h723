@@ -13,7 +13,7 @@ typedef enum
     // 添加其他模式
 } RobotMode_t; //机器人控制模式
 
-extern RobotMode_t RobotMode;
+extern volatile RobotMode_t RobotMode;
 
 
 // #pragma pack() // 开启字节对齐,结束前面的#pragma pack(1)

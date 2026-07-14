@@ -227,6 +227,17 @@ SECTIONS
   PROVIDE( __bss_start = _sbss );
   PROVIDE( __bss_size = __bss_end - __bss_start );
 
+  /* DMA1/DMA2 cannot access DTCM. The MPU config makes RAM_D1 non-cacheable. */
+  .dma_buffer (NOLOAD) :
+  {
+    . = ALIGN(32);
+    __dma_buffer_start__ = .;
+    KEEP(*(.dma_buffer))
+    KEEP(*(.dma_buffer.*))
+    . = ALIGN(32);
+    __dma_buffer_end__ = .;
+  } >RAM_D1
+
   /* 用户堆栈段，用于检查剩余RAM是否足够 */
   ._user_heap_stack (NOLOAD) :
   {

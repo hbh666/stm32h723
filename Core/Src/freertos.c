@@ -35,6 +35,7 @@
 // #include "bsp_log.h"
 #include "dev_cmd.h"
 #include "daemon.h"
+#include "bsp_usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -449,6 +450,8 @@ __attribute__((noreturn)) void StartDaemonTask(void *argument)
     /* Infinite loop */
     for (;;)
     {
+        USARTServiceTask();
+
         // 1. 执行核心的数据刷新逻辑
         Daemon_Update();
 

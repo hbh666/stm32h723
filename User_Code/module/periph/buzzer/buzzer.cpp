@@ -313,9 +313,9 @@ void systemstart_song(void)
 	// buzzer_note(120, 0.5); //高音sol
 	// HAL_Delay(550);
 
-	// SongSpring(); //为什么要演奏春日影！！！
+	//SongSpring(); //为什么要演奏春日影！！！
 
-	// SongLaoda();
+	//SongLaoda();
 
 	buzzer_off();
 }

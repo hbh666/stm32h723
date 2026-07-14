@@ -7,8 +7,10 @@
 #define DEVICE_USART_CNT 5     // 喵板至多分配5个串口
 #define USART_RXBUFF_LIMIT 256 // 如果协议需要更大的buff,请修改这里
 
+typedef struct usart_instance USART_Instance;
+
 // 模块回调函数,用于解析协议
-typedef void (*usart_module_callback)();
+typedef void (*usart_module_callback)(USART_Instance *instance, const uint8_t *recv_data, uint16_t recv_size);
 
 /* 发送模式枚举 */
 typedef enum
@@ -21,18 +23,24 @@ typedef enum
 
 // 串口实例结构体,每个module都要包含一个实例.
 // 由于串口是独占的点对点通信,所以不需要考虑多个module同时使用一个串口的情况,因此不用加入id;当然也可以选择加入,这样在bsp层可以访问到module的其他信息
-typedef struct
+struct usart_instance
 {
-    uint8_t recv_buff[USART_RXBUFF_LIMIT]; // 预先定义的最大buff大小,如果太小请修改USART_RXBUFF_LIMIT
-    uint8_t recv_buff_size; // 模块接收一包数据的大小
+    uint8_t recv_buff[USART_RXBUFF_LIMIT] __attribute__((aligned(32))); // DMA接收buffer
+    uint16_t recv_buff_size; // 模块接收一包数据的大小
     UART_HandleTypeDef *usart_handle; // 实例对应的usart_handle
     usart_module_callback module_callback; // 解析收到的数据的回调函数
-} USART_Instance;
+    volatile uint32_t rx_event_count;
+    volatile uint32_t uart_error_count;
+    volatile uint32_t rx_restart_error_count;
+    volatile uint32_t last_uart_error;
+    volatile uint16_t last_rx_size;
+    volatile uint8_t rx_restart_pending;
+};
 
 /* usart 初始化配置结构体 */
 typedef struct
 {
-    uint8_t recv_buff_size; // 模块接收一包数据的大小
+    uint16_t recv_buff_size; // 模块接收一包数据的大小
     UART_HandleTypeDef *usart_handle; // 实例对应的usart_handle
     usart_module_callback module_callback; // 解析收到的数据的回调函数
 } USART_Init_Config_s;
@@ -45,11 +53,16 @@ typedef struct
 USART_Instance *USARTRegister(USART_Init_Config_s *init_config);
 
 /**
- * @brief 启动串口服务,需要传入一个usart实例.一般用于lost callback的情况(使用串口的模块daemon)
+ * @brief 启动串口DMA接收服务,需要传入一个已注册的usart实例
  *
  * @param _instance
  */
-void USARTServiceInit(USART_Instance *_instance);
+HAL_StatusTypeDef USARTServiceInit(USART_Instance *_instance);
+
+/**
+ * @brief 在任务上下文中恢复中断回调里启动失败的串口接收
+ */
+void USARTServiceTask(void);
 
 
 /**
