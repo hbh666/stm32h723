@@ -149,6 +149,14 @@ osThreadId daemonHandle;
 
 void StartDaemonTask(void *argument); // <--- 新的，带参数的标准 RTOS 线程声明
 
+const osThreadAttr_t buzzer_attributes = {
+    .name = "buzzer",
+    .priority = osPriorityNormal,
+    .stack_size = 512 * 4
+};
+osThreadId buzzerHandle;
+extern void buzzerTask(void const *argument);
+
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -258,6 +266,7 @@ void MX_FREERTOS_Init(void) {
   //@Todo:daemon是测试版本
   // 创建线程
   daemonHandle = osThreadNew(StartDaemonTask, NULL, &daemon_attributes); // <--- 换成新的函数名
+  buzzerHandle = osThreadNew(buzzerTask, NULL, &buzzer_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */

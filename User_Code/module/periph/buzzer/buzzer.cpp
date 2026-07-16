@@ -24,6 +24,7 @@ extern "C"
 #include "cmsis_os.h"
 #include "tim.h"
 #include "delayticks.h"
+#include "rc.h"
 
 #ifdef __cplusplus
 }
@@ -154,6 +155,8 @@ static uint8_t bzply_count = 1; //单个音的节拍延时计数
 
 /*---------------------FUNCTIONS---------------------*/
 
+#define BUZZER_TIM_CLK 5000000U
+
 /***********************************************************************
 ** 函 数 名： SetBuzzerOff()
 ** 函数说明： 关闭蜂鸣器
@@ -175,12 +178,9 @@ void SetBuzzerOff(void)
 ***********************************************************************/
 void SetBuzzerFrequence(uint16_t freq)
 {
-	//buzzer --> tim12.channel2
-	//分频后为1000000Hz
-	uint16_t period = 1000000 / freq - 1;
-
+	uint16_t period = BUZZER_TIM_CLK / freq - 1;
 	__HAL_TIM_SET_AUTORELOAD(&htim12, period);
-	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, period/2);
+	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, period / 2);
 }
 
 /***********************************************************************
@@ -223,17 +223,12 @@ void buzzer_note(uint16_t note, float volume)
 	{
 		volume = 0.0f;
 	}
-	// 禁用定时器
 	__HAL_TIM_DISABLE(&htim12);
-	// 重置定时器计数器
 	htim12.Instance->CNT = 0;
-	// 设置自动重装载寄存器（ARR），以控制PWM信号的频率
-	htim12.Instance->ARR = (1000000 / note - 1) * 1u;
-	// 设置比较寄存器（CCR3），以控制PWM信号的占空比
-	htim12.Instance->CCR3 = (8 * 10500 / note - 1) * volume * 1u;
-	// 重新启用定时器
+	uint32_t arr = BUZZER_TIM_CLK / note - 1;
+	htim12.Instance->ARR = arr;
+	htim12.Instance->CCR2 = (uint32_t) ((float) arr * volume * 0.5f);
 	__HAL_TIM_ENABLE(&htim12);
-	// 启动PWM信号
 	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
 }
 
@@ -245,77 +240,53 @@ void buzzer_note(uint16_t note, float volume)
  */
 void systemstart_song(void)
 {
-	// 播放歌曲的旋律，每个音符后面都跟随一个延时
-	// buzzer_note(50,0.5);
-	// delay_ticks(450);
-	// buzzer_note(53,0.5);
-	// delay_ticks(450);
-	// buzzer_note(60,0.5);
-	// delay_ticks(750);
-	// buzzer_note(50,0.5);
-	// delay_ticks(250);
-	// buzzer_note(60,0.5);
-	// delay_ticks(250);
-	// buzzer_note(50,0.5);
-	// delay_ticks(290);
-	// buzzer_note(60,0.5);
-	// delay_ticks(300);
-	// buzzer_note(75,0.5);
-	// delay_ticks(550);
-	// buzzer_note(80,0.5);
-	// delay_ticks(1000);
-	// 播放结束后关闭蜂鸣器
-	// buzzer_off();
+	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
 
-	// buzzer_note(85,0.5);//中音mi
-	// delay_ticks(450);
-	// buzzer_note(90,0.5);
-	// delay_ticks(450);
-	// buzzer_note(100,0.5);
-	// delay_ticks(750);
-	// buzzer_note(85,0.5);
-	// delay_ticks(250);
-	// buzzer_note(100,0.5);
-	// delay_ticks(250);
-	// buzzer_note(85,0.5);
-	// delay_ticks(290);
-	// buzzer_note(100,0.5);
-	// delay_ticks(300);
-	// buzzer_note(125,0.5);
-	// delay_ticks(550);
-	// buzzer_note(132,0.5);
-	// delay_ticks(1000);
-
-	// buzzer_note(135,0.5);//高音mi
-	// delay_ticks(450);
-	// buzzer_note(140,0.5);
-	// delay_ticks(450);
-	// buzzer_note(160,0.5);
-	// delay_ticks(750);
-	// buzzer_note(135,0.5);
-	// delay_ticks(250);
-	// buzzer_note(160,0.5);
-	// delay_ticks(250);
-	// buzzer_note(135,0.5);
-	// delay_ticks(290);
-	// buzzer_note(160,0.5);
-	// delay_ticks(300);
-	// buzzer_note(200,0.5);
-	// delay_ticks(550);
-	// buzzer_note(210,0.5);
-	// delay_ticks(1000);
-
-	//DJI
-	// buzzer_note(80, 0.5); //高音do
-	// HAL_Delay(450);
-	// buzzer_note(90, 0.5); //高音re
-	// HAL_Delay(450);
-	// buzzer_note(120, 0.5); //高音sol
-	// HAL_Delay(550);
-
-	//SongSpring(); //为什么要演奏春日影！！！
-
-	//SongLaoda();
+	// 低音域 C4~B4
+	buzzer_note(262, 0.5);
+	HAL_Delay(150);
+	buzzer_note(294, 0.5);
+	HAL_Delay(150);
+	buzzer_note(330, 0.5);
+	HAL_Delay(150);
+	buzzer_note(349, 0.5);
+	HAL_Delay(150);
+	buzzer_note(392, 0.5);
+	HAL_Delay(150);
+	buzzer_note(440, 0.5);
+	HAL_Delay(150);
+	buzzer_note(494, 0.5);
+	HAL_Delay(150);
+	// 中音域 C5~B5
+	buzzer_note(523, 0.5);
+	HAL_Delay(150);
+	buzzer_note(587, 0.5);
+	HAL_Delay(150);
+	buzzer_note(659, 0.5);
+	HAL_Delay(150);
+	buzzer_note(698, 0.5);
+	HAL_Delay(150);
+	buzzer_note(784, 0.5);
+	HAL_Delay(150);
+	buzzer_note(880, 0.5);
+	HAL_Delay(150);
+	buzzer_note(988, 0.5);
+	HAL_Delay(150);
+	// 高音域 C6~B6
+	buzzer_note(1046, 0.5);
+	HAL_Delay(150);
+	buzzer_note(1175, 0.5);
+	HAL_Delay(150);
+	buzzer_note(1318, 0.5);
+	HAL_Delay(150);
+	buzzer_note(1397, 0.5);
+	HAL_Delay(150);
+	buzzer_note(1568, 0.5);
+	HAL_Delay(150);
+	buzzer_note(1760, 0.5);
+	HAL_Delay(150);
+	buzzer_note(1976, 0.5);
+	HAL_Delay(400);
 
 	buzzer_off();
 }
@@ -332,40 +303,58 @@ void SongSpring(void) //春日影！！！
 	}
 }
 
+void buzzerTask(void const *argument)
+{
+	(void) argument;
+	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
+
+	for (;;)
+	{
+		if (!RemoteControlIsOnline())
+		{
+			buzzer_note(659, 0.5); // E5
+			osDelay(250);
+			buzzer_note(494, 0.5); // B4
+			osDelay(250);
+			buzzer_off();
+			osDelay(500);
+		}
+		else
+		{
+			osDelay(200);
+		}
+	}
+}
+
 void SongLaoda(void)
 {
-	// 播放歌曲牢大
-	// buzzer_note(85,0.5);//中音mi
-	// delay_ticks(450);
-	// buzzer_note(90,0.5);
-	// delay_ticks(450);
-	buzzer_note(100, 0.5); //so
+	buzzer_note(494, 0.5); // B4
 	HAL_Delay(200);
-	buzzer_note(150, 0.5); //re
+	buzzer_note(740, 0.5); // F#5
 	HAL_Delay(200);
-	buzzer_note(135, 0.5); //do
+	buzzer_note(659, 0.5); // E5
 	HAL_Delay(200);
-	buzzer_note(100, 0.5); //so
+	buzzer_note(494, 0.5); // B4
 	HAL_Delay(500);
-	buzzer_note(135, 0.5); //do
+	buzzer_note(659, 0.5); // E5
 	HAL_Delay(170);
-	buzzer_note(150, 0.5); //re
+	buzzer_note(740, 0.5); // F#5
 	HAL_Delay(170);
-	buzzer_note(165, 0.5); //mi
+	buzzer_note(831, 0.5); // G#5
 	HAL_Delay(170);
-	buzzer_note(150, 0.5); //re
+	buzzer_note(740, 0.5); // F#5
 	HAL_Delay(170);
-	buzzer_note(135, 0.5); //do
+	buzzer_note(659, 0.5); // E5
 	HAL_Delay(170);
-	buzzer_note(150, 0.5); //re
+	buzzer_note(740, 0.5); // F#5
 	HAL_Delay(170);
-	buzzer_note(100, 0.5); //so
+	buzzer_note(494, 0.5); // B4
 	HAL_Delay(215);
-	buzzer_note(150, 0.5); //re
+	buzzer_note(740, 0.5); // F#5
 	HAL_Delay(215);
-	buzzer_note(135, 0.5); //do
+	buzzer_note(659, 0.5); // E5
 	HAL_Delay(215);
-	buzzer_note(100, 0.5); //so
+	buzzer_note(494, 0.5); // B4
 	HAL_Delay(215);
 
 	// buzzer_note(45,0.5);//do

@@ -54,11 +54,15 @@ void robotSelfCheck(void)
 void ws2812Task(void *argument)
 {
     (void) argument;
+    RC_ctrl_t rc_data;
     while (1)
     {
         RobotMode_t display_mode = RobotMode;
         if (display_mode != SYS_ERROR_OCCURRED && !RemoteControlIsOnline())
             display_mode = REMOTE_NOT_CONNECTED;
+
+        if (RemoteControlReadSnapshot(&rc_data) && switch_is_down(rc_data.sw_d))
+            display_mode = NORMAL_MODE;
 
         switch (display_mode)
         {
@@ -69,10 +73,10 @@ void ws2812Task(void *argument)
                 BlinkRed();
                 break;
             case REMOTE_NOT_CONNECTED:
-                BlinkYellow();
+                BlinkRed();
                 break;
             case REMOTE_CONNECTED:
-                BlinkBlue();
+                BlinkYellow();
                 break;
             case AUTO_SHOOTING_MODE:
                 BlinkCyan();
