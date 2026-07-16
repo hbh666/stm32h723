@@ -67,7 +67,7 @@ void ws2812Task(void *argument)
         switch (display_mode)
         {
             case NORMAL_MODE:
-                BlinkGreen();
+                BlinkBlue();
                 break;
             case SYS_ERROR_OCCURRED:
                 BlinkRed();

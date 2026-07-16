@@ -242,51 +242,25 @@ void systemstart_song(void)
 {
 	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
 
-	// 低音域 C4~B4
+	// Super Mario
+	buzzer_note(659, 0.5);
+	HAL_Delay(120); // E5
+	buzzer_note(659, 0.5);
+	HAL_Delay(120); // E5
+	buzzer_note(659, 0.5);
+	HAL_Delay(250); // E5
+	buzzer_off();
+	HAL_Delay(80);
 	buzzer_note(262, 0.5);
-	HAL_Delay(150);
-	buzzer_note(294, 0.5);
-	HAL_Delay(150);
-	buzzer_note(330, 0.5);
-	HAL_Delay(150);
-	buzzer_note(349, 0.5);
+	HAL_Delay(120); // C4
+	buzzer_note(659, 0.5);
+	HAL_Delay(250); // E5
+	buzzer_note(784, 0.5);
+	HAL_Delay(400); // G5
+	buzzer_off();
 	HAL_Delay(150);
 	buzzer_note(392, 0.5);
-	HAL_Delay(150);
-	buzzer_note(440, 0.5);
-	HAL_Delay(150);
-	buzzer_note(494, 0.5);
-	HAL_Delay(150);
-	// 中音域 C5~B5
-	buzzer_note(523, 0.5);
-	HAL_Delay(150);
-	buzzer_note(587, 0.5);
-	HAL_Delay(150);
-	buzzer_note(659, 0.5);
-	HAL_Delay(150);
-	buzzer_note(698, 0.5);
-	HAL_Delay(150);
-	buzzer_note(784, 0.5);
-	HAL_Delay(150);
-	buzzer_note(880, 0.5);
-	HAL_Delay(150);
-	buzzer_note(988, 0.5);
-	HAL_Delay(150);
-	// 高音域 C6~B6
-	buzzer_note(1046, 0.5);
-	HAL_Delay(150);
-	buzzer_note(1175, 0.5);
-	HAL_Delay(150);
-	buzzer_note(1318, 0.5);
-	HAL_Delay(150);
-	buzzer_note(1397, 0.5);
-	HAL_Delay(150);
-	buzzer_note(1568, 0.5);
-	HAL_Delay(150);
-	buzzer_note(1760, 0.5);
-	HAL_Delay(150);
-	buzzer_note(1976, 0.5);
-	HAL_Delay(400);
+	HAL_Delay(500); // G4
 
 	buzzer_off();
 }
@@ -307,10 +281,12 @@ void buzzerTask(void const *argument)
 {
 	(void) argument;
 	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
+	uint8_t was_online = 0;
 
 	for (;;)
 	{
-		if (!RemoteControlIsOnline())
+		uint8_t is_online = RemoteControlIsOnline();
+		if (!is_online)
 		{
 			buzzer_note(659, 0.5); // E5
 			osDelay(250);
@@ -318,9 +294,17 @@ void buzzerTask(void const *argument)
 			osDelay(250);
 			buzzer_off();
 			osDelay(500);
+			was_online = 0;
 		}
 		else
 		{
+			if (!was_online)
+			{
+				buzzer_note(1046, 0.5); // C6
+				osDelay(300);
+				buzzer_off();
+				was_online = 1;
+			}
 			osDelay(200);
 		}
 	}
