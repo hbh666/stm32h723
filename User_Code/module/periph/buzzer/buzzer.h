@@ -8,6 +8,8 @@
 // #include "struct_typedef.h"
 /*---------------------DEFINES-----------------------*/
 //
+//#define SILENT_MODE // 取消注释以关闭所有提示音（有bug！！！）
+
 #define PLAYING_STOP 0
 #define PLAYING_INIT_MUSIC 1
 

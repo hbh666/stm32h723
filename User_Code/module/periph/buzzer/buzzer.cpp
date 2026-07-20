@@ -215,6 +215,11 @@ void buzzer_off(void)
  */
 void buzzer_note(uint16_t note, float volume)
 {
+#ifdef SILENT_MODE
+	(void)note;
+	(void)volume;
+	return;
+#endif
 	if (volume > 1.0f)
 	{
 		volume = 1.0f;
@@ -243,25 +248,26 @@ void systemstart_song(void)
 	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
 
 	// Super Mario
-	buzzer_note(659, 0.5);
-	HAL_Delay(120); // E5
-	buzzer_note(659, 0.5);
-	HAL_Delay(120); // E5
-	buzzer_note(659, 0.5);
-	HAL_Delay(250); // E5
-	buzzer_off();
-	HAL_Delay(80);
-	buzzer_note(262, 0.5);
-	HAL_Delay(120); // C4
-	buzzer_note(659, 0.5);
-	HAL_Delay(250); // E5
-	buzzer_note(784, 0.5);
-	HAL_Delay(400); // G5
-	buzzer_off();
-	HAL_Delay(150);
-	buzzer_note(392, 0.5);
-	HAL_Delay(500); // G4
+	// buzzer_note(659, 0.5);
+	// HAL_Delay(120); // E5
+	// buzzer_note(659, 0.5);
+	// HAL_Delay(120); // E5
+	// buzzer_note(659, 0.5);
+	// HAL_Delay(250); // E5
+	// buzzer_off();
+	// HAL_Delay(80);
+	// buzzer_note(262, 0.5);
+	// HAL_Delay(120); // C4
+	// buzzer_note(659, 0.5);
+	// HAL_Delay(250); // E5
+	// buzzer_note(784, 0.5);
+	// HAL_Delay(400); // G5
+	// buzzer_off();
+	// HAL_Delay(150);
+	// buzzer_note(392, 0.5);
+	// HAL_Delay(500); // G4
 
+	SongLaoda();
 	buzzer_off();
 }
 
