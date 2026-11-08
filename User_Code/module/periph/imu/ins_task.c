@@ -33,6 +33,7 @@ const float zb[3] = {0, 0, 1};
 static uint32_t INS_DWT_Count = 0;
 static float dt = 0, t = 0;
 static float RefTemp = 40; // 恒温设定温度
+#define IMU_TEMP_CTRL_ENABLE 0 // IMU恒温控制开关: 1=开, 0=关(关闭后加热PWM与PID均不运行)
 
 static void IMU_Param_Correction(IMU_Param_t *param, float gyro[3], float accel[3]);
 
@@ -130,7 +131,9 @@ attitude_t *INS_Init(void)
     else
         return (attitude_t *) &INS.Gyro;
 
+#if IMU_TEMP_CTRL_ENABLE
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
+#endif
 
     while (BMI088Init(&hspi2, 1) != BMI088_NO_ERROR);
     IMU_Param.scale[X] = 1;
@@ -232,12 +235,14 @@ void INS_Task(void)
         // VisionSetAltitude(INS.Yaw, INS.Pitch, INS.Roll);
     }
 
+#if IMU_TEMP_CTRL_ENABLE
     // temperature control
     if ((count % 2) == 0)
     {
         // 500hz
         IMU_Temperature_Ctrl();
     }
+#endif
 
     if ((count++ % 1000) == 0)
     {

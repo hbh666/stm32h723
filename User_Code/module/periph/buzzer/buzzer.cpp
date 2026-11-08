@@ -283,7 +283,9 @@ void SongSpring(void) //春日影！！！
 	}
 }
 
-void buzzerTask(void const *argument)
+#define OFFLINE_ALARM_ENABLE 0 // 遥控失联报警开关: 1=开, 0=关(关闭后失联不再蜂鸣,重新连接提示音保留)
+
+void buzzerTask(void *argument)
 {
 	(void) argument;
 	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
@@ -294,12 +296,16 @@ void buzzerTask(void const *argument)
 		uint8_t is_online = RemoteControlIsOnline();
 		if (!is_online)
 		{
+#if OFFLINE_ALARM_ENABLE
 			buzzer_note(659, 0.5); // E5
 			osDelay(250);
 			buzzer_note(494, 0.5); // B4
 			osDelay(250);
 			buzzer_off();
 			osDelay(500);
+#else
+			osDelay(500); // 报警已关闭,仅保留轮询延时
+#endif
 			was_online = 0;
 		}
 		else

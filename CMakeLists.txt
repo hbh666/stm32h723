@@ -23,7 +23,9 @@ option(INFANTRY_TRANSFORM  "5. 变形步兵 (Transformable Infantry)"     OFF)
 option(BALANCE_SERIAL      "6. 串联腿平衡步兵 (Serial-Leg Balance)"    OFF)
 option(BALANCE_PARALLEL    "7. 并联腿平衡步兵 (Parallel-Leg Balance)"  OFF)
 option(DART                "8. 飞镖架 (Dart System)"                  OFF)
-option(DEV_DEBUG           "9. 调试模式 (Debug Mode)"                 ON)
+option(DEV_DEBUG           "9. 调试模式 (Debug Mode)"                 OFF)
+option(WHEEL_LEG           "10. hbh腿机器人 (Wheel-Leg)"     ON)
+
 
 # ------------------------------------------------------------------------------
 # 2. 安全互斥检查 (Safety Check)
@@ -54,6 +56,9 @@ if(DART)
     math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
 endif()
 if(DEV_DEBUG)
+    math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
+endif()
+if(WHEEL_LEG)
     math(EXPR ROBOT_ENABLE_COUNT "${ROBOT_ENABLE_COUNT}+1")
 endif()
 
@@ -117,7 +122,9 @@ message(NOTICE ">> [Build Type] 当前构建类型: ${CMAKE_BUILD_TYPE}")
 # ------------------------------------------------------------------------------
 # 4. 目标与库链接 (Target & Libraries)
 # ------------------------------------------------------------------------------
-add_executable(${CMAKE_PROJECT_NAME})
+add_executable(${CMAKE_PROJECT_NAME}
+        User_Code/module/motor/can_motors/edulite05_motor/edulite05_motor.c
+        User_Code/module/motor/can_motors/edulite05_motor/edulite05_motor.h)
 
 include(CompileOptions)
 
@@ -262,6 +269,13 @@ elseif(DEV_DEBUG)
     set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/dev_tasks")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE DEV_DEBUG)
     message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 调试模式 (DEV_DEBUG)")
+
+# 10. 自研轮腿机器人
+elseif(WHEEL_LEG)
+    message(NOTICE ">> 当前构建兵种: 自研轮腿机器人 (WHEEL_LEG)")
+    set(ACTIVE_APP_DIR "${PROJECT_SOURCE_DIR}/User_Code/user_task/wheel_leg")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE WHEEL_LEG)
+    message(NOTICE ">> [Specific Source] 开始扫描各兵种对应代码，当前选中的兵种为: 自研轮腿机器人 (WHEEL_LEG)")
 
 endif()
 

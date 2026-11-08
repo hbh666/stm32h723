@@ -155,7 +155,7 @@ const osThreadAttr_t buzzer_attributes = {
     .stack_size = 512 * 4
 };
 osThreadId buzzerHandle;
-extern void buzzerTask(void const *argument);
+extern void buzzerTask(void *argument);
 
 /* USER CODE END FunctionPrototypes */
 

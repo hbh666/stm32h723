@@ -42,7 +42,7 @@ extern const uint8_t sound_autoaiming[];
 void systemstart_song(void);
 
 //
-void buzzerTask(void const *argument);
+void buzzerTask(void *argument);
 
 void SongLaoda(void);
 
