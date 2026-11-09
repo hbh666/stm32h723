@@ -62,7 +62,9 @@ typedef struct _
     uint32_t tx_mailbox;           // CAN消息填入的邮箱号
     uint8_t tx_buff[8];            // 发送缓存,发送消息长度可以通过CANSetDLC()设定,最大为8
     uint8_t rx_buff[8];            // 接收缓存,最大消息长度为8
-    uint32_t rx_id;                // 接收id
+    uint32_t rx_id;                // 接收id(扩展帧时为过滤键)
+    uint32_t rx_filter_mask;       // 接收过滤掩码(0=标准帧精确匹配;非0=扩展帧掩码匹配)
+    uint32_t rx_ext_id;            // 最近一次接收到的扩展帧完整29位ID(标准帧无效)
     uint8_t rx_len;                // 接收长度,可能为0-8
     // 接收的回调函数,用于解析接收到的数据
     void (*can_module_callback)(struct _ *); // callback needs an instance to tell among registered ones
@@ -80,6 +82,8 @@ typedef struct
 #endif
     uint32_t tx_id;                             // 发送id
     uint32_t rx_id;                             // 接收id
+    uint32_t filter_mask;                       // 接收过滤掩码: 0=标准帧精确匹配(默认), 非0=扩展帧掩码匹配(位1=必须匹配)
+    uint8_t id_type;                            // 帧ID类型: FDCAN_STANDARD_ID(默认) 或 FDCAN_EXTENDED_ID
     void (*can_module_callback)(FDCANInstance *); // 处理接收数据的回调函数
     void *id;                                   // 拥有can实例的模块地址,用于区分不同的模块(如果有需要的话),如果不需要可以不传入
 } FDCAN_Init_Config_s;

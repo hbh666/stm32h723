@@ -35,6 +35,7 @@ static void CANAddFilter(FDCANInstance *_instance)
 {
 #ifdef FDCAN
 	static uint8_t can1_filter_idx = 0, can2_filter_idx = 0, can3_filter_idx = 0;
+	static uint8_t can1_ext_filter_idx = 0, can2_ext_filter_idx = 0, can3_ext_filter_idx = 0;
 	//检查是否超出过滤器设定数量上限
 	if (can1_filter_idx > hfdcan1.Init.StdFiltersNbr || can2_filter_idx > hfdcan2.Init.StdFiltersNbr || can3_filter_idx
 	    > hfdcan3.Init.StdFiltersNbr)
@@ -67,15 +68,57 @@ static void CANAddFilter(FDCANInstance *_instance)
 	}
 
 	FDCAN_FilterTypeDef fdcan_filter_conf;
-	fdcan_filter_conf.FilterIndex = (*filter_idx_p)++;
-	//使用单个ID模式
-	fdcan_filter_conf.FilterType = FDCAN_FILTER_DUAL;
-	fdcan_filter_conf.FilterConfig = (_instance->tx_id & 1) ? FDCAN_FILTER_TO_RXFIFO0 : FDCAN_FILTER_TO_RXFIFO1;
-	//奇数id的模块会被分配到FIFO0,偶数id的模块会被分配到FIFO1
-	fdcan_filter_conf.FilterID1 = _instance->rx_id;
-	fdcan_filter_conf.FilterID2 = _instance->rx_id;
-	fdcan_filter_conf.IdType = FDCAN_STANDARD_ID;
-	fdcan_filter_conf.IsCalibrationMsg = 0;
+
+	/* 扩展帧分支: 掩码过滤模式, 槽位位于 StdFiltersNbr 之后 */
+	if (_instance->rx_filter_mask != 0)
+	{
+		uint8_t *ext_idx_p;
+		uint32_t std_nbr, ext_nbr;
+		if (_instance->can_handle == &hfdcan1)
+		{
+			ext_idx_p = &can1_ext_filter_idx;
+			std_nbr = hfdcan1.Init.StdFiltersNbr;
+			ext_nbr = hfdcan1.Init.ExtFiltersNbr;
+		}
+		else if (_instance->can_handle == &hfdcan2)
+		{
+			ext_idx_p = &can2_ext_filter_idx;
+			std_nbr = hfdcan2.Init.StdFiltersNbr;
+			ext_nbr = hfdcan2.Init.ExtFiltersNbr;
+		}
+		else
+		{
+			ext_idx_p = &can3_ext_filter_idx;
+			std_nbr = hfdcan3.Init.StdFiltersNbr;
+			ext_nbr = hfdcan3.Init.ExtFiltersNbr;
+		}
+		if (*ext_idx_p >= ext_nbr)
+		{
+			while (1)
+			{
+				LOGERROR("[bsp_can] ext filter exceeded ExtFiltersNbr [%d]! check CubeMX FDCAN config", ext_nbr);
+			}
+		}
+		fdcan_filter_conf.FilterIndex = std_nbr + (*ext_idx_p)++;
+		fdcan_filter_conf.FilterType = FDCAN_FILTER_MASK;   // 掩码模式: FilterID1=键, FilterID2=掩码(1=必须匹配)
+		fdcan_filter_conf.FilterConfig = (_instance->tx_id & 1) ? FDCAN_FILTER_TO_RXFIFO0 : FDCAN_FILTER_TO_RXFIFO1;
+		fdcan_filter_conf.FilterID1 = _instance->rx_id;
+		fdcan_filter_conf.FilterID2 = _instance->rx_filter_mask;
+		fdcan_filter_conf.IdType = FDCAN_EXTENDED_ID;
+		fdcan_filter_conf.IsCalibrationMsg = 0;
+	}
+	else
+	{
+		fdcan_filter_conf.FilterIndex = (*filter_idx_p)++;
+		//使用单个ID模式
+		fdcan_filter_conf.FilterType = FDCAN_FILTER_DUAL;
+		fdcan_filter_conf.FilterConfig = (_instance->tx_id & 1) ? FDCAN_FILTER_TO_RXFIFO0 : FDCAN_FILTER_TO_RXFIFO1;
+		//奇数id的模块会被分配到FIFO0,偶数id的模块会被分配到FIFO1
+		fdcan_filter_conf.FilterID1 = _instance->rx_id;
+		fdcan_filter_conf.FilterID2 = _instance->rx_id;
+		fdcan_filter_conf.IdType = FDCAN_STANDARD_ID;
+		fdcan_filter_conf.IsCalibrationMsg = 0;
+	}
 	//fdcan_filter_conf.RxBufferIndex=0;
 
 	// // ================== 【核心修复区】 ==================@todo：有问题 我要验牌
@@ -184,8 +227,11 @@ FDCANInstance *CANRegister(FDCAN_Init_Config_s *config)
 	}
 	for (size_t i = 0; i < idx; i++)
 	{
-		// 重复注册 | id重复
-		if (fdcan_instance[i]->rx_id == config->rx_id && fdcan_instance[i]->can_handle == config->can_handle)
+		// 重复注册 | id重复(扩展帧按"过滤键 & 掩码"比较,标准帧按精确 rx_id 比较)
+		uint32_t new_key = (config->filter_mask == 0) ? config->rx_id : (config->rx_id & config->filter_mask);
+		uint32_t old_key = (fdcan_instance[i]->rx_filter_mask == 0) ? fdcan_instance[i]->rx_id
+		                                                           : (fdcan_instance[i]->rx_id & fdcan_instance[i]->rx_filter_mask);
+		if (new_key == old_key && fdcan_instance[i]->can_handle == config->can_handle)
 		{
 			while (1)
 			{
@@ -200,7 +246,7 @@ FDCANInstance *CANRegister(FDCAN_Init_Config_s *config)
 	// 进行发送报文的配置
 #ifdef FDCAN
 	instance->txconf.Identifier = config->tx_id; // 发送id
-	instance->txconf.IdType = FDCAN_STANDARD_ID; // 使用标准id,扩展id则使用CAN_ID_EXT(目前没有需求)
+	instance->txconf.IdType = (config->id_type == FDCAN_EXTENDED_ID) ? FDCAN_EXTENDED_ID : FDCAN_STANDARD_ID;
 	instance->txconf.TxFrameType = FDCAN_DATA_FRAME, // 发送数据帧
 			instance->txconf.DataLength = FDCAN_DLC_BYTES_8, // 数据长度为8字节
 			instance->txconf.ErrorStateIndicator = FDCAN_ESI_ACTIVE, // 兼容CAN2.0,错误状态指示器设为主动
@@ -218,6 +264,7 @@ FDCANInstance *CANRegister(FDCAN_Init_Config_s *config)
 	instance->can_handle = config->can_handle;
 	instance->tx_id = config->tx_id; // 好像没用,可以删掉
 	instance->rx_id = config->rx_id;
+	instance->rx_filter_mask = config->filter_mask; // 0=标准帧精确匹配, 非0=扩展帧掩码匹配
 	instance->can_module_callback = config->can_module_callback;
 	instance->id = config->id;
 
@@ -322,14 +369,28 @@ static void FDCANFIFOxCallback(FDCAN_HandleTypeDef *_hfdcan, uint32_t fifox)
 				break; // 兜底保护
 		}
 
-		if (rxconf.RxFrameType == FDCAN_DATA_FRAME && rxconf.IdType == FDCAN_STANDARD_ID)
+		if (rxconf.RxFrameType == FDCAN_DATA_FRAME)
 		{
 			for (size_t i = 0; i < idx; ++i)
 			{
-				if (_hfdcan == fdcan_instance[i]->can_handle && rxconf.Identifier == fdcan_instance[i]->rx_id)
+				uint8_t match = 0;
+				if (fdcan_instance[i]->rx_filter_mask == 0)
+				{
+					// 标准帧: 精确匹配 rx_id
+					match = (rxconf.IdType == FDCAN_STANDARD_ID && rxconf.Identifier == fdcan_instance[i]->rx_id);
+				}
+				else
+				{
+					// 扩展帧: 掩码匹配(过滤键 & 掩码), 并保存完整 29 位 ID 供回调解析
+					match = (rxconf.IdType == FDCAN_EXTENDED_ID &&
+					         (rxconf.Identifier & fdcan_instance[i]->rx_filter_mask) ==
+					             (fdcan_instance[i]->rx_id & fdcan_instance[i]->rx_filter_mask));
+				}
+				if (_hfdcan == fdcan_instance[i]->can_handle && match)
 				{
 					if (fdcan_instance[i]->can_module_callback != NULL)
 					{
+						fdcan_instance[i]->rx_ext_id = rxconf.Identifier;
 						fdcan_instance[i]->rx_len = DataLength;
 						memcpy(fdcan_instance[i]->rx_buff, fdcan_rx_buff, fdcan_instance[i]->rx_len);
 						fdcan_instance[i]->can_module_callback(fdcan_instance[i]);

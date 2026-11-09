@@ -15,6 +15,10 @@
 /* 主机 CAN_ID:EL05 所有一次性命令帧(类型3/4/6)的扩展帧 ID bit23~8 填此值 */
 #define EDU_MASTER_ID 0xFD
 
+/* 反馈帧过滤掩码: 比对 bit28~24(类型=2) + bit8~15(电机ID) + bit7~0(主机ID),
+ * 忽略 bit16~23(故障位/模式状态,每帧都在变) */
+#define EDU_RX_FILTER_MASK 0x1F00FFFFu
+
 /* EL05 运控模式量程(必须与电机固件一致,见 EL05 使用说明书):
  * 位置 ±12.57rad, 速度 ±50rad/s, 力矩 ±6Nm, Kp 0~500, Kd 0~5 */
 #define EL05_P_MIN  (-12.57f)
@@ -103,6 +107,7 @@ typedef struct
     float *speed_feedforward_ptr;
     float *current_feedforward_ptr;
     float pid_ref;                       // 力控目标力矩(EDUMotorSetRef 写入)
+    EDU_Motor_Send_s send_mailbox;       // 运控参数信箱(EDUMotorSetMITParam 写入,直通模式用)
     Motor_Working_Type_e stop_flag;      // 启停标志
     FDCANInstance *motor_can_instance;   // CAN 收发通道(CANRegister 返回)
     Daemon_Instance* motor_daemon;       // 守护实例(失联自动停止)
@@ -155,8 +160,14 @@ void EDUMotorStop(EDUMotorInstance *motor);
 
 /**
  * @brief 将电机当前位置设置为机械零位(发送通信类型6)
+ * @attention 不会在 Init 中自动调用,由上层在标定流程中显式调用
  */
 void EDUMotorCaliEncoder(EDUMotorInstance *motor);
+
+/**
+ * @brief 切换电机控制模式(预留: 以后切电流/速度/位置模式时用)
+ */
+void EDUMotorSetCtrlMode(EDUMotorInstance *motor, EDUMotor_Ctrl_Mode_e mode);
 
 /**
  * @brief 为所有已注册实例创建控制任务(必须在 RTOS 调度器启动后调用)
